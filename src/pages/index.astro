@@ -1,48 +1,21 @@
 ---
-// 1. 引入必要工具與組件
 import { getCollection } from 'astro:content';
 import Timeline from '../components/Timeline.astro';
-// 如果你有 Layout 組件，請記得引入（例如：import Layout from '../layouts/Layout.astro';）
 
-/**
- * 2. 抓取資料
- * 使用 getCollection 抓取 'projects' 資料夾 (即 src/content/projects)
- */
+// 1. 抓取資料
 const projectEntries = await getCollection('projects');
 
-/**
- * 3. 格式轉換
- * 你的 Timeline.astro 預期收到的是「扁平」的物件 (例如 item.title)
- * 但 getCollection 回傳的是 { data: { ...frontmatter }, body: "..." }
- * 所以我們用 .map 把 data 裡的內容提取到最外層
- */
+// 2. 重要：將資料扁平化，這樣 Timeline.astro 才能讀到 item.title, item.date
 const events = projectEntries.map(project => ({
-  title: project.data.title,
-  date: project.data.date,
-  location: project.data.location,
-  category: project.data.category,
-  content: project.data.content, // 對應你 md 裡的 content 欄位
-  tags: project.data.tags,
-  image: project.data.image
+  ...project.data,  // 這會展開 title, date, location, content, tags 等
+  id: project.id
 }));
 ---
 
 <html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8" />
-    <title>Ethan's Timeline</title>
-    <style>
-      /* 給背景一個深色底，才看得到白色的時間軸 */
-      body {
-        background-color: #424242;
-        margin: 0;
-        padding: 40px;
-        font-family: sans-serif;
-      }
-    </style>
-  </head>
-  <body>
+  <body class="bg-[#424242] p-10">
     <main class="max-w-4xl mx-auto">
+      {/* 傳入處理好的扁平化資料 */}
       <Timeline events={events} />
     </main>
   </body>

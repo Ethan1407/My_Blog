@@ -6,21 +6,25 @@
  * 3. 相容性：同時支援 content (projects) 與 summary (about) 欄位
  */
 const { event } = Astro.props;
-// 同時解構 summary 與 content
+
+// 從 event.data 中提取資料 (這是 Astro Content Collections 的標準結構)
 const { title, location, summary, content, tags = [] } = event.data;
 
-// 優先使用 summary，如果沒有則使用 content
+// 優先使用 summary，如果沒有則使用 content (適應不同的 MD 格式)
 const displaySummary = summary || content;
 
+// 將標籤陣列轉為字串，方便前端 JS 進行過濾 (Projects 同步功能)
 const tagsString = JSON.stringify(tags);
 ---
 
 <div class="timeline-event group relative" data-tags={tagsString}>
+    {/* 標題：加上底線特效與 Hover 動畫 */}
     <h3 class="text-2xl font-bold mb-4 tracking-wide text-white underline underline-offset-8 decoration-white/20 group-hover:decoration-white transition-all">
         {title}
     </h3>
 
     <ul class="space-y-2 text-gray-300 text-lg leading-relaxed">
+        {/* 地點：如果有資料才顯示 */}
         {location && (
             <li class="flex items-start">
                 <span class="font-semibold min-w-[120px] text-white/80">• location :</span>
@@ -28,12 +32,13 @@ const tagsString = JSON.stringify(tags);
             </li>
         )}
         
-        {/* 使用我們處理過的 displaySummary */}
+        {/* 內容摘要：自動判斷 summary 或 content */}
         <li class="flex items-start">
             <span class="font-semibold min-w-[120px] text-white/80">• summary :</span>
             <span class="flex-1 text-gray-400">{displaySummary}</span>
         </li>
 
+        {/* 標籤列：藍色透明按鈕風格 */}
         <li class="flex items-start">
             <span class="font-semibold min-w-[120px] text-white/80">• tags :</span>
             <div class="flex-1">
