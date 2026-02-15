@@ -1,0 +1,106 @@
+---
+// src/pages/projects/[slug].astro
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navbar from '@/components/Navbar.astro';
+
+// 1. 產生所有專案的路徑
+export async function getStaticPaths() {
+  const projectEntries = await getCollection('projects');
+  return projectEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+// 2. 取得該專案資料並渲染內容
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+
+// 3. 過濾標題：僅保留 ## (depth 2) 與 ### (depth 3)
+const filteredHeadings = headings.filter((h) => h.depth > 1 && h.depth < 4);
+---
+
+<BaseLayout title={entry.data.title}>
+  <div class="flex flex-col min-h-screen bg-[#424242]">
+    <Navbar />
+    
+    <div class="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-8 xl:gap-20 p-6 md:p-12 relative">
+      
+      <aside class="lg:w-[280px] shrink-0">
+        <div class="sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar">
+          <h2 class="text-gray-500 font-bold text-xs uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-2">
+            Contents
+          </h2>
+          <nav>
+            <ul class="space-y-5">
+              {filteredHeadings.map((h) => (
+                <li class={`transition-all duration-200 ${h.depth === 3 ? 'ml-5' : ''}`}>
+                  <a 
+                    href={`#${h.slug}`} 
+                    class="text-gray-400 hover:text-white text-[15px] leading-relaxed block hover:translate-x-1 transition-transform"
+                  >
+                    {h.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          
+          <div class="mt-16 pt-8 border-t border-white/5">
+            <a href="/projects" class="text-gray-500 hover:text-blue-400 transition-colors text-sm inline-flex items-center gap-2 group">
+              <span class="group-hover:-translate-x-1 transition-transform">←</span> Back to Projects
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <main class="flex-1 min-w-0 max-w-4xl">
+        <header class="mb-16 border-b border-white/10 pb-10">
+          <h1 class="text-5xl font-extrabold mb-8 text-white tracking-tight leading-tight">{entry.data.title}</h1>
+          <div class="flex flex-wrap gap-6 text-gray-400 text-lg">
+            <span class="flex items-center gap-2">📅 {entry.data.date}</span>
+            <span class="flex items-center gap-2">📍 {entry.data.location}</span>
+            <div class="flex gap-2">
+              {entry.data.tags.map(tag => (
+                <span class="bg-white/5 px-3 py-1 rounded text-sm text-white/60">#{tag}</span>
+              ))}
+            </div>
+          </div>
+        </header>
+
+        <article class="prose-custom">
+          <Content />
+        </article>
+
+        <div class="h-40"></div>
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  html { scroll-behavior: smooth; }
+
+  /* Markdown 內容樣式優化 */
+  .prose-custom h2 { 
+    @apply text-3xl font-bold mt-20 mb-8 text-white border-b border-white/10 pb-3 scroll-mt-28; 
+  }
+  .prose-custom h3 { 
+    @apply text-2xl font-bold mt-12 mb-6 text-white/90 scroll-mt-28; 
+  }
+  .prose-custom p { @apply text-lg text-gray-300 leading-[1.8] mb-8; }
+  .prose-custom ul { @apply list-disc ml-8 mb-8 text-gray-300 space-y-3; }
+  .prose-custom pre { 
+    @apply bg-[#1a1a1a] p-8 rounded-2xl overflow-x-auto mb-10 border border-white/5 shadow-2xl; 
+  }
+  .prose-custom code { @apply bg-white/10 px-1.5 py-0.5 rounded text-blue-300 font-mono text-[0.9em]; }
+  
+  /* 圖片樣式：強化陰影與圓角 */
+  .prose-custom img { 
+    @apply rounded-3xl my-14 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-full object-cover;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>

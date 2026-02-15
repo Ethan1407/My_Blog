@@ -1,0 +1,53 @@
+---
+/**
+ * ExperienceCard 組件
+ * 1. 條件渲染：當 location 為空時自動隱藏該行
+ * 2. 樣式：維持純文字列表風格，標籤為藍色透明按鈕
+ * 3. 相容性：同時支援 content (projects) 與 summary (about) 欄位
+ */
+const { event } = Astro.props;
+// 同時解構 summary 與 content
+const { title, location, summary, content, tags = [] } = event.data;
+
+// 優先使用 summary，如果沒有則使用 content
+const displaySummary = summary || content;
+
+const tagsString = JSON.stringify(tags);
+---
+
+<div class="timeline-event group relative" data-tags={tagsString}>
+    <h3 class="text-2xl font-bold mb-4 tracking-wide text-white underline underline-offset-8 decoration-white/20 group-hover:decoration-white transition-all">
+        {title}
+    </h3>
+
+    <ul class="space-y-2 text-gray-300 text-lg leading-relaxed">
+        {location && (
+            <li class="flex items-start">
+                <span class="font-semibold min-w-[120px] text-white/80">• location :</span>
+                <span class="flex-1 text-gray-400">{location}</span>
+            </li>
+        )}
+        
+        {/* 使用我們處理過的 displaySummary */}
+        <li class="flex items-start">
+            <span class="font-semibold min-w-[120px] text-white/80">• summary :</span>
+            <span class="flex-1 text-gray-400">{displaySummary}</span>
+        </li>
+
+        <li class="flex items-start">
+            <span class="font-semibold min-w-[120px] text-white/80">• tags :</span>
+            <div class="flex-1">
+                <div class="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                        <button 
+                            class="tag-button text-sm text-blue-300/80 bg-blue-400/10 hover:bg-white hover:text-[#424242] px-2 py-0.5 rounded-md border border-blue-400/20 transition-all font-bold"
+                            data-tag-name={tag}
+                        >
+                            {tag}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

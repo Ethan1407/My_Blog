@@ -1,0 +1,162 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from './components/ProjectCard.astro';
+import ProjectSidebar from './components/ProjectSidebar.astro';
+
+// 1. 抓取所有專案
+const allProjects = await getCollection('projects');
+
+// 2. 處理標籤邏輯
+const tagMap = {};
+allProjects.forEach(p => {
+    p.data.tags.forEach(t => {
+        tagMap[t] = (tagMap[t] || 0) + 1;
+    });
+});
+const sortedTags = Object.entries(tagMap)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+
+// 3. 處理年份 > 月份動態統計
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const yearlyStatsMap = {};
+
+allProjects.forEach(p => {
+    const dateParts = p.data.date.split('.');
+    const year = dateParts[0];
+    const monthIndex = parseInt(dateParts[1]) - 1 || 0;
+    const monthName = monthNames[monthIndex];
+    if (!yearlyStatsMap[year]) yearlyStatsMap[year] = {};
+    yearlyStatsMap[year][monthName] = (yearlyStatsMap[year][monthName] || 0) + 1;
+});
+
+const sortedYearlyStats = Object.entries(yearlyStatsMap)
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([year, months]) => ({
+        year,
+        months: Object.entries(months).sort((a, b) => monthNames.indexOf(b[0]) - monthNames.indexOf(a[0]))
+    }));
+
+// 4. 排序專案 (最新在前)
+const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.data.date));
+---
+
+<div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white overflow-hidden">
+    <main class="p-8 md:p-12 overflow-y-auto custom-scrollbar bg-[#424242]">
+        <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">Projects</h2>
+        <div class="space-y-8" id="project-list-container">
+            {sortedProjects.map(project => (
+                <ProjectCard project={project} />
+            ))}
+        </div>
+        <div class="h-20"></div>
+    </main>
+
+    <aside class="p-8 overflow-y-auto hide-scrollbar bg-[#424242]">
+        <ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} />
+        <div class="h-20"></div>
+    </aside>
+</div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+</style>
+
+<script>
+    const tagButtons = document.querySelectorAll('.tag-button');
+    const categoryItems = document.querySelectorAll('.filter-category');
+    const monthButtons = document.querySelectorAll('.month-filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+    const clearBtn = document.getElementById('clear-all-filters');
+    const toggleBtn = document.getElementById('toggle-tags-btn');
+    const moreTags = document.querySelectorAll('.more-tag');
+
+    // 多重過濾狀態
+    let activeCategory = null;
+    let activeTag = null;
+    let activeMonth = null; // 格式: "2026.02"
+
+    function applyFilters() {
+        const hasFilter = activeCategory !== null || activeTag !== null || activeMonth !== null;
+        
+        projectCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            const cardTags = JSON.parse(card.getAttribute('data-tags') || '[]');
+            const cardDate = card.getAttribute('data-date'); // 格式: "2026.02.15"
+            
+            const matchCategory = !activeCategory || cardCategory === activeCategory;
+            const matchTag = !activeTag || cardTags.includes(activeTag);
+            const matchMonth = !activeMonth || (cardDate && cardDate.startsWith(activeMonth));
+
+            (card as HTMLElement).style.display = (matchCategory && matchTag && matchMonth) ? 'block' : 'none';
+        });
+
+        if (hasFilter) clearBtn?.classList.remove('hidden');
+        else clearBtn?.classList.add('hidden');
+    }
+
+    // --- 類型點擊邏輯 ---
+    categoryItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const cat = item.getAttribute('data-category');
+            if (activeCategory === cat) activeCategory = null;
+            else {
+                categoryItems.forEach(i => i.classList.remove('text-blue-400', 'font-bold'));
+                activeCategory = cat;
+            }
+            item.classList.toggle('text-blue-400', activeCategory === cat);
+            item.classList.toggle('font-bold', activeCategory === cat);
+            applyFilters();
+        });
+    });
+
+    // --- 標籤點擊邏輯 (亮底 + 白字 + 藍框) ---
+    tagButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tag = btn.getAttribute('data-tag-name');
+            if (activeTag === tag) activeTag = null;
+            else {
+                tagButtons.forEach(b => b.classList.remove('ring-2', 'ring-blue-400', 'bg-[#888888]'));
+                activeTag = tag;
+            }
+            btn.classList.toggle('ring-2', activeTag === tag);
+            btn.classList.toggle('ring-blue-400', activeTag === tag);
+            btn.classList.toggle('bg-[#888888]', activeTag === tag);
+            applyFilters();
+        });
+    });
+
+    // --- 月份點擊邏輯 ---
+    monthButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const monYear = btn.getAttribute('data-month-year');
+            if (activeMonth === monYear) activeMonth = null;
+            else {
+                monthButtons.forEach(b => b.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'));
+                activeMonth = monYear;
+            }
+            btn.classList.toggle('text-blue-400', activeMonth === monYear);
+            btn.classList.toggle('font-bold', activeMonth === monYear);
+            btn.classList.toggle('bg-white/10', activeMonth === monYear);
+            applyFilters();
+        });
+    });
+
+    // --- 重置所有過濾 ---
+    clearBtn?.addEventListener('click', () => {
+        activeCategory = null; activeTag = null; activeMonth = null;
+        categoryItems.forEach(i => i.classList.remove('text-blue-400', 'font-bold'));
+        tagButtons.forEach(b => b.classList.remove('ring-2', 'ring-blue-400', 'bg-[#888888]'));
+        monthButtons.forEach(b => b.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'));
+        applyFilters();
+    });
+
+    // --- 顯示更多標籤 ---
+    toggleBtn?.addEventListener('click', () => {
+        const isExpanded = toggleBtn.textContent?.includes('較少');
+        moreTags.forEach(t => t.classList.toggle('hidden'));
+        toggleBtn.textContent = isExpanded ? `顯示更多 (${moreTags.length})` : '顯示較少';
+    });
+</script>

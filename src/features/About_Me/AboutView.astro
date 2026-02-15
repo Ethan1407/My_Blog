@@ -1,0 +1,101 @@
+---
+// src/features/About_Me/AboutView.astro
+import { getCollection } from 'astro:content';
+import ProfileSidebar from './components/ProfileSidebar.astro';
+import Timeline from './components/Timeline.astro';
+import TagSidebar from './components/TagSidebar.astro';
+
+// 1. 從 Content Collections 抓取資料
+const allAboutEntries = await getCollection('about');
+
+// 2. 排序邏輯：最新的在最上面
+const sortedEvents = allAboutEntries.sort((a, b) => {
+  const dateA = new Date(a.data.date.replace(/\./g, '-')).getTime();
+  const dateB = new Date(b.data.date.replace(/\./g, '-')).getTime();
+  return dateB - dateA;
+});
+
+// 3. 自動標籤解析與計數邏輯 (直接從 tags 陣列讀取)
+const tagCountMap = {};
+sortedEvents.forEach(entry => {
+  entry.data.tags.forEach(tag => {
+    tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
+  });
+});
+
+const sortedTags = Object.entries(tagCountMap)
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
+---
+
+<div class="grid grid-cols-1 lg:grid-cols-[350px_1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white overflow-hidden">
+    <aside class="p-8 overflow-y-auto hide-scrollbar bg-[#424242]">
+        <ProfileSidebar />
+    </aside>
+
+    <main class="p-10 overflow-y-auto custom-scrollbar bg-[#424242]">
+        <Timeline events={sortedEvents} />
+    </main>
+
+    <aside class="p-8 overflow-y-auto hide-scrollbar bg-[#424242] space-y-8">
+        <TagSidebar tags={sortedTags} />
+    </aside>
+</div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+</style>
+
+<script>
+    const eventItems = document.querySelectorAll('.timeline-event'); 
+    const clearBtn = document.getElementById('clear-all-filters');
+    const toggleBtn = document.getElementById('toggle-tags-btn');
+    const moreTags = document.querySelectorAll('.more-tag');
+
+    let activeTag = null;
+
+    function applyFilter() {
+        const tagButtons = document.querySelectorAll('.tag-button');
+        
+        eventItems.forEach(card => {
+            const cardTags = JSON.parse(card.getAttribute('data-tags') || '[]');
+            // 使用 '' 保持 flex 排版，解決位移問題
+            (card as HTMLElement).style.display = (!activeTag || cardTags.includes(activeTag)) ? '' : 'none';
+        });
+
+        tagButtons.forEach(btn => {
+            const isMatch = btn.getAttribute('data-tag-name') === activeTag;
+            const isBlueStyle = btn.classList.contains('text-blue-300/80');
+
+            if (isMatch) {
+                btn.classList.add('ring-2', 'ring-blue-400', 'bg-[#888888]', 'text-white');
+                if (isBlueStyle) btn.classList.remove('text-blue-300/80', 'bg-blue-400/10');
+                else btn.classList.remove('bg-[#5a5a5a]/60');
+            } else {
+                btn.classList.remove('ring-2', 'ring-blue-400', 'bg-[#888888]', 'text-white');
+                if (isBlueStyle) btn.classList.add('text-blue-300/80', 'bg-blue-400/10');
+                else btn.classList.add('bg-[#5a5a5a]/60');
+            }
+        });
+
+        if (activeTag) clearBtn?.classList.remove('hidden');
+        else clearBtn?.classList.add('hidden');
+    }
+
+    document.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest('.tag-button');
+        if (!btn) return;
+        const tagName = btn.getAttribute('data-tag-name');
+        activeTag = (activeTag === tagName) ? null : tagName;
+        applyFilter();
+    });
+
+    clearBtn?.addEventListener('click', () => { activeTag = null; applyFilter(); });
+    toggleBtn?.addEventListener('click', () => {
+        const isExpanded = toggleBtn.textContent?.includes('較少');
+        moreTags.forEach(t => t.classList.toggle('hidden'));
+        toggleBtn.textContent = isExpanded ? `顯示更多 (${moreTags.length})` : '顯示較少';
+    });
+</script>

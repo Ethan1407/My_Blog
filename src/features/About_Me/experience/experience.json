@@ -1,0 +1,47 @@
+[
+  {
+    "date": "2026.02",
+    "title": "YTP 少年圖靈計畫 ",
+    "details": [
+      { "label": "location", "value": "台北市" },
+      { "label": "summary", "value": "運用台北市大數據與 AI 進行專案開發" },
+      { "label": "label", "value": "#Python #AI #Hackathon" }
+    ]
+  },
+  {
+    "date": "2026.02.06",
+    "title": "武嶺單車兩天一夜挑戰",
+    "details": [
+      { "label": "location", "value": "南投縣武嶺" },
+      { "label": "summary", "value": "順利完成高強度單車爬升挑戰" },
+      { "label": "label", "value": "#單車 #活動" }
+    ]
+  },
+  {
+    "date": "2025.10.20",
+    "title": "FhCTF 資安實務競賽",
+    "details": [
+      { "label": "location", "value": "線上" },
+      { "label": "summary", "value": "參與 115 FhCTF 資安實務挑戰，鍛鍊技術" },
+      { "label": "label", "value": "#資安 #競賽 #Python" }
+    ]
+  },
+  {
+    "date": "2025.01.25",
+    "title": "大學入學考試 (學測) 完賽",
+    "details": [
+      { "label": "location", "value": "台灣" },
+      { "label": "summary", "value": "順利完成高中階段重大考試" },
+      { "label": "label", "value": "#活動" }
+    ]
+  },
+  {
+    "date": "2024.10",
+    "title": "標準鐵人三項 51.5km 完賽",
+    "details": [
+      { "label": "location", "value": "台灣" },
+      { "label": "summary", "value": "包含 1.5km 游泳、40km 單車、10km 路跑" },
+      { "label": "label", "value": "#三鐵 #單車 #活動" }
+    ]
+  }
+]

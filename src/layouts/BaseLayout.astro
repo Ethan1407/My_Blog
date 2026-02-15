@@ -1,0 +1,17 @@
+---
+// src/layouts/BaseLayout.astro
+const { title } = Astro.props;
+---
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} | Ethan Chen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#424242] text-white font-['Inter',sans-serif] min-h-screen selection:bg-blue-500/30">
+    <slot />
+  </body>
+</html>
