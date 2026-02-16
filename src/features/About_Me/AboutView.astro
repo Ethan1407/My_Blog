@@ -146,16 +146,37 @@ try {
 
         tagButtons.forEach(btn => {
             const isMatch = btn.getAttribute('data-tag-name') === activeTag;
+            
+            // 🟢 修改重點：當標籤被選中時，底色變白，文字變深藍 (#050b1a)
             btn.classList.toggle('bg-white', isMatch);
-            btn.classList.toggle('text-[#424242]', isMatch);
+            btn.classList.toggle('text-[#050b1a]', isMatch); 
+            btn.classList.toggle('font-bold', isMatch);
+            
+            // 確保非選中狀態恢復原色
+            if (!isMatch) {
+                btn.classList.add('text-gray-300');
+            } else {
+                btn.classList.remove('text-gray-300');
+            }
+
             btn.classList.toggle('ring-2', isMatch);
             btn.classList.toggle('ring-blue-400', isMatch);
         });
 
         yearButtons.forEach(btn => {
             const isMatch = btn.getAttribute('data-year') === activeYear;
+            
+            // 🟢 修改重點：當年份被選中時，邏輯同標籤按鈕
             btn.classList.toggle('bg-white', isMatch);
-            btn.classList.toggle('text-[#424242]', isMatch);
+            btn.classList.toggle('text-[#050b1a]', isMatch);
+            btn.classList.toggle('font-bold', isMatch);
+
+            if (!isMatch) {
+                btn.classList.add('text-gray-300');
+            } else {
+                btn.classList.remove('text-gray-300');
+            }
+
             btn.classList.toggle('ring-2', isMatch);
             btn.classList.toggle('ring-blue-400', isMatch);
         });
