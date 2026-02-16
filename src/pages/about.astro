@@ -1,11 +1,18 @@
 ---
 /**
  * About Me 頁面入口
- * 組合導覽列與三欄式 View
  */
+import { getCollection } from 'astro:content'; // 1. 引入抓取工具
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import AboutView from '../features/About_Me/AboutView.astro';
+
+// 2. 抓取資料並轉換格式
+const projectEntries = await getCollection('projects');
+const events = projectEntries.map(project => ({
+  ...project.data,
+  id: project.id
+}));
 ---
 
 <BaseLayout title="About Me">
@@ -13,7 +20,8 @@ import AboutView from '../features/About_Me/AboutView.astro';
       <Navbar />
       
       <div class="flex-1 overflow-hidden">
-          <AboutView />
+          {/* 3. 把資料傳給 AboutView */}
+          <AboutView events={events} />
       </div>
   </div>
 </BaseLayout>

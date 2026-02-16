@@ -3,6 +3,7 @@
  * ProjectCard 組件
  * 1. 語言同步：內容 -> content, 標籤 -> tags
  * 2. 條件渲染：若無 location 則不顯示該行
+ * 3. 互動強化：加入 .tag-button 類別與 data-tag-name 屬性以支援高亮連動
  */
 const { project } = Astro.props;
 const { title, location, content, date, image, tags, category } = project.data;
@@ -38,7 +39,11 @@ const tagsString = JSON.stringify(tags);
                     <span class="text-sm font-bold text-white/60">tags :</span>
                     <div class="flex flex-wrap gap-2">
                         {tags.map((tag) => (
-                            <span class="text-sm text-blue-300/80 bg-blue-400/10 px-2 py-0.5 rounded-md border border-blue-400/20">
+                            /* 關鍵修改：加上 tag-button 類別與 data-tag-name */
+                            <span 
+                                class="tag-button text-sm text-blue-300/80 bg-blue-400/10 px-2 py-0.5 rounded-md border border-blue-400/20 transition-all duration-300"
+                                data-tag-name={tag}
+                            >
                                 {tag}
                             </span>
                         ))}

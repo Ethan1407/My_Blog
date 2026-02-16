@@ -6,7 +6,7 @@ const projectsCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     location: z.string().optional().nullable(),
-    content: z.string(), // 注意：這裡與 personal-website.md 裡的欄位對應
+    content: z.string(), // 對應專案內文簡述
     date: z.string(), 
     category: z.string(),
     tags: z.array(z.string()),
@@ -21,7 +21,7 @@ const aboutCollection = defineCollection({
     title: z.string(),
     date: z.string(),
     location: z.string().optional().nullable(),
-    summary: z.string(), // 這裡使用的是 summary
+    summary: z.string(), // 關於頁面使用的簡述
     category: z.string(),
     tags: z.array(z.string()),
   }),
