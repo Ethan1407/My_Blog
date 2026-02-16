@@ -1,20 +1,20 @@
 ---
 /**
- * Navbar 組件：星空深藍強化版
+ * Navbar 組件：深藍星空同步版
  */
 const { pathname } = Astro.url;
+const isHome = pathname === '/';
 const isAbout = pathname.includes('about');
 const isProjects = pathname.includes('projects');
 const isHobbies = pathname.includes('hobbies');
 
-// 修改 activeClass：使用半透明白色背景，讓它在深藍底色上更突出
 const activeClass = "bg-white/20 font-semibold text-white shadow-lg backdrop-blur-sm";
 const inactiveClass = "text-gray-400 hover:text-white transition-colors";
 ---
 
 <nav class="flex items-center justify-between px-8 py-4 bg-[#050b1a]/90 backdrop-blur-md border-b border-white/10 relative z-50 h-[80px]">
     
-    <a href="/" class="text-2xl text-white cursor-pointer hover:opacity-80 transition-opacity drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+    <a href="/" class={`text-2xl cursor-pointer transition-all ${isHome ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]' : 'text-white hover:opacity-80'}`}>
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
     </a>
 
@@ -42,13 +42,12 @@ const inactiveClass = "text-gray-400 hover:text-white transition-colors";
         </button>
         
         <div class="w-10 h-10 rounded-full bg-blue-500/20 overflow-hidden border-2 border-white/20 shadow-lg">
-             <img src="https://picsum.photos/id/1036/100/100" alt="User" class="w-full h-full object-cover" />
+             <img src="https://picsum.photos/id/1036/100/100" alt="User Profile" class="w-full h-full object-cover" />
         </div>
     </div>
 </nav>
 
 <script>
-    // 搜尋邏輯保持不變
     const searchInput = document.getElementById('nav-search-input') as HTMLInputElement;
     const searchBtn = document.getElementById('nav-search-btn');
 

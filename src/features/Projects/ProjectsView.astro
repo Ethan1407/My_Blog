@@ -62,9 +62,9 @@ try {
 } catch (e) { console.error("GitHub API Error:", e); }
 ---
 
-<div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-[#424242]">
+<div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
     
-    <main class="flex flex-col h-full overflow-y-auto custom-scrollbar bg-[#424242]">
+    <main class="flex flex-col h-full overflow-y-auto custom-scrollbar bg-transparent">
         <div class="p-8 md:p-12 flex-1">
             <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">Projects</h2>
             <div class="space-y-8" id="project-list-container">
@@ -75,7 +75,7 @@ try {
             <div class="h-20"></div>
         </div>
 
-        <footer class="w-full py-8 px-10 border-t border-white/10 bg-[#424242] mt-auto">
+        <footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent mt-auto">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
                     Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
@@ -98,7 +98,7 @@ try {
         </footer>
     </main>
 
-    <aside class="p-8 overflow-y-auto hide-scrollbar bg-[#424242]">
+    <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent">
         <ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} />
         <div class="h-20"></div>
     </aside>

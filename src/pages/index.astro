@@ -1,53 +1,15 @@
 ---
-import { getCollection } from 'astro:content';
-import Timeline from '../components/Timeline.astro';
-
-// 1. 嘗試抓取資料
-const projectEntries = await getCollection('projects');
-
-// 2. 準備診斷數據
-const count = projectEntries.length;
-// 拿到第一筆資料的標題，用來確認資料結構
-const firstTitle = count > 0 ? projectEntries[0].data.title : "無資料";
+// src/pages/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navbar from '@/components/Navbar.astro';
+import HomeView from '@/features/Home/HomeView.astro';
 ---
 
-<html lang="zh-Hant">
-<head>
-    <meta charset="utf-8" />
-    <title>除錯中...</title>
-</head>
-<body class="bg-[#2a2a2a] text-white p-10 font-mono">
-    <div class="max-w-2xl mx-auto border-4 border-dashed border-yellow-500 p-8">
-        <h1 class="text-3xl font-bold text-yellow-500 mb-6">🕵️ 暴力診斷儀表板</h1>
-        
-        <div class="space-y-4 text-xl">
-            <p>📁 目標資料夾：<span class="text-blue-400">src/content/projects/</span></p>
-            
-            <p>📊 抓到的檔案數量：
-                <span class={`font-bold ${count > 0 ? 'text-green-400' : 'text-red-500'}`}>
-                    {count}
-                </span>
-            </p>
-
-            {count > 0 ? (
-                <div class="mt-4 p-4 bg-green-500/10 border border-green-500">
-                    <p class="text-green-400">✅ 成功讀取！</p>
-                    <p>第一筆專案名稱：<span class="text-white">{firstTitle}</span></p>
-                </div>
-            ) : (
-                <div class="mt-4 p-4 bg-red-500/10 border border-red-500">
-                    <p class="text-red-500 font-bold">❌ 失敗：Astro 找不到任何檔案。</p>
-                    <p class="text-sm text-gray-400 mt-2">原因可能是：資料夾名稱拼錯、或是 config.ts 沒對準。</p>
-                </div>
-            )}
-        </div>
-
-        <hr class="my-8 opacity-20" />
-        
-        <h2 class="text-lg mb-4 text-gray-400">下方為 Timeline 組件嘗試渲染結果：</h2>
-        <div class="border border-white/10 p-4">
-            {count > 0 ? <Timeline events={projectEntries} /> : "（因數量為 0，組件未啟動）"}
-        </div>
-    </div>
-</body>
-</html>
+<BaseLayout title="Home">
+  <div class="flex flex-col min-h-screen">
+    <Navbar />
+    <main class="flex-1 flex flex-col">
+        <HomeView />
+    </main>
+  </div>
+</BaseLayout>
