@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import bicycle from "../features/Hobbies/bicycle.png";
+import billiard from "../features/Hobbies/billiard.png";
+import bowling from "../features/Hobbies/bowling.png";
+import volleyball from "../features/Hobbies/volleyball.png";
+import diy from "../features/Hobbies/diy.png";
+
+const hobbies = [
+  { name: "單車", img: bicycle, tag: "單車" },
+  { name: "撞球", img: billiard, tag: "撞球" },
+  { name: "保齡球", img: bowling, tag: "保齡球" },
+  { name: "排球", img: volleyball, tag: "排球" },
+  { name: "手作", img: diy, tag: "手作" },
+];
+---
+
+<BaseLayout title="我的興趣 | Ethan Chen" sideBarActiveItemID="hobbies">
+  <div class="rounded-lg bg-base-100 hover:shadow-xl transition ease-in-out hover:scale-[102%] mb-32">
+    <div class="hero-content flex-col md:flex-row p-8">
+      <div class="grow w-full text-center md:text-left">
+        <h1 class="text-5xl font-bold mb-4">Hobbies</h1>
+        <p class="text-lg opacity-80">除了寫程式，這些是我投入熱情的地方。點擊下方圖片可以查看相關的貼文紀錄。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-row justify-center items-center gap-10 mb-20 overflow-x-auto px-4 pb-10">
+    {hobbies.map((hobby) => (
+      <a href={`/hobbies/${hobby.tag}`} class="group flex flex-col items-center flex-none w-1/6 min-w-[200px] max-w-[250px] transition-all duration-300 hover:scale-110">
+        <div class="relative w-full flex items-center justify-center">
+          <Image 
+            src={hobby.img} 
+            alt={hobby.name} 
+            class="h-auto w-full object-contain drop-shadow-xl group-hover:drop-shadow-2xl transition-all" 
+          />
+        </div>
+        <div class="mt-8 text-2xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-primary text-center">
+          {hobby.name}
+        </div>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  const tags = ["單車", "撞球", "保齡球", "排球", "手作"];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { posts: allPosts.filter((post) => post.data.tags?.includes(tag)) },
+  }));
+}
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+<BaseLayout title={`${tag} - 相關貼文`} sideBarActiveItemID="hobbies">
+  <div class="mb-10 mt-5">
+    <div class="text-4xl font-bold">關於 #{tag} 的貼文</div>
+  </div>
+  <div class="flex flex-col gap-4">
+    {posts.length === 0 ? (
+      <div class="bg-base-200 p-12 rounded-lg text-center border-2 border-dashed border-base-300">
+        <p class="text-xl text-base-content/60 italic">目前無相關貼文</p>
+      </div>
+    ) : (
+      posts.map((post) => (
+        <a href={"/blog/" + post.slug} class="rounded-lg bg-base-100 hover:shadow-xl transition ease-in-out hover:scale-[101%] border border-base-200">
+          <div class="hero-content flex-col md:flex-row p-4">
+            {post.data.heroImage && (
+              <img src={post.data.heroImage} alt={post.data.title} class="max-w-full md:max-w-[13rem] rounded-lg object-cover h-32 w-full" />
+            )}
+            <div class="grow w-full">
+              <h1 class="text-xl font-bold">
+                {post.data.title}
+                {post.data.badge && <div class="badge badge-secondary mx-2">{post.data.badge}</div>}
+              </h1>
+              <p class="py-1 text-sm text-base-content/70 line-clamp-2">{post.data.description}</p>
+            </div>
+          </div>
+        </a>
+      ))
+    )}
+  </div>
+  <div class="mt-10">
+    <a href="/hobbies" class="btn btn-outline btn-sm">← 返回興趣首頁</a>
+  </div>
+  <div class="divider my-10"></div>
+  <div class="rounded-lg bg-base-200 p-10 text-center shadow-inner border border-base-300">
+    <h2 class="text-3xl font-bold mb-4">探索更多</h2>
+    <p class="text-base-content/70 max-w-2xl mx-auto">
+      這裡記錄了我生活中的各種挑戰與嘗試。無論是體能上的極限還是手作的成就感，都是我成長的一部分。
+    </p>
+    <div class="mt-6">
+      <a href="/blog" class="btn btn-primary">閱讀所有文章</a>
+    </div>
+  </div>
+</BaseLayout>
