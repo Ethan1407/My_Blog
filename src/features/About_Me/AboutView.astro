@@ -8,15 +8,14 @@ import TagSidebar from './components/TagSidebar.astro';
 // 引入 JSON 經歷檔
 import experienceData from '../../data/experience.json';
 
-// 1. 同時抓取 MD 資料
-const aboutEntries = await getCollection('about');
+// 1. 僅抓取 Projects MD 資料
 const projectEntries = await getCollection('projects');
 
 // 2. 處理資料合併與去重
 const seenTitles = new Set();
 const allEntries = [];
 
-[...projectEntries, ...aboutEntries].forEach(entry => {
+projectEntries.forEach(entry => {
     seenTitles.add(entry.data.title);
     allEntries.push(entry);
 });
@@ -38,7 +37,7 @@ const sortedEvents = allEntries.sort((a, b) => {
   return dateB - dateA;
 });
 
-// 4. 提取不重複年份 (用於右側「動態」區塊)
+// 4. 提取不重複年份
 const years = [...new Set(sortedEvents.map(e => e.data.date.split('.')[0]))].sort((a, b) => b.localeCompare(a));
 
 // 5. 標籤計數
@@ -72,23 +71,23 @@ try {
 } catch (e) { console.error(e); }
 ---
 
-<div class="grid grid-cols-1 lg:grid-cols-[350px_1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-[#424242]">
-    <aside class="p-8 overflow-y-auto hide-scrollbar bg-[#424242]">
+<div class="grid grid-cols-1 lg:grid-cols-[350px_1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
+    <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent">
         <ProfileSidebar />
     </aside>
 
-    <main class="flex flex-col h-full overflow-y-auto custom-scrollbar bg-[#424242]">
+    <main class="flex flex-col h-full overflow-y-auto custom-scrollbar bg-transparent">
         <div class="p-10 flex-1">
             {sortedEvents.length > 0 ? (
                 <Timeline events={sortedEvents} />
             ) : (
-                <div class="text-white text-center p-20 border-2 border-dashed border-gray-500">
+                <div class="text-white text-center p-20 border-2 border-dashed border-gray-500 bg-transparent">
                     <p class="text-xl">目前沒有資料，請確認資料夾或 JSON 內容。</p>
                 </div>
             )}
         </div>
 
-        <footer class="w-full py-8 px-10 border-t border-white/10 bg-[#424242] mt-auto">
+        <footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent mt-auto">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
                     Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
@@ -111,7 +110,7 @@ try {
         </footer>
     </main>
 
-    <aside class="p-8 overflow-y-auto hide-scrollbar bg-[#424242] space-y-8">
+    <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent space-y-8">
         <TagSidebar tags={sortedTags} years={years} />
     </aside>
 </div>
@@ -134,7 +133,6 @@ try {
     let activeYear = null;
 
     function applyFilter() {
-        // 1. 交集過濾時間軸項目
         eventItems.forEach(item => {
             const itemTags = JSON.parse(item.getAttribute('data-tags') || '[]');
             const itemDate = (item.querySelector('.w-40')?.textContent || "").trim();
@@ -146,7 +144,6 @@ try {
             (item as HTMLElement).style.display = (matchTag && matchYear) ? '' : 'none';
         });
 
-        // 2. 更新按鈕 Active 樣式 (標籤)
         tagButtons.forEach(btn => {
             const isMatch = btn.getAttribute('data-tag-name') === activeTag;
             btn.classList.toggle('bg-white', isMatch);
@@ -155,7 +152,6 @@ try {
             btn.classList.toggle('ring-blue-400', isMatch);
         });
 
-        // 3. 更新按鈕 Active 樣式 (年份)
         yearButtons.forEach(btn => {
             const isMatch = btn.getAttribute('data-year') === activeYear;
             btn.classList.toggle('bg-white', isMatch);
@@ -164,12 +160,10 @@ try {
             btn.classList.toggle('ring-blue-400', isMatch);
         });
 
-        // 4. 重置按鈕顯示控制
         if (activeTag || activeYear) clearBtn?.classList.remove('hidden');
         else clearBtn?.classList.add('hidden');
     }
 
-    // 標籤點擊事件
     tagButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const tagName = btn.getAttribute('data-tag-name');
@@ -178,7 +172,6 @@ try {
         });
     });
 
-    // 年份點擊事件
     yearButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const year = btn.getAttribute('data-year');
@@ -187,14 +180,12 @@ try {
         });
     });
 
-    // 修復：「顯示更多」按鈕邏輯
     toggleBtn?.addEventListener('click', () => {
         const isHidden = moreTags[0].classList.contains('hidden');
         moreTags.forEach(t => t.classList.toggle('hidden'));
         toggleBtn.textContent = isHidden ? '顯示較少' : `顯示更多 (${moreTags.length})`;
     });
 
-    // 重置所有過濾
     clearBtn?.addEventListener('click', () => { 
         activeTag = null; 
         activeYear = null; 

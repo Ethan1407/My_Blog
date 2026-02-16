@@ -1,0 +1,122 @@
+---
+// src/pages/search.astro
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navbar from '@/components/Navbar.astro';
+import ProjectCard from '@/features/Projects/components/ProjectCard.astro';
+import experienceData from '../data/experience.json';
+
+// 1. 抓取所有 MD 專案
+const projectEntries = await getCollection('projects');
+
+// 2. 格式化 JSON 經歷
+const jsonEntries = experienceData.map(item => ({
+  collection: 'experience_json',
+  slug: '', 
+  data: { ...item },
+  body: "" 
+}));
+
+// 3. 整合所有搜尋來源
+const allSearchableContent = [...projectEntries, ...jsonEntries];
+---
+
+<BaseLayout title="搜尋結果">
+  <div class="flex flex-col min-h-screen bg-[#424242]">
+    <Navbar />
+    
+    <main class="flex-1 max-w-4xl mx-auto w-full p-8 md:p-12">
+      <header class="mb-16 border-b border-white/10 pb-10">
+        <h1 class="text-5xl font-extrabold text-white mb-6 tracking-tight">Search Results</h1>
+        <p id="search-status" class="text-gray-400 text-xl">
+          正在檢索關鍵字：<span id="query-text" class="text-blue-400 font-bold italic"></span>
+        </p>
+      </header>
+
+      <div id="search-results-list" class="space-y-12">
+        {allSearchableContent.map(item => (
+          <div 
+            class="search-item-box hidden" 
+            data-title={item.data.title} 
+            data-tags={JSON.stringify(item.data.tags || [])}
+            data-content={item.data.content || item.data.summary || ""}
+            data-body={item.body || ""} 
+          >
+            <ProjectCard project={item} />
+          </div>
+        ))}
+      </div>
+
+      <div id="no-results-view" class="hidden flex flex-col items-center justify-center py-32 border-2 border-dashed border-white/10 rounded-3xl bg-white/5">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-6"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        <p class="text-gray-400 text-2xl font-medium">找不到符合的貼文或專案</p>
+        <a href="/projects" class="mt-6 text-blue-400 hover:underline">返回所有專案</a>
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  /**
+   * 前端搜尋核心邏輯 - 強化正規化
+   */
+  const urlParams = new URLSearchParams(window.location.search);
+  const rawQuery = urlParams.get('q') || "";
+  
+  // 正規化函式：轉小寫、並移除所有非文字數字的字元（包含空格、橫線、底線等）
+  const normalize = (str: string) => {
+    return str.toLowerCase().replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
+  };
+
+  const queryDisplay = document.getElementById('query-text');
+  const searchItems = document.querySelectorAll('.search-item-box');
+  const noResultsView = document.getElementById('no-results-view');
+  const searchStatus = document.getElementById('search-status');
+
+  if (queryDisplay) queryDisplay.textContent = rawQuery || "無";
+
+  const normalizedQuery = normalize(rawQuery);
+
+  if (normalizedQuery) {
+    let matchCount = 0;
+
+    searchItems.forEach(item => {
+      // 取得屬性並同步進行正規化處理
+      const title = normalize(item.getAttribute('data-title') || "");
+      const tags = normalize(item.getAttribute('data-tags') || "");
+      const summary = normalize(item.getAttribute('data-content') || "");
+      const fullBody = normalize(item.getAttribute('data-body') || "");
+
+      const isMatch = 
+        title.includes(normalizedQuery) || 
+        tags.includes(normalizedQuery) || 
+        summary.includes(normalizedQuery) || 
+        fullBody.includes(normalizedQuery);
+
+      if (isMatch) {
+        (item as HTMLElement).classList.remove('hidden');
+        matchCount++;
+      } else {
+        (item as HTMLElement).classList.add('hidden');
+      }
+    });
+
+    if (matchCount === 0) {
+      noResultsView?.classList.remove('hidden');
+    }
+  } else {
+    if (searchStatus) searchStatus.innerHTML = '<span class="text-yellow-500/80">請在導覽列輸入關鍵字進行搜尋。</span>';
+    noResultsView?.classList.remove('hidden');
+  }
+</script>
+
+<style>
+  .search-item-box:not(.hidden) {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

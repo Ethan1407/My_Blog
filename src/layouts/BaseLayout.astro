@@ -1,8 +1,10 @@
 ---
 // src/layouts/BaseLayout.astro
+import StarryBackground from '../components/StarryBackground.astro'; 
 const { title } = Astro.props;
 ---
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-Hant" class="bg-[#0a0a0a]"> 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -12,7 +14,33 @@ const { title } = Astro.props;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   </head>
   
-  <body class="bg-[#424242] text-white font-['Inter',sans-serif] min-h-screen selection:bg-blue-500/30">
+  <body class="bg-transparent text-white font-['Inter',sans-serif] min-h-screen selection:bg-blue-500/30">
+    
+    <StarryBackground />
+
     <slot />
+
   </body>
 </html>
+
+<style is:global>
+  /* 確保根節點不會帶有擋住 Canvas 的底色 */
+  :root {
+    background-color: transparent;
+  }
+  
+  /* 自定義捲軸樣式 */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+</style>

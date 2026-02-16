@@ -1,0 +1,93 @@
+---
+// src/components/StarryBackground.astro
+---
+<canvas id="starry-canvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
+
+<script>
+  const initStarfield = () => {
+    const canvas = document.getElementById('starry-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    console.log("✨ 星空引擎啟動：正在處理背景與 DPI...");
+
+    let stars = [];
+    const starCount = 200;
+    const bgColor = "#0a0a0a"; // 核心：定義背景色
+
+    function resize() {
+      // 處理高解析度螢幕 (Retina / High DPI)
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      
+      // 同步 CSS 尺寸
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      
+      // 縮放座標系統
+      ctx.scale(dpr, dpr);
+      
+      initStars();
+    }
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          size: Math.random() * 2 + 0.5,
+          opacity: Math.random(),
+          speed: Math.random() * 0.1 + 0.05
+        });
+      }
+    }
+
+    function draw() {
+      // 🔴 解決方案：每一幀都重新填滿黑色背景，而不是清空成透明
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+      // 🔴 偵錯大紅圓：如果這顆沒出來，代表畫布被蓋住了
+      ctx.beginPath();
+      ctx.arc(100, 100, 40, 0, Math.PI * 2);
+      ctx.fillStyle = "red";
+      ctx.fill();
+
+      // 繪製星星
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+        ctx.fill();
+
+        star.y -= star.speed;
+        if (star.y < 0) star.y = window.innerHeight;
+
+        star.opacity += (Math.random() - 0.5) * 0.05;
+        if (star.opacity < 0.2) star.opacity = 0.2;
+        if (star.opacity > 1) star.opacity = 1;
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+    console.log("✅ 渲染循環已開始");
+  };
+
+  // 確保 Astro 切換頁面時也會執行
+  document.addEventListener('DOMContentLoaded', initStarfield);
+  document.addEventListener('astro:page-load', initStarfield);
+</script>
+
+<style>
+  #starry-canvas {
+    pointer-events: none;
+    /* 這裡不再寫 bg-color，由 JS 掌控 */
+  }
+</style>
