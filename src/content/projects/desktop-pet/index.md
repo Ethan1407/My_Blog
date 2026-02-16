@@ -4,7 +4,7 @@ location: "Local / GitHub"
 content: "具備硬體監控與螢幕時間追蹤功能的桌面寵物。"
 date: "2026.02.14"
 category: "活動"
-tags: ["Python", "UI/UX", "pet"]
+tags: ["Python", "UI/UX", "單車"]
 image: "https://picsum.photos/id/1015/400/250"
 ---
 
