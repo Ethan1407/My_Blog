@@ -9,7 +9,7 @@ const projectsCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     location: z.string().optional().nullable(),
-    content: z.string(), // 用於列表顯示的簡短內文
+    summary: z.string(), // 用於列表顯示的簡短內文
     date: z.string(), 
     category: z.string(),
     tags: z.array(z.string()),

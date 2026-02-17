@@ -1,34 +1,138 @@
 [
   {
-    "date": "2026.02.06",
-    "title": "武嶺單車兩天一夜挑戰",
-    "location": "南投縣武嶺",
+    "date": "2026.01.26-27",
+    "title": "ZeroDay Cookie寒訓",
+    "location": "臺北科技大學",
     "category": "活動",
-    "summary": "順利完成高強度單車爬升挑戰",
-    "tags": ["單車", "活動"]
+    "summary": "",
+    "tags": ["資訊"]
   },
   {
-    "date": "2025.10.20",
-    "title": "FhCTF 資安實務競賽",
-    "location": "線上",
+    "date": "2026.01.01",
+    "title": "FhCTF",
+    "location": "",
     "category": "競賽",
-    "summary": "參與 115 FhCTF 資安實務挑戰，鍛鍊技術",
-    "tags": ["資安", "競賽", "Python"]
+    "summary": "",
+    "tags": ["CTF"]
   },
   {
-    "date": "2025.01.25",
-    "title": "大學入學考試 (學測)完賽",
-    "location": "台灣",
+    "date": "2025.11.24",
+    "title": "資安素養個人挑戰賽",
+    "location": "",
     "category": "活動",
-    "summary": "順利完成高中階段重大考試",
-    "tags": ["活動"]
+    "summary": "",
+    "tags": ["CTF"]
   },
   {
-    "date": "2024.10.01",
-    "title": "標準鐵人三項 51.5km 完賽",
-    "location": "台灣",
+    "title": "2025Bebras資訊思維測驗",
+    "date": "2025.11.20",
+    "location": "",
+    "category": "競賽",
+    "summary": "",
+    "tags": ["資訊"]
+  },
+  {
+    "title": "2024資訊月活動",
+    "date": "2024.11.14",
+    "location": "臺北市世貿一館",
     "category": "活動",
-    "summary": "包含 1.5km 游泳、40km 單車、10km 路跑",
-    "tags": ["三鐵", "單車", "活動"]
+    "summary": "",
+    "tags": ["資訊"]
+  },
+  {
+    "title": "北市化學科能力競賽",
+    "date": "2025.11.09",
+    "location": "",
+    "category": "競賽",
+    "summary": "雖然在校內拿了第二名，但在全市的競賽中卻只有落榜的下場...",
+    "tags": ["化學"]
+  },
+  {
+    "title": "2024Bebras資訊思維測驗",
+    "date": "2024.11.06",
+    "location": "",
+    "category": "競賽",
+    "summary": "",
+    "tags": ["資訊"]
+  },
+  {
+    "date": "2024.10.20",
+    "title": "APCS測驗",
+    "location": "師範大學-圖書館校區",
+    "category": "競賽",
+    "summary": "",
+    "tags": ["C++","資訊"]
+  },
+  {
+    "date": "2024.10.16",
+    "title": "2024校內資訊學科能力競賽",
+    "location": "",
+    "category": "競賽",
+    "summary": "全校第一名",
+    "tags": ["資訊"]
+  },
+  {
+    "title": "SecurityFocus Online CTF",
+    "date": "2024.09.11",
+    "location": "",
+    "category": "競賽",
+    "summary": "",
+    "tags": ["CTF"]
+  },
+  {
+    "date": "2024.08.30-2025.06.30",
+    "title": "內湖高中資訊研究社社長",
+    "location": "",
+    "category": "活動",
+    "summary": "",
+    "tags": ["資訊"]
+  },
+  {
+    "date": "2024.07.27-28",
+    "title": "元智大學─資安開匙營隊",
+    "location": "桃園市元智大學",
+    "category": "活動",
+    "summary": "",
+    "tags": ["CTF","資訊"]
+  },
+  {
+    "date": "2024.07.26",
+    "title": "AMAZON參訪",
+    "location": "信義微風南山",
+    "category": "活動",
+    "summary": "",
+    "tags": ["參訪"]
+  },
+  {
+    "date": "2024.05.10",
+    "title": "精誠科技SYSTEX參訪",
+    "location": "臺北市內湖區瑞光路318號",
+    "category": "活動",
+    "summary": "",
+    "tags": ["參訪"]
+  },
+  {
+    "date": "2023.12.16",
+    "title": "無人機競賽",
+    "location": "木柵高工",
+    "category": "競賽",
+    "summary": "我",
+    "tags": ["無人機"]
+  },
+  {
+    "date": "2023.11.09",
+    "title": "2023資訊月活動",
+    "location": "臺北市世貿一館",
+    "category": "活動",
+    "summary": "",
+    "tags": ["資訊"]
+  },
+  {
+    "date": "2023.10.15",
+    "title": "2023校內資訊學科能力競賽",
+    "location": "",
+    "category": "競賽",
+    "summary": "高一組第二名",
+    "tags": ["資訊"]
   }
 ]

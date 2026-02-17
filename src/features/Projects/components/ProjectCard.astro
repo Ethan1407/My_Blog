@@ -1,12 +1,12 @@
 ---
 /**
  * ProjectCard 組件
- * 1. 語言同步：內容 -> content, 標籤 -> tags
+ * 1. 語言同步：內容 -> summary, 標籤 -> tags
  * 2. 條件渲染：若無 location 則不顯示該行
  * 3. 互動強化：加入 .tag-button 類別與 data-tag-name 屬性以支援高亮連動
  */
 const { project } = Astro.props;
-const { title, location, content, date, image, tags, category } = project.data;
+const { title, location, summary, date, image, tags, category } = project.data;
 const slug = project.slug;
 
 const tagsString = JSON.stringify(tags);
@@ -32,7 +32,7 @@ const tagsString = JSON.stringify(tags);
                     {location && (
                         <p><span class="font-semibold text-white/80">location :</span> {location}</p>
                     )}
-                    <p><span class="font-semibold text-white/80">content :</span> {content}</p>
+                    <p><span class="font-semibold text-white/80">summary :</span> {summary}</p>
                 </div>
 
                 <div class="mt-4 flex flex-wrap items-center gap-2">

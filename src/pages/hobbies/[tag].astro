@@ -4,7 +4,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
 
 export async function getStaticPaths() {
-  const allPosts = await getCollection("blog");
+  const allPosts = await getCollection("projects");
   const tags = ["單車", "撞球", "保齡球", "排球", "手作"];
 
   return tags.map((tag) => ({
@@ -19,11 +19,11 @@ const { tag } = Astro.params;
 const { posts } = Astro.props;
 
 const descriptions: Record<string, string> = {
-  "單車": "從武嶺挑戰到日常訓練，單車對我來說不只是運動，更是一種對自我極限的追求與破風的快感。我喜歡在公路上與風競爭的感覺，每一次踩踏都是與大地的對話。",
-  "撞球": "撞球是一場關於角度與力道的幾何遊戲，我享受每一顆球精準進袋時的成就感。這不只是技巧，更是一場冷靜與專注力的磨練。",
-  "保齡球": "在球道上尋找完美的旋轉角度，全倒時清脆的撞擊聲是我最有效的舒壓方式。這是一場與自己節奏的對抗，追求每一次出球的穩定。",
-  "排球": "排球講求團隊默契與瞬間爆發力，我喜歡在球場上與隊友一同救球、進攻的熱血氛圍。在那小小的場地裡，球不落地，永不放棄。",
-  "手作": "從無到有的創造過程充滿樂趣。動手實作讓我能更直觀地理解結構，並將腦中的想法實體化，這是我將創意落地的實驗室。"
+  "單車": "接觸時間：2021年 從武嶺挑戰到日常訓練，單車對我來說不只是運動，更是一種對自我極限的追求與破風的快感。我喜歡在公路上與風競爭的感覺，每一次踩踏都是與大地的對話。",
+  "撞球": "接觸時間：2023年 撞球是一場關於角度與力道的幾何遊戲，我享受每一顆球精準進袋時的成就感。這不只是技巧，更是一場冷靜與專注力的磨練。",
+  "保齡球": "接觸時間：2026年 在球道上尋找完美的旋轉角度，全倒時清脆的撞擊聲是我最有效的舒壓方式。這是一場與自己節奏的對抗，追求每一次出球的穩定。",
+  "排球": "接觸時間：2024年 排球講求團隊默契與瞬間爆發力，我喜歡在球場上與隊友一同救球、進攻的熱血氛圍。在那小小的場地裡，球不落地，永不放棄。",
+  "手作": "接觸時間：2022年 從無到有的創造過程充滿樂趣。動手實作讓我能更直觀地理解結構，並將腦中的想法實體化，這是我將創意落地的實驗室。"
 };
 
 let lastUpdated = "2026.02.16"; 
@@ -81,11 +81,8 @@ try {
       </aside>
 
       <main class="flex-1 min-w-0 max-w-4xl flex flex-col">
-        <header class="mb-12 border-b border-white/10 pb-10">
-          <h1 class="text-5xl font-extrabold text-white tracking-tight leading-tight">關於 #{tag}</h1>
-        </header>
-
-        <article class="prose-custom mb-16">
+        <div class="p-8 md:p-12">
+          <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">關於 #{tag}</h2>        <article class="prose-custom mb-16">
           <div class="bg-white/5 p-8 rounded-2xl border-l-4 border-blue-500 shadow-2xl">
             <p class="text-xl italic text-gray-200 m-0">
               {descriptions[tag as string] || "這是我熱愛的活動之一，帶給我無限的動力。"}
@@ -105,7 +102,7 @@ try {
               </div>
             ) : (
               posts.map((post) => (
-                <a href={"/blog/" + post.slug} class="group rounded-2xl bg-white/5 hover:bg-white/[0.08] transition-all duration-300 border border-white/5 hover:border-white/20 overflow-hidden">
+                <a href={"/projects/" + post.slug} class="group rounded-2xl bg-white/5 hover:bg-white/[0.08] transition-all duration-300 border border-white/5 hover:border-white/20 overflow-hidden">
                   <div class="flex flex-col md:flex-row items-center p-6 gap-6">
                     {post.data.heroImage && (
                       <img src={post.data.heroImage} alt={post.data.title} class="w-full md:w-48 h-32 rounded-xl object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -123,6 +120,7 @@ try {
             )}
           </div>
         </section>
+        </div>
       </main>
     </div>
 

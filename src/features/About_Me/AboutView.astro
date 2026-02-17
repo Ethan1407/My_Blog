@@ -30,17 +30,21 @@ experienceData.forEach(item => {
     }
 });
 
-// 3. 排序邏輯
+// 3. 排序邏輯 (處理範圍日期，如 2024.07.08-12)
 const sortedEvents = allEntries.sort((a, b) => {
-  const dateA = new Date(a.data.date.replace(/\./g, '-')).getTime();
-  const dateB = new Date(b.data.date.replace(/\./g, '-')).getTime();
+  // 提取開始日期 (在 - 之前的部分)
+  const dateAStart = a.data.date.split('-')[0]; // "2024.07.08"
+  const dateBStart = b.data.date.split('-')[0]; // "2024.07.08"
+  
+  const dateA = new Date(dateAStart.replace(/\./g, '-')).getTime();
+  const dateB = new Date(dateBStart.replace(/\./g, '-')).getTime();
   return dateB - dateA;
 });
 
-// 4. 提取不重複年份
-const years = [...new Set(sortedEvents.map(e => e.data.date.split('.')[0]))].sort((a, b) => b.localeCompare(a));
+// 4. 提取不重複年份 (需要處理範圍日期)
+const years = [...new Set(sortedEvents.map(e => e.data.date.split('-')[0].split('.')[0]))].sort((a, b) => b.localeCompare(a));
 
-// 5. 標籤計數
+// 5. 標籀計數
 const tagCountMap = {};
 sortedEvents.forEach(entry => {
   const tags = entry.data.tags || [];
@@ -50,6 +54,19 @@ sortedEvents.forEach(entry => {
 });
 
 const sortedTags = Object.entries(tagCountMap)
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
+
+// 6. 類別(類下)計數
+const categoryCountMap = {};
+sortedEvents.forEach(entry => {
+  const category = entry.data.category || '';
+  if (category) {
+    categoryCountMap[category] = (categoryCountMap[category] || 0) + 1;
+  }
+});
+
+const sortedCategories = Object.entries(categoryCountMap)
   .map(([name, count]) => ({ name, count }))
   .sort((a, b) => b.count - a.count);
 
@@ -111,7 +128,7 @@ try {
     </main>
 
     <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent space-y-8">
-        <TagSidebar tags={sortedTags} years={years} />
+        <TagSidebar tags={sortedTags} years={years} categories={sortedCategories} />
     </aside>
 </div>
 
@@ -125,64 +142,81 @@ try {
     const eventItems = document.querySelectorAll('.timeline-event'); 
     const tagButtons = document.querySelectorAll('.tag-button');
     const yearButtons = document.querySelectorAll('.year-filter-btn');
+    const categoryButtons = document.querySelectorAll('.filter-category');
     const clearBtn = document.getElementById('clear-all-filters');
     const toggleBtn = document.getElementById('toggle-tags-btn');
     const moreTags = document.querySelectorAll('.more-tag');
 
     let activeTag = null;
     let activeYear = null;
+    let activeCategory = null;
 
     function applyFilter() {
         eventItems.forEach(item => {
             const itemTags = JSON.parse(item.getAttribute('data-tags') || '[]');
-            const itemDate = (item.querySelector('.w-40')?.textContent || "").trim();
+            const itemDate = (item.querySelector('.text-right.pr-8')?.textContent || "").trim().split('-')[0]; // 取開始日期
             const itemYear = itemDate.split('.')[0];
+            const itemCategory = item.getAttribute('data-category') || '';
 
             const matchTag = !activeTag || itemTags.includes(activeTag);
             const matchYear = !activeYear || itemYear === activeYear;
+            const matchCategory = !activeCategory || itemCategory === activeCategory;
 
-            (item as HTMLElement).style.display = (matchTag && matchYear) ? '' : 'none';
+            (item as HTMLElement).style.display = (matchTag && matchYear && matchCategory) ? '' : 'none';
         });
 
         tagButtons.forEach(btn => {
             const isMatch = btn.getAttribute('data-tag-name') === activeTag;
-            
-            btn.classList.toggle('bg-white', isMatch);
-            // 🟢 強制改為 text-black
-            btn.classList.toggle('text-black', isMatch); 
-            btn.classList.toggle('font-bold', isMatch);
-            
-            if (!isMatch) {
-                btn.classList.add('text-gray-300');
-                btn.classList.remove('text-black');
-            } else {
-                btn.classList.remove('text-gray-300');
-            }
 
-            btn.classList.toggle('ring-2', isMatch);
-            btn.classList.toggle('ring-blue-400', isMatch);
+            if (isMatch) {
+                btn.classList.add('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400');
+                btn.classList.remove('text-gray-300', 'text-white');
+            } else {
+                if (!activeTag) {
+                    btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400', 'text-gray-300');
+                    btn.classList.add('text-white');
+                } else {
+                    btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400', 'text-white');
+                    btn.classList.add('text-gray-300');
+                }
+            }
         });
 
         yearButtons.forEach(btn => {
             const isMatch = btn.getAttribute('data-year') === activeYear;
-            
-            btn.classList.toggle('bg-white', isMatch);
-            // 🟢 同樣強制改為 text-black
-            btn.classList.toggle('text-black', isMatch);
-            btn.classList.toggle('font-bold', isMatch);
 
-            if (!isMatch) {
-                btn.classList.add('text-gray-300');
-                btn.classList.remove('text-black');
+            if (isMatch) {
+                btn.classList.add('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400');
+                btn.classList.remove('text_gray-300', 'text-white');
             } else {
-                btn.classList.remove('text-gray-300');
+                if (!activeYear) {
+                    btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400', 'text-gray-300');
+                    btn.classList.add('text-white');
+                } else {
+                    btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400', 'text-white');
+                    btn.classList.add('text-gray-300');
+                }
             }
-
-            btn.classList.toggle('ring-2', isMatch);
-            btn.classList.toggle('ring-blue-400', isMatch);
         });
 
-        if (activeTag || activeYear) clearBtn?.classList.remove('hidden');
+        categoryButtons.forEach(btn => {
+            const isMatch = btn.getAttribute('data-category') === activeCategory;
+
+            if (isMatch) {
+                btn.classList.add('text-white', 'font-bold');
+                btn.classList.remove('text-gray-300');
+            } else {
+                if (!activeCategory) {
+                    btn.classList.remove('text-white', 'font-bold');
+                    btn.classList.add('text-gray-300');
+                } else {
+                    btn.classList.remove('text-white', 'font-bold');
+                    btn.classList.add('text-gray-300');
+                }
+            }
+        });
+
+        if (activeTag || activeYear || activeCategory) clearBtn?.classList.remove('hidden');
         else clearBtn?.classList.add('hidden');
     }
 
@@ -202,6 +236,14 @@ try {
         });
     });
 
+    categoryButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const category = btn.getAttribute('data-category');
+            activeCategory = (activeCategory === category) ? null : category;
+            applyFilter();
+        });
+    });
+
     toggleBtn?.addEventListener('click', () => {
         const isHidden = moreTags[0].classList.contains('hidden');
         moreTags.forEach(t => t.classList.toggle('hidden'));
@@ -211,6 +253,7 @@ try {
     clearBtn?.addEventListener('click', () => { 
         activeTag = null; 
         activeYear = null; 
+        activeCategory = null;
         applyFilter(); 
     });
 </script>

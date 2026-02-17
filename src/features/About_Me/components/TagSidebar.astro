@@ -2,11 +2,28 @@
 /**
  * TagSidebar 組件 (About Me 版本)
  */
-const { tags = [], years = [] } = Astro.props; // 接收 years 資料
+const { tags = [], years = [], categories = [] } = Astro.props;
 const topTags = tags.slice(0, 8); 
 const otherTags = tags.slice(8);
 ---
 <div class="space-y-12">
+    <section>
+        <h2 class="text-lg font-bold mb-4 tracking-widest border-l-4 border-white pl-3 text-white uppercase text-[15px]">類型</h2>
+        <ul class="space-y-0.5 text-base text-gray-300">
+            {categories.map(cat => (
+                <li 
+                    class="filter-category flex items-center justify-between hover:text-white cursor-pointer transition-colors group px-2 py-1 rounded-md" 
+                    data-category={cat.name}
+                >
+                    <span class="flex items-center">
+                        <span class="mr-2 text-white/30 group-hover:text-white text-xs">•</span> {cat.name}
+                    </span>
+                    <span class="text-[11px] font-mono text-white/40 group-hover:text-white/80">{cat.count}</span>
+                </li>
+            ))}
+        </ul>
+    </section>
+
     <section>
         <h2 class="text-lg font-bold mb-4 tracking-widest border-l-4 border-white pl-3 text-white uppercase text-[15px]">標籤</h2>
         

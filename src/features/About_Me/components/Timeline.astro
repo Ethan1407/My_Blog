@@ -18,18 +18,22 @@ const sortedEvents = [...events].sort((a, b) => {
 <div class="relative">
   <h2 class="text-3xl font-bold mb-16 tracking-widest text-white">Timeline</h2>
 
-  <div class="absolute left-[10.5rem] top-24 bottom-10 w-[2px] bg-white hidden md:block opacity-50"></div>
+  <div class="absolute left-[10.5rem] top-24 bottom-10 w-[2px] bg-white hidden md:block opacity-50 z-0"></div>
 
   <div class="space-y-16 relative">
     <div class="flex items-center mb-20 relative h-8">
-      <div class="w-40 text-right pr-8 font-bold text-xl text-gray-400">Present</div>
+      <div class="w-[10.5rem] text-right pr-8 font-bold text-xl text-gray-400 flex-shrink-0 whitespace-nowrap">
+        Present
+      </div>
       <div class="absolute left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242]"></div>
-      <div class="pl-12 font-bold text-2xl tracking-widest text-white">Now</div>
+      <div class="pl-12 font-bold text-2xl tracking-widest text-white">
+        Now
+      </div>
     </div>
 
     {sortedEvents.map((item, index) => {
       const { 
-        title, date, location, category, content, summary, tags = [] 
+        title, date, location, category, summary, tags = [] 
       } = item.data;
 
       const tagsString = JSON.stringify(tags);
@@ -38,30 +42,32 @@ const sortedEvents = [...events].sort((a, b) => {
       const isProject = item.collection === 'projects';
       const projectPath = isProject ? `/projects/${item.slug}` : null;
 
-      const currentYear = date.split('.')[0];
-      const nextYear = sortedEvents[index + 1] ? sortedEvents[index + 1].data.date.split('.')[0] : null;
+      // 提取開始日期（處理範圍日期如 2024.07.08-12）
+      const startDate = date.split('-')[0]; // "2024.07.08"
+      const currentYear = startDate.split('.')[0]; // "2024"
+      const nextItemDate = sortedEvents[index + 1] ? sortedEvents[index + 1].data.date : null;
+      const nextItemStartDate = nextItemDate ? nextItemDate.split('-')[0] : null;
+      const nextYear = nextItemStartDate ? nextItemStartDate.split('.')[0] : null;
       const isYearEnd = currentYear !== nextYear;
 
       const displayDetails = [
         { label: 'location', value: location },
         { label: 'category', value: category },
-        { label: 'summary', value: summary || content }, 
+        { label: 'summary', value: summary }, 
       ];
 
       return (
         <Fragment key={index}>
-          <div class="timeline-event flex items-start group relative" data-tags={tagsString}>
-            <div class="w-40 text-right pr-8 pt-1 font-bold text-lg tracking-wider text-gray-300">
+          <div class="timeline-event flex items-start group relative" data-tags={tagsString} data-category={category}>
+            <div class="w-[10.5rem] text-right pr-8 pt-1 font-bold text-lg tracking-wider text-gray-300 flex-shrink-0 whitespace-nowrap">
               {date}
             </div>
 
-            {/* --- 修改 1：圓點特效控制 --- */}
-            {/* 只有在 projectPath 存在時才加上 group-hover:scale-125 */}
+            {/* 圓點特效：只有在 projectPath 存在時才加上 group-hover:scale-125 */}
             <div class={`absolute left-[10.5rem] -translate-x-1/2 w-4 h-4 bg-white rounded-full z-10 mt-2 ring-4 ring-[#424242] transition-all duration-300 ${projectPath ? 'group-hover:scale-125' : ''}`}></div>
 
             <div class="flex-1 pl-12">
-              {/* --- 修改 2：標題特效控制 --- */}
-              {/* 只有在 projectPath 存在時才加上底線與 hover 顏色變化類別 */}
+              {/* 標題特效控制 */}
               <h3 class={`text-2xl font-bold mb-4 tracking-wide text-white transition-all duration-300 ${projectPath ? 'underline underline-offset-8 decoration-white/20 group-hover:decoration-white' : ''}`}>
                 {projectPath ? (
                   <a href={projectPath} class="hover:text-blue-400 hover:translate-x-1 transition-all inline-flex items-center gap-2">
@@ -83,7 +89,7 @@ const sortedEvents = [...events].sort((a, b) => {
 
                 {tags.length > 0 && (
                   <li class="flex items-start">
-                    <span class="font-semibold min-w-[120px] text-white/80">• label :</span>
+                    <span class="font-semibold min-w-[120px] text-white/80">• tags :</span>
                     <div class="flex flex-wrap gap-2 flex-1">
                       {tags.map((tag) => (
                         <button 
@@ -102,7 +108,7 @@ const sortedEvents = [...events].sort((a, b) => {
 
           {isYearEnd && (
             <div class="flex items-center my-20 relative h-10">
-              <div class="w-40 text-right pr-8 font-bold text-3xl text-gray-400">{currentYear}</div>
+              <div class="w-[10.5rem] text-right pr-8 font-bold text-3xl text-gray-400">{currentYear}</div>
               <div class="absolute left-[10.5rem] -translate-x-1/2 w-10 h-[2px] bg-white z-10 opacity-80"></div>
             </div>
           )}

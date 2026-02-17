@@ -1,11 +1,11 @@
 ---
-title: "Desktop Pet Application"
-location: "Local / GitHub"
-content: "具備硬體監控與螢幕時間追蹤功能的桌面寵物。"
+title: "Deskpet"
+location:
+summary: "具備硬體監控與螢幕時間追蹤功能的桌面寵物。"
 date: "2026.02.14"
-category: "活動"
-tags: ["Python", "UI/UX", "單車"]
-image: "https://picsum.photos/id/1015/400/250"
+category: "專題"
+tags: ["Python", "自主學習"]
+image:
 ---
 
 ## 這裡是專案的初始想法，我想要解決長時間盯著電腦的問題。

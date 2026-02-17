@@ -3,15 +3,14 @@
  * ExperienceCard 組件
  * 1. 條件渲染：當 location 為空時自動隱藏該行
  * 2. 樣式：維持純文字列表風格，標籤為藍色透明按鈕
- * 3. 相容性：同時支援 content (projects) 與 summary (about) 欄位
  */
 const { event } = Astro.props;
 
 // 從 event.data 中提取資料 (這是 Astro Content Collections 的標準結構)
-const { title, location, summary, content, tags = [] } = event.data;
+const { title, location, summary, tags = [] } = event.data;
 
-// 優先使用 summary，如果沒有則使用 content (適應不同的 MD 格式)
-const displaySummary = summary || content;
+// 使用 summary 欄位
+const displaySummary = summary;
 
 // 將標籤陣列轉為字串，方便前端 JS 進行過濾 (Projects 同步功能)
 const tagsString = JSON.stringify(tags);
@@ -32,7 +31,7 @@ const tagsString = JSON.stringify(tags);
             </li>
         )}
         
-        {/* 內容摘要：自動判斷 summary 或 content */}
+        {/* 內容摘要：使用 summary 欄位 */}
         <li class="flex items-start">
             <span class="font-semibold min-w-[120px] text-white/80">• summary :</span>
             <span class="flex-1 text-gray-400">{displaySummary}</span>
