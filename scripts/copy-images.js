@@ -5,6 +5,7 @@ const EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp']);
 const workspaceRoot = process.cwd();
 const srcDir = path.join(workspaceRoot, 'src', 'content');
 const destDir = path.join(workspaceRoot, 'public', 'images');
+const destDir2 = path.join(workspaceRoot, 'public', 'projects');
 
 async function copyRec(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -20,7 +21,12 @@ async function copyRec(dir) {
     const outPath = path.join(destDir, rel);
     await fs.mkdir(path.dirname(outPath), { recursive: true });
     await fs.copyFile(srcPath, outPath);
-    console.log('Copied', rel);
+    console.log('Copied', path.relative(workspaceRoot, outPath));
+
+    const outPath2 = path.join(destDir2, rel);
+    await fs.mkdir(path.dirname(outPath2), { recursive: true });
+    await fs.copyFile(srcPath, outPath2);
+    console.log('Copied', path.relative(workspaceRoot, outPath2));
   }
 }
 
