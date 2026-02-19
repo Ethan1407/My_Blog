@@ -5,7 +5,7 @@ const EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp']);
 const workspaceRoot = process.cwd();
 const srcDir = path.join(workspaceRoot, 'src', 'content');
 const destDir = path.join(workspaceRoot, 'public', 'images');
-const destDir2 = path.join(workspaceRoot, 'public', 'projects');
+const destDir2 = path.join(workspaceRoot, 'public');
 
 async function copyRec(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
