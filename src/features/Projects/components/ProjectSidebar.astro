@@ -5,7 +5,7 @@
  * 2. 視覺：維持極小間距與高資訊密度排版
  * 3. 功能：支援標籤與月份的複合過濾
  */
-const { tags = [], yearlyStats = [] } = Astro.props;
+const { tags = [], yearlyStats = [], categories = [] } = Astro.props;
 const topTags = tags.slice(0, 5);
 const otherTags = tags.slice(5);
 
@@ -15,12 +15,15 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
     <section>
         <h2 class="text-lg font-bold mb-4 tracking-widest border-l-4 border-white pl-3 text-white uppercase">類型</h2>
         <ul class="space-y-0.5 text-base text-gray-300">
-            {['競賽', '筆記', '活動', '專題'].map(item => (
+            {categories.map(cat => (
                 <li 
-                    class="filter-category flex items-center hover:text-white cursor-pointer transition-colors group px-2 py-1 rounded-md" 
-                    data-category={item}
+                    class="filter-category flex items-center justify-between hover:text-white cursor-pointer transition-colors group px-2 py-1 rounded-md" 
+                    data-category={cat.name}
                 >
-                    <span class="mr-2 text-white/30 group-hover:text-white text-xs">•</span> {item}
+                    <span class="flex items-center">
+                        <span class="mr-2 text-white/30 group-hover:text-white text-xs">•</span> {cat.name}
+                    </span>
+                    <span class="text-[11px] font-mono text-white/40 group-hover:text-white/80">{cat.count}</span>
                 </li>
             ))}
         </ul>

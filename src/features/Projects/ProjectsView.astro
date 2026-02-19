@@ -17,6 +17,15 @@ const sortedTags = Object.entries(tagMap)
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
 
+// 2b. 處理類型 (category) 統計，供側邊欄顯示數量
+const categoryMap = {};
+allProjects.forEach(p => {
+    const cat = p.data.category || '';
+    if (cat) categoryMap[cat] = (categoryMap[cat] || 0) + 1;
+});
+const sidebarCategoriesOrder = ['競賽', '筆記', '活動', '專題'];
+const categories = sidebarCategoriesOrder.map(name => ({ name, count: categoryMap[name] || 0 }));
+
 // 3. 處理年份 > 月份動態統計
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const yearlyStatsMap = {};
@@ -99,7 +108,7 @@ try {
     </main>
 
     <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent">
-        <ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} />
+        <ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} categories={categories} />
         <div class="h-20"></div>
     </aside>
 </div>
