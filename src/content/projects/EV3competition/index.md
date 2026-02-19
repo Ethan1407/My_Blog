@@ -5,7 +5,7 @@ summary: ""
 date: "2024.05.26"
 category: "競賽"
 tags: ["EV3"]
-image: "/projects/EV3competition/EV3.jpg"
+image: "./EV3.jpg"
 ---
 
 ## 一、 幸運的入場券：從抽籤開始的挑戰

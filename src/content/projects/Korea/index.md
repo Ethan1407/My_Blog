@@ -5,7 +5,7 @@ summary: ""
 date: "2025.08.19-21"
 category: "活動"
 tags: ["交流", "跨國","資訊"]
-image: "/projects/Korea/Korea.jpg"
+image: "./Korea.jpg"
 ---
 
 

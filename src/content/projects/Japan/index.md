@@ -5,7 +5,7 @@ summary: ""
 date: "2024.07.08-12"
 category: "活動"
 tags: ["交流", "跨國","資訊"]
-image: "/projects/Japan/Japan.jpg"
+image: "./Japan.jpg"
 ---
 
 這次的日本教育旅行對我來說，不只是一次出國觀光，更是一場關於勇氣、交流與文化衝擊的成長之旅。這五天四夜的點點滴滴，我將其歸納為四個面向來分享。
