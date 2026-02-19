@@ -2,22 +2,23 @@ import { defineCollection, z } from 'astro:content';
 
 /**
  * 專案作品集 (對應 src/content/projects/*)
- * 每個專案可以是一個 .md 檔案，或是一個包含 index.md 的資料夾。
+ * 使用 schema 回呼函數來取得 image 輔助工具
  */
 const projectsCollection = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     location: z.string().optional().nullable(),
-    summary: z.string(), // 用於列表顯示的簡短內文
+    summary: z.string(), 
     date: z.string(), 
     category: z.string(),
     tags: z.array(z.string()),
-    image: z.string().optional().nullable(),
+    // 關鍵修正：使用 image() 而不是 z.string()
+    // 這會讓 Astro 在編譯時去抓取相對路徑的圖檔並進行優化
+    image: image().optional(), 
   }),
 });
 
-// 匯出集合：我們現在移除了 'about'，讓架構保持最簡潔
 export const collections = {
   'projects': projectsCollection,
 };
