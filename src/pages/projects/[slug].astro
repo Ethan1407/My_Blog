@@ -50,12 +50,13 @@ try {
             Contents
           </h2>
           <nav>
-            <ul class="space-y-5">
+            <ul class="space-y-5" id="toc-list">
               {filteredHeadings.map((h) => (
                 <li class={`transition-all duration-200 ${h.depth === 3 ? 'ml-5' : ''}`}>
                   <a 
-                    href={`#${h.slug}`} 
-                    class="text-gray-400 hover:text-white text-[15px] leading-relaxed block hover:translate-x-1 transition-transform"
+                    href={`#${h.slug}`}
+                    data-heading-slug={h.slug}
+                    class="toc-link text-gray-400 hover:text-white text-[15px] leading-relaxed block hover:translate-x-1 transition-all duration-300"
                   >
                     {h.text}
                   </a>
@@ -119,6 +120,50 @@ try {
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  // Table of Contents 高亮功能
+  function updateActiveHeading() {
+    // 獲取所有標題元素
+    const headings = document.querySelectorAll('.prose-custom h2, .prose-custom h3');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    if (headings.length === 0 || tocLinks.length === 0) return;
+
+    let activeHeadingSlug = null;
+
+    // 找到當前視窗中最上方的標題
+    for (let heading of headings) {
+      const rect = heading.getBoundingClientRect();
+      // 如果標題在視窗上半部分（scroll-mt-28 對應約 112px）
+      if (rect.top <= 150) {
+        activeHeadingSlug = heading.id;
+      } else {
+        break; // 因為我們從上往下掃，一旦超過就可以停止
+      }
+    }
+
+    // 更新所有連結的樣式
+    tocLinks.forEach((link) => {
+      const slug = link.getAttribute('data-heading-slug');
+      if (slug === activeHeadingSlug) {
+        // 當前活躍的標題：白色 + 加粗 + 加強視覺反饋
+        link.classList.remove('text-gray-400');
+        link.classList.add('text-white', 'font-bold', 'translate-x-1');
+      } else {
+        // 非活躍的標題：回復灰色
+        link.classList.remove('text-white', 'font-bold', 'translate-x-1');
+        link.classList.add('text-gray-400');
+      }
+    });
+  }
+
+  // 監聽滾動事件
+  window.addEventListener('scroll', updateActiveHeading, { passive: true });
+
+  // 頁面載入時立即執行一次
+  updateActiveHeading();
+</script>
 
 <style is:global>
   html { scroll-behavior: smooth; }
