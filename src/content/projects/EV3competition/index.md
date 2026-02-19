@@ -5,7 +5,7 @@ summary: ""
 date: "2024.05.26"
 category: "競賽"
 tags: ["EV3"]
-image: "./EV3.jpg"
+image: "/projects/EV3competition/EV3.jpg"
 ---
 
 ## 一、 幸運的入場券：從抽籤開始的挑戰
@@ -17,7 +17,7 @@ image: "./EV3.jpg"
 面對更複雜的十字路口，我們討論出一套邏輯：利用「變數」來記錄路口次數。例如，遇到第一個路口要右轉、第三個要左轉等。這種透過精確計算來決定動作的方式，成功解決了機器人在迷宮中迷路的問題，也讓我們對程式邏輯有了更深的理解。
 
 競賽地圖的照片：
-<img src="./1.jpg" style="width: 50%; display: block; margin: 0 auto;" />
+<img src="/projects/EV3competition/1.jpg" style="width: 50%; display: block; margin: 0 auto;" />
 
 ## 三、 學會「取捨」：比賽中的戰術與策略
 在練習過程中，我們發現賽道上有許多難度極高的加分關卡，例如黑線中斷的空白區或是複雜的棋盤格地圖。考慮到機器人蛇行前進的不確定性，加上棋盤格需要設定的變數過於繁雜，一旦出錯就會全盤皆輸。
@@ -32,4 +32,4 @@ image: "./EV3.jpg"
 雖然成績不如預期，心中難免感到遺憾，但這場比賽教會我們：技術再好，也必須考量臨場變因與硬體極限。這三個月的努力並沒有白費，這些經驗後來也成了我們與日本交流時的珍貴話題。這場旅程讓我們深刻體會到，比賽的意義不只在於獎牌，更在於解決問題的韌性與團隊合作的回憶。
 
 得獎照片:
-<img src="./2.jpg" style="width: 75%; display: block; margin: 0 auto;" />
+<img src="/projects/EV3competition/2.jpg" style="width: 75%; display: block; margin: 0 auto;" />

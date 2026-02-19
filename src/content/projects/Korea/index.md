@@ -5,7 +5,7 @@ summary: ""
 date: "2025.08.19-21"
 category: "活動"
 tags: ["交流", "跨國","資訊"]
-image: "/src/content/projects/Korea/Korea.jpg"
+image: "/projects/Korea/Korea.jpg"
 ---
 
 
@@ -45,10 +45,10 @@ image: "/src/content/projects/Korea/Korea.jpg"
 
 在發表的部分我們總共分成十組，每一組發表的內容都是希望可以解決一些社會問題，像是人口老化或者是減少塑膠排放等。聽了幾組的發表後，終於輪到我們了，身為發表者，面對台下近50位同學和老師注視著我，我努力克服自己的恐懼，將我們的分析結果用英文的方式讓大家了解，過度補習所造成的壓力往往超出我們的想像，雖然過程中令我非常緊張，有時也會忘詞，但最後卻成功獲得第三名的人氣獎，讓我了解到自己所有的努力都值得了。
 
-<img src="/src/content/projects/Korea/4.jpg" style="width: 75%; display: block; margin: 0 auto;" />
+<img src="/projects/Korea/4.jpg" style="width: 75%; display: block; margin: 0 auto;" />
 
 
 ## 心得總整
 在這場為期三天的台韓實作營中，我將核心目標放在運用數據驅動解決社會問題。針對「補習與青少年壓力」專案，我練習從零散的網路資訊中提取有效數據，並學習運用 Gemini 擔任思考夥伴，進行資料分類與圖表產出，將抽象文字轉化為具說服力的視覺化圖表，並結合 Google Sites 網頁製作技巧，將成果轉化為精美的數位實作紀錄。這段從問題發現到設計策略的過程，不僅增強了我結構化思考的能力，更讓我對未來工程學系所需的邏輯分析與數位整合有了具體實踐。最令我難忘的是在 Google 總部 77 樓進行全英文簡報的挑戰，面對近五十位聽眾，我從台下的極度焦慮到台上努力克服恐懼，最終成功帶領小組奪下人氣獎第三名。這次經驗讓我明白，真正的自信來自於紮實的準備，而跨語言的溝通正是邏輯與誠意的傳遞。這場活動讓我學會如何在壓力下保持冷靜，並利用科技工具將研究轉化為具備社會影響力的行動，是我在高中階段極為寶貴的跨領域學習經歷。
 
-<img src="/src/content/projects/Korea/5.jpg" style="width: 75%; display: block; margin: 0 auto;" />
+<img src="/projects/Korea/5.jpg" style="width: 75%; display: block; margin: 0 auto;" />
