@@ -13,10 +13,13 @@ const projectsCollection = defineCollection({
     date: z.string(), 
     category: z.string(),
     tags: z.array(z.string()),
-    // 終極修正：image() 代表處理圖片物件
-    // .optional() 允許「不寫這一行」
-    // .nullable() 允許「寫了但填 null」
-    image: image().optional().nullable(), 
+    
+    // --- 終極修正版 ---
+    // 使用 z.union 同時支援「本地圖片物件」與「外部 URL 字串」
+    image: z.union([
+      image(),           // 處理如 "./photo.jpg" 的本地優化
+      z.string().url()   // 處理如 "https://..." 的外部連結
+    ]).optional().nullable(), 
   }),
 });
 
