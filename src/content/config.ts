@@ -13,9 +13,10 @@ const projectsCollection = defineCollection({
     date: z.string(), 
     category: z.string(),
     tags: z.array(z.string()),
-    // 關鍵修正：使用 image() 而不是 z.string()
-    // 這會讓 Astro 在編譯時去抓取相對路徑的圖檔並進行優化
-    image: image().optional(), 
+    // 終極修正：image() 代表處理圖片物件
+    // .optional() 允許「不寫這一行」
+    // .nullable() 允許「寫了但填 null」
+    image: image().optional().nullable(), 
   }),
 });
 
