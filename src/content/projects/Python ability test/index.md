@@ -7,3 +7,10 @@ category: "競賽"
 tags: ["Python"]
 image:
 ---
+
+
+
+
+
+證書：
+![image](./1.jpg)
