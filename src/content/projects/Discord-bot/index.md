@@ -1,7 +1,7 @@
 ---
 title: "Ethan's Assistant Discord Bot"
 location:
-summary: "為個人社群設計的輔助機器人，包含自動化管理與發想者角色設定。"
+summary: "利用機器人來幫我自動化處理資料和訊息"
 date: "2026.02.12"
 category: "專題"
 tags: ["Python", "自主學習","資訊"]

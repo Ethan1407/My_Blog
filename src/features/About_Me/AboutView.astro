@@ -151,6 +151,11 @@ try {
     let activeYear = null;
     let activeCategory = null;
 
+    // 儲存每個按鈕的原始 class 以便還原（保留原本的淡藍底等樣式）
+    tagButtons.forEach(btn => {
+        if (!btn.dataset.originalClass) btn.dataset.originalClass = btn.className;
+    });
+
     function applyFilter() {
         eventItems.forEach(item => {
             const itemTags = JSON.parse(item.getAttribute('data-tags') || '[]');
@@ -166,18 +171,19 @@ try {
         });
 
         tagButtons.forEach(btn => {
+            const original = btn.dataset.originalClass || '';
             const isMatch = btn.getAttribute('data-tag-name') === activeTag;
 
             if (isMatch) {
-                btn.classList.add('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400');
-                btn.classList.remove('text-gray-300', 'text-white');
+                // 以原始 class 為基礎，附加選取樣式
+                btn.className = original + ' bg-white text-black font-bold ring-2 ring-blue-400';
             } else {
                 if (!activeTag) {
-                    btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400', 'text-gray-300');
-                    btn.classList.add('text-white');
+                    // 沒有任何選取時還原為原始 class
+                    btn.className = original;
                 } else {
-                    btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400', 'text-white');
-                    btn.classList.add('text-gray-300');
+                    // 有其他 tag 被選中時顯示次要狀態（灰色文字），保留原始底色
+                    btn.className = original + ' text-gray-300';
                 }
             }
         });

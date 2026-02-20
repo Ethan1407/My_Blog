@@ -1,7 +1,7 @@
 ---
 title: "臺北市資通訊大賽"
 location: "木柵高工"
-summary: ""
+summary: "鑽研 EV3 邏輯與策略取捨，在比賽挑戰中學會臨場應變，將技術與遺憾轉化為成長養分。"
 date: "2024.05.26"
 category: "競賽"
 tags: ["EV3","資訊"]

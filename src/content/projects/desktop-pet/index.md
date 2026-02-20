@@ -1,7 +1,7 @@
 ---
 title: "Deskpet"
 location:
-summary: "具備硬體監控與螢幕時間追蹤功能的桌面寵物。"
+summary: "製作桌寵來偵測螢幕使用時間和放置小工具"
 date: "2026.02.14"
 category: "專題"
 tags: ["Python", "自主學習","資訊"]
