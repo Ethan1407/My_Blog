@@ -9,7 +9,9 @@ image:
 ---
 
 
+在準備測驗時，我將賓州大學出的所有是非題做了詳解，讓我對Python有了更深刻的理解
 
+筆記連結見後方👉[🔗](https://hackmd.io/@Ethan1407/rJsvKr--xx)
 
 
 證書：
