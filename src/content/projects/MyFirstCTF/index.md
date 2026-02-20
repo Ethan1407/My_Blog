@@ -4,6 +4,6 @@ location: "清華大學"
 summary: ""
 date: "2025.05.24"
 category: "競賽"
-tags: ["CTF", "資安"]
-image: "./MyFirstCTF.jpg"
+tags: ["CTF", "資安","資訊"]
+image: "/projects/MyFirstCTF/MyFirstCTF.jpg"
 ---

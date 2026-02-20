@@ -4,7 +4,7 @@ location:
 summary: "具備硬體監控與螢幕時間追蹤功能的桌面寵物。"
 date: "2026.02.14"
 category: "專題"
-tags: ["Python", "自主學習"]
+tags: ["Python", "自主學習","資訊"]
 image:
 ---
 

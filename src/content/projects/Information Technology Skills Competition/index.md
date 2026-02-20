@@ -5,5 +5,5 @@ summary: ""
 date: "2024.11.03"
 category: "競賽"
 tags: ["C++"]
-image: "./competition.jpg"
+image: "/projects/Information Technology Skills Competition/competition.jpg"
 ---

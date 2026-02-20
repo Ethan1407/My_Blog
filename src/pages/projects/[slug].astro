@@ -124,7 +124,6 @@ try {
 <script>
   // Table of Contents 高亮功能
   function updateActiveHeading() {
-    // 獲取所有標題元素
     const headings = document.querySelectorAll('.prose-custom h2, .prose-custom h3');
     const tocLinks = document.querySelectorAll('.toc-link');
 
@@ -132,36 +131,28 @@ try {
 
     let activeHeadingSlug = null;
 
-    // 找到當前視窗中最上方的標題
     for (let heading of headings) {
       const rect = heading.getBoundingClientRect();
-      // 如果標題在視窗上半部分（scroll-mt-28 對應約 112px）
       if (rect.top <= 150) {
         activeHeadingSlug = heading.id;
       } else {
-        break; // 因為我們從上往下掃，一旦超過就可以停止
+        break;
       }
     }
 
-    // 更新所有連結的樣式
     tocLinks.forEach((link) => {
       const slug = link.getAttribute('data-heading-slug');
       if (slug === activeHeadingSlug) {
-        // 當前活躍的標題：白色 + 加粗 + 加強視覺反饋
         link.classList.remove('text-gray-400');
         link.classList.add('text-white', 'font-bold', 'translate-x-1');
       } else {
-        // 非活躍的標題：回復灰色
         link.classList.remove('text-white', 'font-bold', 'translate-x-1');
         link.classList.add('text-gray-400');
       }
     });
   }
 
-  // 監聽滾動事件
   window.addEventListener('scroll', updateActiveHeading, { passive: true });
-
-  // 頁面載入時立即執行一次
   updateActiveHeading();
 </script>
 
@@ -182,9 +173,14 @@ try {
   }
   .prose-custom code { @apply bg-white/10 px-1.5 py-0.5 rounded text-blue-300 font-mono text-[0.9em]; }
   
-  /* 圖片樣式：配合 Colocation 資料夾結構，圖片會自動被 Astro 優化 */
+  /* 🚀 修正：圖片樣式統一管理 */
   .prose-custom img { 
-    @apply rounded-3xl my-14 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-full object-cover;
+    @apply rounded-3xl my-14 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] object-cover;
+    /* 這裡改成 75% 並置中 */
+    width: 75% !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
   .hide-scrollbar::-webkit-scrollbar { display: none; }

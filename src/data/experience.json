@@ -5,7 +5,7 @@
     "location": "臺北科技大學",
     "category": "活動",
     "summary": "",
-    "tags": ["資訊"]
+    "tags": ["資安","資訊"]
   },
   {
     "date": "2026.01.01",
@@ -13,7 +13,7 @@
     "location": "",
     "category": "競賽",
     "summary": "",
-    "tags": ["CTF"]
+    "tags": ["CTF","資訊"]
   },
   {
     "date": "2025.11.24",
@@ -21,7 +21,7 @@
     "location": "",
     "category": "活動",
     "summary": "",
-    "tags": ["CTF"]
+    "tags": ["CTF","資訊"]
   },
   {
     "title": "2025Bebras資訊思維測驗",
@@ -69,7 +69,7 @@
     "location": "",
     "category": "競賽",
     "summary": "全校第一名",
-    "tags": ["資訊"]
+    "tags": ["C++","資訊"]
   },
   {
     "title": "SecurityFocus Online CTF",
@@ -77,7 +77,7 @@
     "location": "",
     "category": "競賽",
     "summary": "",
-    "tags": ["CTF"]
+    "tags": ["CTF","資訊"]
   },
   {
     "date": "2024.08.30-2025.06.30",
@@ -101,7 +101,7 @@
     "location": "信義微風南山",
     "category": "活動",
     "summary": "",
-    "tags": ["參訪"]
+    "tags": ["參訪","資訊"]
   },
   {
     "date": "2024.05.10",
@@ -109,7 +109,7 @@
     "location": "臺北市內湖區瑞光路318號",
     "category": "活動",
     "summary": "",
-    "tags": ["參訪"]
+    "tags": ["參訪","資訊"]
   },
   {
     "date": "2023.12.16",
@@ -117,7 +117,7 @@
     "location": "木柵高工",
     "category": "競賽",
     "summary": "我",
-    "tags": ["無人機"]
+    "tags": ["無人機","資訊"]
   },
   {
     "date": "2023.11.09",
@@ -133,6 +133,6 @@
     "location": "",
     "category": "競賽",
     "summary": "高一組第二名",
-    "tags": ["資訊"]
+    "tags": ["C++","資訊"]
   }
 ]
