@@ -11,5 +11,4 @@ image: "/projects/Triathlon/Triathlon.jpg"
 
 
 
-![image](./1.jpg)
 
