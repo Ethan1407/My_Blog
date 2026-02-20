@@ -1,12 +1,14 @@
 ---
-title: "Deskpet"
+title: "Deskpet - 桌寵製作"
 location:
 summary: "製作桌寵來偵測螢幕使用時間和放置小工具"
 date: "2026.02.14"
 category: "專題"
 tags: ["Python", "自主學習","資訊"]
-image:
+image: "/projects/deskpet/deskpet.png"
 ---
+
+桌寵的GitHub連結[🔗](https://github.com/Ethan1407/deskpet)
 
 ## 這裡是專案的初始想法，我想要解決長時間盯著電腦的問題。
 
