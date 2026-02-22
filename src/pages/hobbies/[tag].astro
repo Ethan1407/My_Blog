@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
+import NavbarMobile from "@/components/NavbarMobile.astro";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("projects");
@@ -43,11 +44,18 @@ try {
 
 <BaseLayout title={`關於 ${tag} | Ethan Chen`}>
   <div class="flex flex-col min-h-screen bg-transparent">
-    <Navbar />
+    <!-- 電腦版導覽列 -->
+    <div class="hidden md:block">
+      <Navbar />
+    </div>
+    
+    <!-- 手機版導覽列 -->
+    <NavbarMobile />
     
     <div class="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-8 xl:gap-20 p-6 md:p-12 relative grow">
       
-      <aside class="lg:w-[280px] shrink-0">
+      <!-- 側邊欄：電腦版顯示，手機版隱藏 -->
+      <aside class="hidden lg:block lg:w-[280px] shrink-0">
         <div class="sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar">
           <h2 class="text-gray-500 font-bold text-xs uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-2">
             Hobbies Navigation

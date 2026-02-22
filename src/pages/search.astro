@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Navbar from '@/components/Navbar.astro';
+import NavbarMobile from '@/components/NavbarMobile.astro';
 import ProjectCard from '@/features/Projects/components/ProjectCard.astro';
 import experienceData from '../data/experience.json';
 
@@ -23,7 +24,13 @@ const allSearchableContent = [...projectEntries, ...jsonEntries];
 
 <BaseLayout title="搜尋結果">
   <div class="flex flex-col min-h-screen bg-transparent">
-    <Navbar />
+    <!-- 電腦版導覽列 -->
+    <div class="hidden md:block">
+      <Navbar />
+    </div>
+    
+    <!-- 手機版導覽列 -->
+    <NavbarMobile />
     
     <main class="flex-1 max-w-4xl mx-auto w-full p-8 md:p-12">
       <header class="mb-16 border-b border-white/10 pb-10">

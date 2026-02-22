@@ -1,0 +1,111 @@
+---
+// src/components/StarryBackgroundMobile.astro
+// 手機版背景 - 星星數量減少 70%，避免眩暈
+---
+<canvas id="starry-canvas-mobile" class="fixed top-0 left-0 w-full h-full -z-10 md:hidden"></canvas>
+
+<script>
+  const initStarfieldMobile = () => {
+    const canvas = document.getElementById('starry-canvas-mobile') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let stars = [];
+    const starCount = 45; // 手機版減少到 45 個星星（原本 180）
+    const connectionDist = 150;
+    const mouseRadius = 150;
+    const bgColor = "#050b1a";
+
+    const mouse = { x: -9999, y: -9999 };
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.scale(dpr, dpr);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      initStars();
+    }
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          size: Math.random() * 1.2 + 0.3,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.7 + 0.3
+        });
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+      stars.forEach((star, i) => {
+        const dx = star.x - mouse.x;
+        const dy = star.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < mouseRadius) {
+          const force = (mouseRadius - dist) / mouseRadius;
+          const angle = Math.atan2(dy, dx);
+          star.x += Math.cos(angle) * force * 3;
+          star.y += Math.sin(angle) * force * 3;
+        }
+
+        star.x += star.vx;
+        star.y += star.vy;
+
+        if (star.x < 0) star.x = window.innerWidth;
+        if (star.x > window.innerWidth) star.x = 0;
+        if (star.y < 0) star.y = window.innerHeight;
+        if (star.y > window.innerHeight) star.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+        ctx.fill();
+
+        for (let j = i + 1; j < stars.length; j++) {
+          const target = stars[j];
+          const distNext = Math.sqrt(Math.pow(star.x - target.x, 2) + Math.pow(star.y - target.y, 2));
+          
+          if (distNext < connectionDist) {
+            ctx.beginPath();
+            ctx.moveTo(star.x, star.y);
+            ctx.lineTo(target.x, target.y);
+            const lineOpacity = 1 - (distNext / connectionDist);
+            ctx.strokeStyle = `rgba(200, 230, 255, ${lineOpacity * 0.15})`;
+            ctx.lineWidth = 0.4;
+            ctx.stroke();
+            ctx.closePath();
+          }
+        }
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    const originalResize = resize;
+    window.addEventListener('resize', originalResize);
+    resize();
+    draw();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStarfieldMobile);
+  } else {
+    initStarfieldMobile();
+  }
+</script>

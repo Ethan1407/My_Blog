@@ -5,7 +5,9 @@
 import { getCollection } from 'astro:content'; // 1. 引入抓取工具
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
+import NavbarMobile from '../components/NavbarMobile.astro';
 import AboutView from '../features/About_Me/AboutView.astro';
+import AboutViewMobile from '../features/About_Me/AboutViewMobile.astro';
 
 // 2. 抓取資料並轉換格式
 const projectEntries = await getCollection('projects');
@@ -17,11 +19,24 @@ const events = projectEntries.map(project => ({
 
 <BaseLayout title="About Me">
   <div class="flex flex-col h-screen overflow-hidden bg-transparent">
-      <Navbar />
+      <!-- 電腦版導覽列 -->
+      <div class="hidden md:block">
+        <Navbar />
+      </div>
+      
+      <!-- 手機版導覽列 -->
+      <NavbarMobile />
       
       <div class="flex-1 overflow-hidden">
-          {/* 3. 把資料傳給 AboutView */}
-          <AboutView events={events} />
+          {/* 電腦版內容 */}
+          <div class="hidden md:block h-full overflow-auto">
+            <AboutView events={events} />
+          </div>
+          
+          {/* 手機版內容 */}
+          <div class="md:hidden overflow-auto">
+            <AboutViewMobile />
+          </div>
       </div>
   </div>
 </BaseLayout>
