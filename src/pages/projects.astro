@@ -14,8 +14,10 @@ import ProjectsViewMobile from '@/features/Projects/ProjectsViewMobile.astro';
     </div>
   </div>
   
-  <!-- 手機版：直接顯示 ProjectsViewMobile -->
-  <div class="block lg:hidden w-screen h-screen overflow-hidden bg-transparent flex flex-col">
-    <ProjectsViewMobile />
+  <!-- 手機版：直接顯示 ProjectsViewMobile - 允許內部滾動 -->
+  <div class="block lg:hidden w-full h-screen overflow-hidden bg-transparent">
+    <div class="w-full h-full overflow-y-auto">
+      <ProjectsViewMobile />
+    </div>
   </div>
 </BaseLayout>
