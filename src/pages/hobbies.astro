@@ -31,13 +31,15 @@ lastUpdated = date.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digi
 } catch (e) { console.error("GitHub API Error:", e); }
 ---
 <BaseLayout title="我的興趣 | Ethan Chen">
-<div class="flex flex-col min-h-screen bg-transparent">
+<div class="flex flex-col h-screen overflow-hidden bg-transparent">
 <Navbar />
-<div class="hidden lg:block w-full flex-1">
+<div class="flex-1 overflow-hidden">
+<div class="hidden lg:block h-full">
 <HobbiesDesktop hobbies={hobbies} lastUpdated={lastUpdated} />
 </div>
-<div class="block lg:hidden w-full flex-1">
+<div class="block lg:hidden h-full overflow-y-auto">
 <HobbiesMobile hobbies={hobbies} lastUpdated={lastUpdated} />
+</div>
 </div>
 </div>
 </BaseLayout>
