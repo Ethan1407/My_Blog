@@ -1,157 +1,87 @@
 ---
 /**
- * Timeline 組件：標題支援超連結，並根據是否有連結動態切換滑鼠特效
+ * Timeline 組件：保留原始所有預處理邏輯，僅優化手機版空間排版
  */
 const { events = [] } = Astro.props;
-
-// 1. 自動排序日期
 const sortedEvents = [...events].sort((a, b) => {
-  const dateAStr = a.data?.date || "0000.00.00";
-  const dateBStr = b.data?.date || "0000.00.00";
-  
-  const dateA = new Date(dateAStr.replace(/\./g, '-')).getTime();
-  const dateB = new Date(dateBStr.replace(/\./g, '-')).getTime();
-  return dateB - dateA;
+const dateAStr = a.data?.date || "0000.00.00";
+const dateBStr = b.data?.date || "0000.00.00";
+const dateA = new Date(dateAStr.replace(/\./g, '-')).getTime();
+const dateB = new Date(dateBStr.replace(/\./g, '-')).getTime();
+return dateB - dateA;
 });
-
-// 預處理事件，將要在模板使用的欄位先計算好，避免在模板內寫太複雜的 JS
 const processedEvents = sortedEvents.map((item, index) => {
-  const { title, date, location, category, summary, tags = [] } = item.data;
-  const rawDate = String(date || '');
-  let displayParts = [rawDate];
-  if (rawDate.includes('-')) {
-    const m = rawDate.match(/^(.+?)-(.*)$/);
-    if (m) {
-      const left = m[1].trim();
-      const right = m[2].trim();
-      const leftHasYear = /^\d{4}\./.test(left);
-      const rightHasYear = /^\d{4}\./.test(right);
-      if (leftHasYear && rightHasYear) {
-        displayParts = [left + '-', right];
-      }
-    }
-  }
-
-  const startDate = rawDate.split('-')[0];
-  const currentYear = startDate.split('.')[0];
-  const nextItemDate = sortedEvents[index + 1] ? sortedEvents[index + 1].data.date : null;
-  const nextItemStartDate = nextItemDate ? nextItemDate.split('-')[0] : null;
-  const nextYear = nextItemStartDate ? nextItemStartDate.split('.')[0] : null;
-  const isYearEnd = currentYear !== nextYear;
-
-  const isProject = item.collection === 'projects';
-  const projectPath = isProject ? '/projects/' + item.slug : null;
-
-  return {
-    title,
-    date: rawDate,
-    displayParts,
-    location,
-    category,
-    summary,
-    tags,
-    tagsString: JSON.stringify(tags),
-    projectPath,
-    isYearEnd,
-    currentYear,
-  };
+const { title, date, location, category, summary, tags = [] } = item.data;
+const rawDate = String(date || '');
+let displayParts = [rawDate];
+if (rawDate.includes('-')) {
+const m = rawDate.match(/^(.+?)-(.*)$/);
+if (m) {
+const left = m[1].trim();
+const right = m[2].trim();
+const leftHasYear = /^\d{4}\./.test(left);
+const rightHasYear = /^\d{4}\./.test(right);
+if (leftHasYear && rightHasYear) { displayParts = [left + '-', right]; }
+}
+}
+const startDate = rawDate.split('-')[0];
+const currentYear = startDate.split('.')[0];
+const nextItemDate = sortedEvents[index + 1] ? sortedEvents[index + 1].data.date : null;
+const nextItemStartDate = nextItemDate ? nextItemDate.split('-')[0] : null;
+const nextYear = nextItemStartDate ? nextItemStartDate.split('.')[0] : null;
+const isYearEnd = currentYear !== nextYear;
+const isProject = item.collection === 'projects';
+const projectPath = isProject ? '/projects/' + item.slug : null;
+return { title, date: rawDate, displayParts, location, category, summary, tags, tagsString: JSON.stringify(tags), projectPath, isYearEnd, currentYear };
 });
 ---
-
 <div class="relative">
-  <h2 class="text-3xl font-bold mb-16 tracking-widest text-white">Timeline</h2>
-
-  <div class="absolute left-[10.5rem] top-24 bottom-10 w-[2px] bg-white hidden md:block opacity-50 z-0"></div>
-
-  <div class="space-y-16 relative">
-    <div class="flex items-center mb-20 relative h-8">
-      <div class="w-[10.5rem] text-right pr-8 font-bold text-xl text-gray-400 flex-shrink-0 whitespace-nowrap">
-        Present
-      </div>
-      <div class="absolute left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242]"></div>
-      <div class="pl-12 font-bold text-2xl tracking-widest text-white">
-        Now
-      </div>
-    </div>
-
-    {processedEvents.map((evt, index) => (
-      <div key={index}>
-        <div class="timeline-event flex items-start group relative" data-tags={evt.tagsString} data-category={evt.category}>
-          <div class={"w-[10.5rem] text-right pr-8 pt-1 font-bold text-lg tracking-wider text-gray-300 flex-shrink-0 " + (evt.displayParts.length === 1 ? 'whitespace-nowrap' : '')}>
-            {evt.displayParts.length > 1 ? (
-              evt.displayParts.map((part, i) => (
-                <span class={i > 0 ? 'block' : ''}>{part}</span>
-              ))
-            ) : (
-              evt.date
-            )}
-          </div>
-
-          <div class={"absolute left-[10.5rem] -translate-x-1/2 w-4 h-4 bg-white rounded-full z-10 mt-2 ring-4 ring-[#424242] transition-all duration-300 " + (evt.projectPath ? 'group-hover:scale-125' : '')}></div>
-
-          <div class="flex-1 pl-12">
-            <h3 class={"text-2xl font-bold mb-4 tracking-wide text-white transition-all duration-300 " + (evt.projectPath ? 'underline underline-offset-8 decoration-white/20 group-hover:decoration-white' : '')}>
-              {evt.projectPath ? (
-                <a href={evt.projectPath} class="hover:text-blue-400 hover:translate-x-1 transition-all inline-flex items-center gap-2">
-                  {evt.title}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 group-hover:opacity-100 transition-opacity"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                </a>
-              ) : (
-                evt.title
-              )}
-            </h3>
-
-            <ul class="space-y-3 text-gray-300 text-lg leading-relaxed">
-              {evt.location && (
-                <li class="flex items-start">
-                  <span class="font-semibold min-w-[120px] text-white/80">• location :</span>
-                  <span class="flex-1 text-gray-400">{evt.location}</span>
-                </li>
-              )}
-
-              {evt.category && (
-                <li class="flex items-start">
-                  <span class="font-semibold min-w-[120px] text-white/80">• category :</span>
-                  <span class="flex-1 text-gray-400">{evt.category}</span>
-                </li>
-              )}
-
-              {evt.summary && (
-                <li class="flex items-start">
-                  <span class="font-semibold min-w-[120px] text-white/80">• summary :</span>
-                  <span class="flex-1 text-gray-400">{evt.summary}</span>
-                </li>
-              )}
-
-              {evt.tags.length > 0 && (
-                <li class="flex items-start">
-                  <span class="font-semibold min-w-[120px] text-white/80">• tags :</span>
-                  <div class="flex flex-wrap gap-2 flex-1">
-                    {evt.tags.map((tag) => (
-                      <button 
-                          class="tag-button text-sm text-blue-300/80 bg-blue-400/10 hover:bg-white hover:text-[#424242] px-2 py-0.5 rounded-md border border-blue-400/20 transition-all font-bold"
-                          data-tag-name={tag}
-                      >
-                          {tag}
-                      </button>
-                    ))}
-                  </div>
-                </li>
-              )}
-            </ul>
-          </div>
-        </div>
-
-        {evt.isYearEnd && (
-          <div class="flex items-center my-20 relative h-10">
-            <div class="w-[10.5rem] text-right pr-8 font-bold text-3xl text-gray-400">{evt.currentYear}</div>
-            <div class="absolute left-[10.5rem] -translate-x-1/2 w-10 h-[2px] bg-white z-10 opacity-80"></div>
-          </div>
-        )}
-      </div>
-    ))}
-
-  </div>
-
-  <div class="h-40"></div>
+<h2 class="text-3xl font-bold mb-16 tracking-widest text-white">Timeline</h2>
+<div class="absolute left-[10.5rem] top-24 bottom-10 w-[2px] bg-white hidden md:block opacity-50 z-0"></div>
+<div class="space-y-16 relative">
+<div class="flex flex-col md:flex-row items-start md:items-center mb-10 md:mb-20 relative h-auto md:h-8">
+<div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-xl text-blue-400 md:text-gray-400 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">Present</div>
+<div class="absolute left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242] hidden md:block"></div>
+<div class="md:pl-12 font-bold text-2xl tracking-widest text-white">Now</div>
+</div>
+{processedEvents.map((evt, index) => (
+<div key={index}>
+<div class="timeline-event flex flex-col md:flex-row items-start group relative" data-tags={evt.tagsString} data-category={evt.category}>
+<div class={"w-full md:w-[10.5rem] text-left md:text-right md:pr-8 pt-1 font-bold text-lg tracking-wider text-blue-400 md:text-gray-300 flex-shrink-0 mb-1 md:mb-0 " + (evt.displayParts.length === 1 ? 'whitespace-nowrap' : '')}>
+{evt.displayParts.length > 1 ? evt.displayParts.map((part, i) => (<span class={i > 0 ? 'block' : ''}>{part}</span>)) : evt.date}
+</div>
+<div class={"absolute left-[10.5rem] -translate-x-1/2 w-4 h-4 bg-white rounded-full z-10 mt-2 ring-4 ring-[#424242] transition-all duration-300 hidden md:block " + (evt.projectPath ? 'group-hover:scale-125' : '')}></div>
+<div class="flex-1 md:pl-12 w-full">
+<h3 class={"text-2xl font-bold mb-4 tracking-wide text-white transition-all duration-300 " + (evt.projectPath ? 'underline underline-offset-8 decoration-white/20 group-hover:decoration-white' : '')}>
+{evt.projectPath ? (
+<a href={evt.projectPath} class="hover:text-blue-400 hover:translate-x-1 transition-all inline-flex items-center gap-2">
+{evt.title}
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 group-hover:opacity-100 transition-opacity"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+</a>
+) : (evt.title)}
+</h3>
+<ul class="space-y-3 text-gray-300 text-lg leading-relaxed">
+{evt.location && (<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• location :</span><span class="flex-1 text-gray-400">{evt.location}</span></li>)}
+{evt.category && (<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• category :</span><span class="flex-1 text-gray-400">{evt.category}</span></li>)}
+{evt.summary && (<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• summary :</span><span class="flex-1 text-gray-400">{evt.summary}</span></li>)}
+{evt.tags.length > 0 && (
+<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• tags :</span>
+<div class="flex flex-wrap gap-2 flex-1">
+{evt.tags.map((tag) => (<button class="tag-button text-sm text-blue-300/80 bg-blue-400/10 hover:bg-white hover:text-[#424242] px-2 py-0.5 rounded-md border border-blue-400/20 transition-all font-bold" data-tag-name={tag}>{tag}</button>))}
+</div>
+</li>
+)}
+</ul>
+</div>
+</div>
+{evt.isYearEnd && (
+<div class="flex flex-row items-center my-16 md:my-20 relative h-10">
+<div class="w-auto md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-3xl text-gray-400">{evt.currentYear}</div>
+<div class="flex-1 md:absolute md:left-[10.5rem] md:-translate-x-1/2 h-[2px] bg-white z-10 opacity-30 ml-4 md:ml-0 md:w-10"></div>
+</div>
+)}
+</div>
+))}
+</div>
+<div class="h-40"></div>
 </div>
