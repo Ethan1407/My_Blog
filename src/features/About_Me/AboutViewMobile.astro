@@ -73,16 +73,16 @@ const sortedCategories = Object.entries(categoryCountMap)
     </div>
 
     <!-- 下方内容 -->
-    <div class="flex-1 overflow-y-auto custom-scrollbar">
+    <div class="flex-1 overflow-y-auto">
         <!-- 自我介紹 -->
         <div id="intro-content" class="p-4 space-y-4">
             <h2 class="text-2xl font-black text-white mb-2">About Me</h2>
             <div class="p-4 rounded-lg bg-white/5 border border-white/10 space-y-3">
-                <p class="text-sm text-gray-300 leading-relaxed">
-                    I'm a passionate developer who enjoys building things and solving problems through code. I love exploring new technologies and sharing my learning journey with the community.
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    我是一位對程式設計充滿熱情的開發者，喜歡透過代碼解決問題和建構有趣的事物。
                 </p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                    When I'm not coding, I enjoy gaming, designing, reading tech blogs, and traveling to explore new places and cultures.
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    除了編程外，我還喜歡騎單車、打撞球、保齡球、排球和手作等活動。
                 </p>
             </div>
         </div>
@@ -106,8 +106,15 @@ const sortedCategories = Object.entries(categoryCountMap)
 </div>
 
 <style>
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); }
+    @media (max-width: 768px) {
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+    }
 </style>
 
 <script>

@@ -4,20 +4,35 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
 import NavbarMobile from "@/components/NavbarMobile.astro";
 
+// 英文 tag 到中文 tag 的映射
+const tagMapping: Record<string, string> = {
+  "cycling": "單車",
+  "billiards": "撞球",
+  "bowling": "保齡球",
+  "volleyball": "排球",
+  "handcraft": "手作"
+};
+
 export async function getStaticPaths() {
   const allPosts = await getCollection("projects");
-  const tags = ["單車", "撞球", "保齡球", "排球", "手作"];
+  const paths = [];
+  
+  // 為所有英文 tag 生成路由
+  Object.entries(tagMapping).forEach(([englishTag, chineseTag]) => {
+    paths.push({
+      params: { tag: englishTag },
+      props: { 
+        posts: allPosts.filter((post) => post.data.tags?.includes(chineseTag)),
+        displayTag: chineseTag
+      },
+    });
+  });
 
-  return tags.map((tag) => ({
-    params: { tag },
-    props: { 
-      posts: allPosts.filter((post) => post.data.tags?.includes(tag)) 
-    },
-  }));
+  return paths;
 }
 
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+const { posts, displayTag } = Astro.props;
 
 const descriptions: Record<string, string> = {
   "單車": "接觸時間：2021年。",
@@ -42,7 +57,7 @@ try {
 } catch (e) { console.error(e); }
 ---
 
-<BaseLayout title={`關於 ${tag} | Ethan Chen`}>
+<BaseLayout title={`關於 ${displayTag} | Ethan Chen`}>
   <div class="flex flex-col min-h-screen bg-transparent">
     <!-- 電腦版導覽列 -->
     <div class="hidden md:block">
@@ -63,19 +78,19 @@ try {
           <nav>
             <ul class="space-y-5">
               <li>
-                <a href="/hobbies/單車" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '單車' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 單車 Cycling</a>
+                <a href="/hobbies/cycling" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${displayTag === '單車' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 單車 Cycling</a>
               </li>
               <li>
-                <a href="/hobbies/撞球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '撞球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 撞球 Billiard</a>
+                <a href="/hobbies/billiards" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${displayTag === '撞球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 撞球 Billiard</a>
               </li>
               <li>
-                <a href="/hobbies/保齡球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '保齡球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 保齡球 Bowling</a>
+                <a href="/hobbies/bowling" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${displayTag === '保齡球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 保齡球 Bowling</a>
               </li>
               <li>
-                <a href="/hobbies/排球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '排球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 排球 Volleyball</a>
+                <a href="/hobbies/volleyball" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${displayTag === '排球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 排球 Volleyball</a>
               </li>
               <li>
-                <a href="/hobbies/手作" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '手作' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 手作 DIY</a>
+                <a href="/hobbies/handcraft" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${displayTag === '手作' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 手作 DIY</a>
               </li>
             </ul>
           </nav>
@@ -90,10 +105,10 @@ try {
 
       <main class="flex-1 min-w-0 max-w-4xl flex flex-col">
         <div class="p-8 md:p-12">
-          <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">關於 #{tag}</h2>        <article class="prose-custom mb-16">
+          <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">關於 #{displayTag}</h2>        <article class="prose-custom mb-16">
           <div class="bg-white/5 p-8 rounded-2xl border-l-4 border-blue-500 shadow-2xl">
             <p class="text-xl italic text-gray-200 m-0">
-              {descriptions[tag as string] || "這是我熱愛的活動之一，帶給我無限的動力。"}
+              {descriptions[displayTag as string] || "這是我熱愛的活動之一，帶給我無限的動力。"}
             </p>
           </div>
         </article>
@@ -106,7 +121,7 @@ try {
           <div class="flex flex-col gap-6">
             {posts.length === 0 ? (
               <div class="bg-white/5 p-16 rounded-3xl text-center border border-dashed border-white/10">
-                <p class="text-xl text-gray-500 italic">目前尚無關於 #{tag} 的貼文</p>
+                <p class="text-xl text-gray-500 italic">目前尚無關於 #{displayTag} 的貼文</p>
               </div>
             ) : (
               posts.map((post) => (
