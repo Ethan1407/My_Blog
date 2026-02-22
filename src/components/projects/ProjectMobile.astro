@@ -1,0 +1,26 @@
+---
+// src/components/projects/ProjectMobile.astro
+const { entry, lastUpdated, Content } = Astro.props;
+---
+<div class="flex flex-col w-full p-4 pt-20">
+<header class="mb-10 border-b border-white/10 pb-6">
+<h1 class="text-3xl font-bold mb-6 text-white leading-tight">{entry.data.title}</h1>
+<div class="flex flex-col gap-4 text-gray-400 text-sm">
+<div class="flex items-center gap-4"><span>📅 {entry.data.date}</span><span>📍 {entry.data.location}</span></div>
+<div class="flex flex-wrap gap-2">
+{entry.data.tags.map(tag => (<span class="bg-white/5 px-2 py-1 rounded text-xs text-white/60">#{tag}</span>))}
+</div>
+</div>
+</header>
+<article class="prose-custom w-full overflow-hidden">
+<Content />
+</article>
+<footer class="w-full py-10 border-t border-white/10 mt-10">
+<div class="flex flex-col items-center gap-6">
+<div class="text-gray-400 text-xs font-mono uppercase">Last Updated : <span class="text-white">{lastUpdated}</span></div>
+<div class="flex gap-6">
+<a href="/projects" class="text-blue-400 text-sm">← Back to Projects</a>
+</div>
+</div>
+</footer>
+</div>

@@ -1,86 +1,171 @@
 ---
+
 // HobbiesView.astro
+
 import hobbiesData from '../../data/hobbies.json';
 
+
+
 /**
+
  * 圖示組件庫：直接在這邊定義 SVG，方便後續管理
+
  * 確保 key 值與 hobbies.json 中的 id 一致
+
  */
+
 const icons: Record<string, string> = {
+
   cycling: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>`,
+
   billiards: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="m17 7-5 5"/></svg>`,
+
   bowling: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M14 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M11 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>`,
+
   volleyball: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m12 2 4.5 9.5-8.5-4.5"/><path d="m20.5 7.5-9.5 4.5 4.5 8.5"/><path d="m3.5 16.5 9.5-4.5-4.5-8.5"/></svg>`,
+
   handcraft: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`
+
 };
+
 ---
 
+
+
 <div class="flex flex-wrap justify-center gap-12 lg:gap-20 px-10">
+
   {hobbiesData.map((hobby) => (
+
     <div class="group relative flex flex-col items-center">
+
       
+
       {/* 核心圖示卡片 */}
+
       <div class={`
+
         relative z-20 flex items-center justify-center w-24 h-24 lg:w-32 lg:h-32 rounded-[2rem] 
+
         bg-[#050b1a]/50 border border-white/10 backdrop-blur-xl 
+
         transition-all duration-500 
+
         group-hover:scale-110 group-hover:border-blue-400 
+
         group-hover:shadow-[0_0_40px_rgba(59,130,246,0.3)]
+
         ${hobby.related_projects.length > 0 ? 'cursor-pointer' : 'cursor-default'}
+
       `}>
+
         {/* 動態渲染 SVG */}
+
         <div 
+
           class="text-gray-400 group-hover:text-blue-400 transition-colors duration-500" 
+
           set:html={icons[hobby.id] || ''} 
+
         />
 
+
+
         {/* 狀況 A: 多個相關專案 - 顯示 Tooltip 列表 */}
+
         {hobby.related_projects.length > 1 && (
+
           <div class="absolute top-[110%] left-1/2 -translate-x-1/2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 z-30 translate-y-2 group-hover:translate-y-0">
+
             <div class="bg-[#0a0f1e]/90 border border-blue-400/20 backdrop-blur-xl rounded-2xl p-4 shadow-2xl min-w-[220px]">
+
               <p class="text-[10px] text-blue-400 font-mono mb-3 px-2 uppercase tracking-[0.2em]">Explore More</p>
+
               <div class="space-y-2">
+
                 {hobby.related_projects.map((proj) => (
+
                   <a 
+
                     href={`/projects/${proj.slug}`} 
+
                     class="flex items-center justify-between px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all group/item"
+
                   >
+
                     <span>{proj.title}</span>
+
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-0 group-hover/item:opacity-100 transition-opacity">
+
                       <path d="M5 12h14m-7-7 7 7-7 7"/>
+
                     </svg>
+
                   </a>
+
                 ))}
+
               </div>
+
             </div>
+
             {/* 隱形接合區：防止滑鼠移往列表時彈窗消失 */}
+
             <div class="absolute -top-4 left-0 w-full h-4"></div>
+
           </div>
+
         )}
+
         
+
         {/* 狀況 B: 只有一個專案 - 直接讓整個區塊可點擊 */}
+
         {hobby.related_projects.length === 1 && (
+
           <a 
+
             href={`/projects/${hobby.related_projects[0].slug}`} 
+
             class="absolute inset-0 z-30"
+
             aria-label={`View ${hobby.name} project`}
+
           ></a>
+
         )}
+
       </div>
 
+
+
       {/* 文字內容區 */}
+
       <div class="mt-8 text-center">
+
         <h3 class="text-white font-bold text-xl tracking-[0.15em] uppercase group-hover:text-blue-400 transition-colors">
+
           {hobby.name}
+
         </h3>
+
         <p class="text-gray-500 text-xs mt-2 max-w-[150px] font-medium leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity">
+
           {hobby.description}
+
         </p>
+
         
+
         {/* 底部裝飾線條 */}
+
         <div class="h-[2px] w-0 group-hover:w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent transition-all duration-700 mx-auto mt-4"></div>
+
       </div>
+
       
+
     </div>
+
   ))}
+
 </div>

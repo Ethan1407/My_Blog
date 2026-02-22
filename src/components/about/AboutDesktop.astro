@@ -1,0 +1,147 @@
+---
+// src/components/about/AboutDesktop.astro
+import { getCollection } from 'astro:content';
+// 🚀 關鍵修正：校正指向原 features 資料夾的路徑
+import ProfileSidebar from '../../features/About_Me/components/ProfileSidebar.astro';
+import Timeline from '../../features/About_Me/components/Timeline.astro';
+import TagSidebar from '../../features/About_Me/components/TagSidebar.astro';
+import experienceData from '../../data/experience.json';
+const projectEntries = await getCollection('projects');
+const seenTitles = new Set();
+const allEntries = [];
+projectEntries.forEach(entry => {
+seenTitles.add(entry.data.title);
+allEntries.push(entry);
+});
+experienceData.forEach(item => {
+if (!seenTitles.has(item.title)) {
+allEntries.push({ collection: 'experience_json', slug: '', data: { ...item } });
+}
+});
+const sortedEvents = allEntries.sort((a, b) => {
+const dateAStart = a.data.date.split('-')[0];
+const dateBStart = b.data.date.split('-')[0];
+const dateA = new Date(dateAStart.replace(/\./g, '-')).getTime();
+const dateB = new Date(dateBStart.replace(/\./g, '-')).getTime();
+return dateB - dateA;
+});
+const years = [...new Set(sortedEvents.map(e => e.data.date.split('-')[0].split('.')[0]))].sort((a, b) => b.localeCompare(a));
+const tagCountMap = {};
+sortedEvents.forEach(entry => {
+const tags = entry.data.tags || [];
+tags.forEach(tag => { tagCountMap[tag] = (tagCountMap[tag] || 0) + 1; });
+});
+const sortedTags = Object.entries(tagCountMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+const categoryCountMap = {};
+sortedEvents.forEach(entry => {
+const category = entry.data.category || '';
+if (category) { categoryCountMap[category] = (categoryCountMap[category] || 0) + 1; }
+});
+const sortedCategories = Object.entries(categoryCountMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+let lastUpdated = "2026.02.15"; 
+try {
+const response = await fetch(`https://api.github.com/repos/Ethan1407/My_Blog/commits?per_page=1`, { headers: { 'User-Agent': 'Astro-App' } });
+if (response.ok) {
+const commits = await response.json();
+if (commits.length > 0) {
+const date = new Date(commits[0].commit.committer.date);
+lastUpdated = date.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
+}
+}
+} catch (e) { console.error(e); }
+---
+<div class="grid grid-cols-1 lg:grid-cols-[350px_1fr_280px] h-full divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
+<aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent">
+<ProfileSidebar />
+</aside>
+<main class="flex flex-col h-full overflow-y-auto custom-scrollbar bg-transparent">
+<div class="p-10 flex-1">
+{sortedEvents.length > 0 ? (
+<Timeline events={sortedEvents} />
+) : (
+<div class="text-white text-center p-20 border-2 border-dashed border-gray-500 bg-transparent">
+<p class="text-xl">目前沒有資料，請確認資料夾或 JSON 內容。</p>
+</div>
+)}
+</div>
+<footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent mt-auto">
+<div class="max-w-7xl mx-auto flex justify-between items-center">
+<div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
+Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
+</div>
+<div class="flex gap-4">
+<a href="https://www.instagram.com/ethan._1407" target="_blank" class="p-2 bg-[#5a5a5a] rounded-lg hover:bg-[#777777] transition-all duration-300 shadow-md">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+</a>
+<a href="https://discord.com/users/1251472862825545831" target="_blank" class="p-2 bg-[#5a5a5a] rounded-lg hover:bg-[#777777] transition-all duration-300 shadow-md">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.6853-.2761-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.5151.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0323 1.4913 4.0069 2.3961 5.9604 2.9921a.0779.0779 0 00.0848-.0276c.4635-.6344.8837-1.3132 1.2542-2.026a.0764.0764 0 00-.0415-1.0562c-.7249-.2744-1.4187-.5963-2.0825-.9605a.0786.0786 0 01-.0061-.1286c.1574-.1163.3148-.2361.4678-.3596a.0754.0754 0 01.0803-.012c4.1977 1.9136 8.7394 1.9136 12.9073 0a.0754.0754 0 01.0803.012c.1545.1235.3133.2433.4721.3596a.0786.0786 0 01-.0061.1286c-.6682.3685-1.3657.6932-2.1006.9697a.0764.0764 0 00-.0415 1.0562c.3744.7171.7975 1.4004 1.2656 2.0387a.0779.0779 0 00.0848.0276c1.9535-.596 3.9281-1.5008 5.9604-2.9921a.0835.0835 0 00.0312-.0561c.4895-5.2044-.7392-9.7525-3.6922-13.6787a.0684.0684 0 00-.0321-.0277zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z"/></svg>
+</a>
+<a href="https://github.com/Ethan1407" target="_blank" class="p-2 bg-[#5a5a5a] rounded-lg hover:bg-[#777777] transition-all duration-300 shadow-md">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+</a>
+<a href="mailto:ethanchen.pro@gmail.com" class="p-2 bg-[#5a5a5a] rounded-xl hover:bg-[#777777] transition-all duration-300 shadow-md">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+</a>
+</div>
+</div>
+</footer>
+</main>
+<aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent space-y-8">
+<TagSidebar tags={sortedTags} years={years} categories={sortedCategories} />
+</aside>
+</div>
+<style is:global>
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.prose-custom img { @apply rounded-3xl my-14 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] object-cover; width: 75% !important; display: block !important; margin-left: auto !important; margin-right: auto !important; }
+</style>
+<script is:inline>
+const eventItems = document.querySelectorAll('.timeline-event'); 
+const tagButtons = document.querySelectorAll('.tag-button');
+const yearButtons = document.querySelectorAll('.year-filter-btn');
+const categoryButtons = document.querySelectorAll('.filter-category');
+const clearBtn = document.getElementById('clear-all-filters');
+const toggleBtn = document.getElementById('toggle-tags-btn');
+const moreTags = document.querySelectorAll('.more-tag');
+let activeTag = null;
+let activeYear = null;
+let activeCategory = null;
+tagButtons.forEach(btn => { if (!btn.dataset.originalClass) btn.dataset.originalClass = btn.className; });
+function applyFilter() {
+eventItems.forEach(item => {
+const itemTags = JSON.parse(item.getAttribute('data-tags') || '[]');
+const dateText = item.querySelector('.text-right.pr-8')?.textContent || "";
+const itemYear = dateText.trim().split('-')[0].split('.')[0];
+const itemCategory = item.getAttribute('data-category') || '';
+const matchTag = !activeTag || itemTags.includes(activeTag);
+const matchYear = !activeYear || itemYear === activeYear;
+const matchCategory = !activeCategory || itemCategory === activeCategory;
+item.style.display = (matchTag && matchYear && matchCategory) ? '' : 'none';
+});
+tagButtons.forEach(btn => {
+const original = btn.dataset.originalClass || '';
+const isMatch = btn.getAttribute('data-tag-name') === activeTag;
+if (isMatch) { btn.className = original + ' bg-white text-black font-bold ring-2 ring-blue-400'; } 
+else { btn.className = activeTag ? original + ' text-gray-300' : original; }
+});
+yearButtons.forEach(btn => {
+const isMatch = btn.getAttribute('data-year') === activeYear;
+if (isMatch) { btn.classList.add('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400'); btn.classList.remove('text-white'); } 
+else { btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400'); btn.classList.toggle('text-gray-300', !!activeYear); btn.classList.toggle('text-white', !activeYear); }
+});
+categoryButtons.forEach(btn => {
+const isMatch = btn.getAttribute('data-category') === activeCategory;
+btn.classList.toggle('text-white', isMatch || !activeCategory);
+btn.classList.toggle('font-bold', isMatch);
+btn.classList.toggle('text-gray-300', !!activeCategory && !isMatch);
+});
+if (activeTag || activeYear || activeCategory) clearBtn?.classList.remove('hidden');
+else clearBtn?.classList.add('hidden');
+}
+tagButtons.forEach(btn => { btn.addEventListener('click', () => { const tagName = btn.getAttribute('data-tag-name'); activeTag = (activeTag === tagName) ? null : tagName; applyFilter(); }); });
+yearButtons.forEach(btn => { btn.addEventListener('click', () => { const year = btn.getAttribute('data-year'); activeYear = (activeYear === year) ? null : year; applyFilter(); }); });
+categoryButtons.forEach(btn => { btn.addEventListener('click', () => { const category = btn.getAttribute('data-category'); activeCategory = (activeCategory === category) ? null : category; applyFilter(); }); });
+toggleBtn?.addEventListener('click', () => { const isHidden = moreTags[0].classList.contains('hidden'); moreTags.forEach(t => t.classList.toggle('hidden')); toggleBtn.textContent = isHidden ? '顯示較少' : `顯示更多 (${moreTags.length})`; });
+clearBtn?.addEventListener('click', () => { activeTag = null; activeYear = null; activeCategory = null; applyFilter(); });
+</script>

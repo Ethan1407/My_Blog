@@ -1,42 +1,27 @@
 ---
-/**
- * About Me 頁面入口
- */
-import { getCollection } from 'astro:content'; // 1. 引入抓取工具
+// src/pages/about.astro
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
-import NavbarMobile from '../components/NavbarMobile.astro';
-import AboutView from '../features/About_Me/AboutView.astro';
-import AboutViewMobile from '../features/About_Me/AboutViewMobile.astro';
-
-// 2. 抓取資料並轉換格式
+// 🚀 引入物理隔離的電腦版與手機版組件
+import AboutDesktop from '../components/about/AboutDesktop.astro';
+import AboutMobile from '../components/about/AboutMobile.astro';
 const projectEntries = await getCollection('projects');
 const events = projectEntries.map(project => ({
-  ...project.data,
-  id: project.id
+...project.data,
+id: project.id
 }));
 ---
-
 <BaseLayout title="About Me">
-  <div class="flex flex-col h-screen overflow-hidden bg-transparent">
-      <!-- 電腦版導覽列 -->
-      <div class="hidden md:block">
-        <Navbar />
-      </div>
-      
-      <!-- 手機版導覽列 -->
-      <NavbarMobile />
-      
-      <div class="flex-1 overflow-hidden">
-          {/* 電腦版內容 */}
-          <div class="hidden md:block h-full overflow-auto">
-            <AboutView events={events} />
-          </div>
-          
-          {/* 手機版內容 */}
-          <div class="md:hidden overflow-auto">
-            <AboutViewMobile />
-          </div>
-      </div>
-  </div>
+<div class="flex flex-col h-screen overflow-hidden bg-transparent">
+<Navbar />
+<div class="flex-1 overflow-hidden">
+<div class="hidden lg:block h-full">
+<AboutDesktop events={events} />
+</div>
+<div class="block lg:hidden h-full overflow-y-auto">
+<AboutMobile events={events} />
+</div>
+</div>
+</div>
 </BaseLayout>

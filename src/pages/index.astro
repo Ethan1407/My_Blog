@@ -2,9 +2,7 @@
 // src/pages/index.astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Navbar from '@/components/Navbar.astro';
-import NavbarMobile from '@/components/NavbarMobile.astro';
 import HomeView from '@/features/Home/HomeView.astro';
-import HomeViewMobile from '@/features/Home/HomeViewMobile.astro';
 
 // 自動抓取 GitHub 最新 Commit 時間
 let lastUpdated = "2026.02.15";
@@ -26,21 +24,9 @@ try {
 
 <BaseLayout title="Home">
   <div class="flex flex-col min-h-screen">
-    <!-- 電腦版導覽列 -->
-    <div class="hidden md:block">
-      <Navbar />
-    </div>
-    
-    <!-- 手機版導覽列 -->
-    <NavbarMobile />
-    
+    <Navbar />
     <main class="flex-1 flex flex-col">
-        <!-- 電腦版內容 -->
-        <div class="hidden md:block">
-          <HomeView />
-        </div>
-        <!-- 手機版內容 -->
-        <HomeViewMobile />
+        <HomeView />
     </main>
 
     <footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent">
