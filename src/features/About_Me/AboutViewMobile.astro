@@ -1,5 +1,7 @@
 ﻿---
 import { getCollection } from 'astro:content';
+import Timeline from './components/Timeline.astro';
+import TagSidebar from './components/TagSidebar.astro';
 import experienceData from '../../data/experience.json';
 
 const projectEntries = await getCollection('projects');
@@ -28,36 +30,78 @@ const sortedEvents = allEntries.sort((a, b) => {
   const dateB = new Date(dateBStart.replace(/\./g, '-')).getTime();
   return dateB - dateA;
 });
+
+const years = [...new Set(sortedEvents.map(e => e.data.date.split('-')[0].split('.')[0]))].sort((a, b) => b.localeCompare(a));
+
+const tagCountMap = {};
+sortedEvents.forEach(entry => {
+  const tags = entry.data.tags || [];
+  tags.forEach(tag => {
+    tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
+  });
+});
+
+const sortedTags = Object.entries(tagCountMap)
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
+
+const categoryCountMap = {};
+sortedEvents.forEach(entry => {
+  const category = entry.data.category || '';
+  if (category) {
+    categoryCountMap[category] = (categoryCountMap[category] || 0) + 1;
+  }
+});
+
+const sortedCategories = Object.entries(categoryCountMap)
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
 ---
 
-<div class='md:hidden flex flex-col min-h-[calc(100vh-80px)] bg-transparent overflow-y-auto custom-scrollbar py-4 px-4'>
-    <h2 class='text-3xl font-black text-white mb-1 text-center'>About Me</h2>
-    <p class='text-gray-400 text-sm text-center mb-6'>Developer &amp; Creative Thinker</p>
+<div class="md:hidden flex flex-col min-h-[calc(100vh-80px)] bg-transparent">
+    <!-- 選項按鈕 -->
+    <div class="sticky top-0 z-40 px-3 py-2 bg-[#050b1a]/80 backdrop-blur border-b border-white/10 flex gap-2 overflow-x-auto">
+        <button id="tab-intro" class="tab-btn tab-intro px-3 py-2 rounded text-xs font-semibold bg-white/20 text-white border border-white/20 transition-all whitespace-nowrap active">
+            自我介紹
+        </button>
+        <button id="tab-timeline" class="tab-btn tab-timeline px-3 py-2 rounded text-xs font-semibold bg-white/5 text-gray-400 border border-white/10 transition-all hover:text-white whitespace-nowrap">
+            時間軸
+        </button>
+        <button id="tab-filter" class="tab-btn tab-filter px-3 py-2 rounded text-xs font-semibold bg-white/5 text-gray-400 border border-white/10 transition-all hover:text-white whitespace-nowrap">
+            篩選
+        </button>
+    </div>
 
-    <div class='space-y-3 flex-1'>
-        {sortedEvents.length > 0 ? (
-            sortedEvents.map((event, idx) => (
-                <div class='p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors'>
-                    <div class='flex justify-between items-start gap-3 mb-2'>
-                        <h3 class='font-bold text-white text-sm flex-1'>{event.data.title}</h3>
-                        <span class='text-blue-400 text-xs font-semibold'>{event.data.date.split('-')[0]}</span>
-                    </div>
-                    {event.data.description && (
-                        <p class='text-gray-300 text-xs leading-relaxed mb-2'>{event.data.description}</p>
-                    )}
-                    {event.data.tags && event.data.tags.length > 0 && (
-                        <div class='flex flex-wrap gap-1'>
-                            {event.data.tags.slice(0, 3).map((tag: string) => (
-                                <span class='px-2 py-1 text-xs bg-blue-500/20 text-blue-300 rounded-full'>{tag}</span>
-                            ))}
-                            {event.data.tags.length > 3 && <span class='px-2 py-1 text-xs text-gray-400'>+{event.data.tags.length - 3}</span>}
-                        </div>
-                    )}
-                </div>
-            ))
-        ) : (
-            <p class='text-gray-400 text-center'>No data</p>
-        )}
+    <!-- 下方内容 -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar">
+        <!-- 自我介紹 -->
+        <div id="intro-content" class="p-4 space-y-4">
+            <h2 class="text-2xl font-black text-white mb-2">About Me</h2>
+            <div class="p-4 rounded-lg bg-white/5 border border-white/10 space-y-3">
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    I'm a passionate developer who enjoys building things and solving problems through code. I love exploring new technologies and sharing my learning journey with the community.
+                </p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    When I'm not coding, I enjoy gaming, designing, reading tech blogs, and traveling to explore new places and cultures.
+                </p>
+            </div>
+        </div>
+
+        <!-- 時間軸 -->
+        <div id="timeline-content" class="hidden p-4">
+            <h2 class="text-xl font-black text-white mb-4">Timeline</h2>
+            {sortedEvents.length > 0 ? (
+                <Timeline events={sortedEvents} />
+            ) : (
+                <p class="text-gray-400 text-center py-8">No data</p>
+            )}
+        </div>
+
+        <!-- 篩選 -->
+        <div id="filter-content" class="hidden p-4">
+            <h2 class="text-xl font-black text-white mb-4">Filters</h2>
+            <TagSidebar tags={sortedTags} years={years} categories={sortedCategories} />
+        </div>
     </div>
 </div>
 
@@ -65,3 +109,37 @@ const sortedEvents = allEntries.sort((a, b) => {
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); }
 </style>
+
+<script>
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const introContent = document.getElementById('intro-content');
+    const timelineContent = document.getElementById('timeline-content');
+    const filterContent = document.getElementById('filter-content');
+
+    function showTab(tabName) {
+        // 隐藏所有
+        introContent?.classList.add('hidden');
+        timelineContent?.classList.add('hidden');
+        filterContent?.classList.add('hidden');
+        tabBtns.forEach(b => {
+            b.classList.remove('bg-white/20', 'text-white', 'border-white/20');
+            b.classList.add('bg-white/5', 'text-gray-400', 'border-white/10');
+        });
+        
+        // 顯示選中的內容
+        const tab = document.getElementById(`tab-${tabName}`);
+        if (tabName === 'intro') {
+            introContent?.classList.remove('hidden');
+        } else if (tabName === 'timeline') {
+            timelineContent?.classList.remove('hidden');
+        } else if (tabName === 'filter') {
+            filterContent?.classList.remove('hidden');
+        }
+        tab?.classList.add('bg-white/20', 'text-white', 'border-white/20');
+        tab?.classList.remove('bg-white/5', 'text-gray-400', 'border-white/10');
+    }
+
+    document.getElementById('tab-intro')?.addEventListener('click', () => showTab('intro'));
+    document.getElementById('tab-timeline')?.addEventListener('click', () => showTab('timeline'));
+    document.getElementById('tab-filter')?.addEventListener('click', () => showTab('filter'));
+</script>
