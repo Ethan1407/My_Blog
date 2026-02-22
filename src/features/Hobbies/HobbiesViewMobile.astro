@@ -1,72 +1,64 @@
 ---
 // src/features/Hobbies/HobbiesViewMobile.astro
-// 手機版興趣 - 垂直堆疊，保持桌面版圖示和設計
-import hobbiesData from '../../data/hobbies.json';
+// 手機版興趣 - 使用圖片卡片垂直顯示
+import { Image } from "astro:assets";
+import bicycle from "./bicycle.png";
+import billiard from "./billiard.png";
+import bowling from "./bowling.png";
+import volleyball from "./volleyball.png";
+import diy from "./diy.png";
 
-const icons: Record<string, string> = {
-  cycling: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>`,
-  billiards: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="m17 7-5 5"/></svg>`,
-  bowling: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M14 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M11 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>`,
-  volleyball: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m12 2 4.5 9.5-8.5-4.5"/><path d="m20.5 7.5-9.5 4.5 4.5 8.5"/><path d="m3.5 16.5 9.5-4.5-4.5-8.5"/></svg>`,
-  handcraft: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`
-};
+const hobbies = [
+  { name: "Cycling", img: bicycle, tag: "cycling", description: "Started in 2021" },
+  { name: "Billiards", img: billiard, tag: "billiards", description: "Started in 2023" },
+  { name: "Bowling", img: bowling, tag: "bowling", description: "Started in 2026" },
+  { name: "Volleyball", img: volleyball, tag: "volleyball", description: "Started in 2024" },
+  { name: "Handcraft", img: diy, tag: "handcraft", description: "Started in 2022" },
+];
 ---
 
-<!-- 手機版興趣容器 - 垂直堆疊 -->
-<div class="md:hidden flex flex-col h-[calc(100vh-80px)] bg-transparent overflow-y-auto custom-scrollbar">
+<div class="md:hidden flex flex-col min-h-[calc(100vh-80px)] bg-transparent py-4 px-4 overflow-y-auto custom-scrollbar">
     
-    <!-- 標題區 -->
-    <div class="sticky top-0 z-10 px-4 pt-6 pb-4 text-center bg-[#050b1a]/80 backdrop-blur">
-        <h2 class="text-3xl font-black text-white mb-1">My Hobbies</h2>
-        <p class="text-gray-400 text-sm">Things I'm passionate about</p>
-    </div>
+    <!-- 標題 -->
+    <h2 class="text-3xl font-black text-white mb-2 text-center">My Hobbies</h2>
+    <p class="text-gray-400 text-sm text-center mb-6">Things I'm passionate about</p>
 
-    <!-- 興趣卡片垂直列表 -->
-    <div class="px-4 py-6 space-y-6 flex-1">
-        {hobbiesData.map((hobby) => (
-            <div class="flex flex-col items-center text-center group">
-                
-                {/* 圖示卡片 */}
-                <div class={`
-                    flex items-center justify-center w-28 h-28 rounded-3xl 
-                    bg-[#050b1a]/50 border border-white/10 backdrop-blur-xl 
-                    transition-all duration-500 
-                    group-hover:scale-110 group-hover:border-blue-400 
-                    group-hover:shadow-[0_0_40px_rgba(59,130,246,0.3)]
-                    ${hobby.related_projects && hobby.related_projects.length > 0 ? 'cursor-pointer' : 'cursor-default'}
-                `}>
-                    <div 
-                        class="text-gray-400 group-hover:text-blue-400 transition-colors duration-500" 
-                        set:html={icons[hobby.id] || ''} 
+    <!-- 興趣卡片網格 - 改為單列垂直 -->
+    <div class="space-y-4">
+        {hobbies.map((hobby) => (
+            <a 
+                href={`/hobbies/${hobby.tag}`}
+                class="group block rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-blue-400/50 transition-all hover:bg-white/10 active:scale-95"
+            >
+                <div class="relative h-40 overflow-hidden bg-gradient-to-br from-blue-500/5 to-purple-500/5">
+                    <Image 
+                        src={hobby.img} 
+                        alt={hobby.name} 
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
                     />
-
-                    {/* 單個相關專案時可點擊 */}
-                    {hobby.related_projects && hobby.related_projects.length === 1 && (
-                        <a 
-                            href={`/projects/${hobby.related_projects[0].slug}`} 
-                            class="absolute inset-0 rounded-3xl"
-                            aria-label={`View ${hobby.name} project`}
-                        ></a>
-                    )}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
                 </div>
-
-                {/* 文字內容區 */}
-                <div class="mt-4">
-                    <h3 class="text-white font-bold text-lg tracking-[0.15em] uppercase group-hover:text-blue-400 transition-colors">
+                
+                <div class="p-4">
+                    <h3 class="text-base font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
                         {hobby.name}
                     </h3>
-                    <p class="text-gray-400 text-xs mt-2 font-medium leading-relaxed opacity-70 group-hover:opacity-100 transition-opacity">
+                    <p class="text-gray-300 text-xs leading-relaxed mb-3">
                         {hobby.description}
                     </p>
-                    
-                    {/* 底部裝飾線條 */}
-                    <div class="h-[2px] w-0 group-hover:w-8 bg-gradient-to-r from-transparent via-blue-500 to-transparent transition-all duration-700 mx-auto mt-3"></div>
+                    <div class="flex items-center gap-1 text-blue-400 text-xs group-hover:translate-x-1 transition-transform">
+                        <span class="font-semibold">View Posts</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
                 </div>
-
-            </div>
+            </a>
         ))}
     </div>
 
+    <div class="h-8"></div>
 </div>
 
 <style>

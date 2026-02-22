@@ -12,9 +12,9 @@
     if (!ctx) return;
 
     let stars = [];
-    const starCount = 45; // 手機版減少到 45 個星星（原本 180）
-    const connectionDist = 150;
-    const mouseRadius = 150;
+    const starCount = 20; // 手機版星星縮小至 20 個
+    const connectionDist = 100; // 連接距離也縮小
+    const mouseRadius = 100;
     const bgColor = "#050b1a";
 
     const mouse = { x: -9999, y: -9999 };
@@ -35,10 +35,10 @@
         stars.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          size: Math.random() * 1.2 + 0.3,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          opacity: Math.random() * 0.7 + 0.3
+          size: Math.random() * 0.8 + 0.2,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          opacity: Math.random() * 0.5 + 0.2
         });
       }
     }
