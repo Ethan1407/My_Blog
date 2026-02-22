@@ -6,13 +6,16 @@ import ProjectsViewMobile from '@/features/Projects/ProjectsViewMobile.astro';
 ---
 
 <BaseLayout title="Projects">
-  <div class="flex flex-col h-screen overflow-hidden bg-transparent">
-      <Navbar />
-      <div class="hidden lg:flex flex-1">
-          <ProjectsView />
-      </div>
-      <div class="block lg:hidden flex-1 w-full">
-          <ProjectsViewMobile />
-      </div>
+  <!-- 電腦版：顯示 Navbar + ProjectsView -->
+  <div class="hidden lg:flex flex-col h-screen overflow-hidden bg-transparent">
+    <Navbar />
+    <div class="flex-1">
+      <ProjectsView />
+    </div>
+  </div>
+  
+  <!-- 手機版：直接顯示 ProjectsViewMobile（包含自己的導航） -->
+  <div class="block lg:hidden h-screen overflow-hidden bg-transparent">
+    <ProjectsViewMobile />
   </div>
 </BaseLayout>
