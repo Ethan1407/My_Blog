@@ -11,7 +11,8 @@
     if (!ctx) return;
 
     let stars = [];
-    const starCount = 180; // 粒子數量
+    const isMobile = window.innerWidth < 768; // md breakpoint
+    const starCount = isMobile ? 60 : 180; // 粒子數量 (手機60個，桌面180個)
     const connectionDist = 120; // 連線的最大距離
     const mouseRadius = 150; // 滑鼠排斥影響範圍
     

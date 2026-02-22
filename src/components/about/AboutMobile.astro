@@ -89,6 +89,81 @@ bP.onclick = () => { resetTabs(); vP.style.display = 'block'; bP.className = act
 bT.onclick = () => { resetTabs(); vT.style.display = 'block'; bT.className = activeCls; };
 bG.onclick = () => { resetTabs(); vG.style.display = 'block'; bG.className = activeCls; };
 }
+function initMobileTimelineFilters() {
+let selectedFilter = null;
+const tagButtons = document.querySelectorAll('#view-tags .tag-button');
+const categoryItems = document.querySelectorAll('#view-tags .filter-category');
+const yearButtons = document.querySelectorAll('#view-tags .year-filter-btn');
+const timelineEvents = document.querySelectorAll('#view-timeline .timeline-event');
+const timelineTagBtns = document.querySelectorAll('#view-timeline .tag-button');
+const clearBtn = document.getElementById('clear-all-filters');
+function applyFilters() {
+const activeTagName = (selectedFilter && selectedFilter.startsWith('tag:')) ? selectedFilter.substring(4) : null;
+timelineEvents.forEach(evt => {
+const eventTags = JSON.parse(evt.dataset.tags || '[]');
+const eventCategory = evt.dataset.category || '';
+let shouldShow = true;
+if (selectedFilter) {
+if (selectedFilter.startsWith('tag:')) { shouldShow = eventTags.includes(selectedFilter.substring(4)); }
+else if (selectedFilter.startsWith('category:')) { shouldShow = eventCategory === selectedFilter.substring(9); }
+else if (selectedFilter.startsWith('year:')) { shouldShow = evt.dataset.year === selectedFilter.substring(5); }
+}
+evt.style.display = shouldShow ? 'block' : 'none';
+});
+timelineTagBtns.forEach(tBtn => {
+if (activeTagName && tBtn.dataset.tagName === activeTagName) {
+tBtn.classList.remove('text-blue-300/80', 'bg-blue-400/10');
+tBtn.classList.add('bg-white', 'text-black', 'font-black');
+} else {
+tBtn.classList.add('text-blue-300/80', 'bg-blue-400/10');
+tBtn.classList.remove('bg-white', 'text-black', 'font-black');
+}
+});
+if (clearBtn) clearBtn.style.display = selectedFilter ? 'block' : 'none';
+}
+function clearAllHighlights() {
+tagButtons.forEach(btn => { btn.classList.remove('bg-white', 'text-[#424242]'); btn.classList.add('bg-[#5a5a5a]/60', 'text-white'); });
+categoryItems.forEach(item => { item.classList.remove('text-white'); item.classList.add('text-gray-300'); });
+yearButtons.forEach(btn => { btn.classList.remove('bg-white', 'text-[#424242]'); btn.classList.add('bg-[#5a5a5a]/60', 'text-white'); });
+}
+tagButtons.forEach(btn => {
+btn.addEventListener('click', () => {
+const tagName = btn.dataset.tagName;
+const filterKey = 'tag:' + tagName;
+if (selectedFilter === filterKey) { selectedFilter = null; clearAllHighlights(); }
+else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('bg-white', 'text-[#424242]'); btn.classList.remove('bg-[#5a5a5a]/60', 'text-white'); }
+applyFilters();
+});
+});
+categoryItems.forEach(item => {
+item.addEventListener('click', () => {
+const category = item.dataset.category;
+const filterKey = 'category:' + category;
+if (selectedFilter === filterKey) { selectedFilter = null; item.classList.remove('text-white'); item.classList.add('text-gray-300'); }
+else { clearAllHighlights(); selectedFilter = filterKey; item.classList.add('text-white'); item.classList.remove('text-gray-300'); }
+applyFilters();
+});
+});
+yearButtons.forEach(btn => {
+btn.addEventListener('click', () => {
+const year = btn.dataset.year;
+const filterKey = 'year:' + year;
+if (selectedFilter === filterKey) { selectedFilter = null; btn.classList.remove('bg-white', 'text-[#424242]'); btn.classList.add('bg-[#5a5a5a]/60', 'text-white'); }
+else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('bg-white', 'text-[#424242]'); btn.classList.remove('bg-[#5a5a5a]/60', 'text-white'); }
+applyFilters();
+});
+});
+if (clearBtn) { clearBtn.addEventListener('click', () => { selectedFilter = null; clearAllHighlights(); applyFilters(); }); }
+const toggleTagsBtn = document.getElementById('toggle-tags-btn');
+if (toggleTagsBtn) {
+toggleTagsBtn.addEventListener('click', () => {
+const moreTags = document.querySelectorAll('#view-tags .more-tag');
+moreTags.forEach(tag => tag.classList.toggle('hidden'));
+toggleTagsBtn.textContent = toggleTagsBtn.textContent.includes('顯示') ? '隱藏標籤' : '顯示更多';
+});
+}
+}
 initAboutSwitcher();
-document.addEventListener('astro:page-load', initAboutSwitcher);
+initMobileTimelineFilters();
+document.addEventListener('astro:page-load', () => { initAboutSwitcher(); initMobileTimelineFilters(); });
 </script>

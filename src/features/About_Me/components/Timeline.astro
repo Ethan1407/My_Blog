@@ -46,7 +46,7 @@ return { title, date: rawDate, displayParts, location, category, summary, tags, 
 </div>
 {processedEvents.map((evt, index) => (
 <div key={index}>
-<div class="timeline-event flex flex-col md:flex-row items-start group relative" data-tags={evt.tagsString} data-category={evt.category}>
+<div class="timeline-event flex flex-col md:flex-row items-start group relative" data-tags={evt.tagsString} data-category={evt.category} data-year={evt.currentYear}>
 <div class={"w-full md:w-[10.5rem] text-left md:text-right md:pr-8 pt-1 font-bold text-lg tracking-wider text-blue-400 md:text-gray-300 flex-shrink-0 mb-1 md:mb-0 " + (evt.displayParts.length === 1 ? 'whitespace-nowrap' : '')}>
 {evt.displayParts.length > 1 ? evt.displayParts.map((part, i) => (<span class={i > 0 ? 'block' : ''}>{part}</span>)) : evt.date}
 </div>
