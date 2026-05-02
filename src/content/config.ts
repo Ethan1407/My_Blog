@@ -13,10 +13,7 @@ const projectsCollection = defineCollection({
     category: z.string(),
     tags: z.array(z.string()),
     // 使用 z.union 確保 Astro 資產流水線能正確處理本地圖片物件或外部字串
-    image: z.union([
-      image(),
-      z.string()
-    ]).optional().nullable(),
+    image: z.string().optional().nullable(),
   }),
 });
 export const collections = {

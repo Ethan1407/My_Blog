@@ -1,12 +1,12 @@
 ---
 // src/components/projects/ProjectMobile.astro
 // 用於單個專案詳情頁面的手機版
-const { entry, filteredHeadings, lastUpdated, Content } = Astro.props;
+const { entry, filteredHeadings, lastUpdated, Content, wordCount } = Astro.props;
 ---
 <div class="block w-full bg-transparent">
 <header class="p-10 pt-28 border-b border-white/10 w-full bg-[#050b1a]">
 <h1 class="text-4xl font-black text-white mb-3 tracking-tighter leading-tight">{entry.data.title}</h1>
-<p class="text-gray-400 text-sm font-mono uppercase tracking-widest">📅 {entry.data.date} • 📍 {entry.data.location}</p>
+<p class="text-gray-400 text-sm font-mono uppercase tracking-widest">📅 {entry.data.date} • 📍 {entry.data.location} • 📝 {wordCount} 字</p>
 </header>
 <main class="p-6 w-full prose-custom bg-transparent">
 <article class="text-gray-200 leading-relaxed">

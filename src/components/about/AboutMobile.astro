@@ -156,10 +156,11 @@ applyFilters();
 if (clearBtn) { clearBtn.addEventListener('click', () => { selectedFilter = null; clearAllHighlights(); applyFilters(); }); }
 const toggleTagsBtn = document.getElementById('toggle-tags-btn');
 if (toggleTagsBtn) {
-toggleTagsBtn.addEventListener('click', () => {
 const moreTags = document.querySelectorAll('#view-tags .more-tag');
+toggleTagsBtn.addEventListener('click', () => {
+const isHidden = moreTags[0].classList.contains('hidden');
 moreTags.forEach(tag => tag.classList.toggle('hidden'));
-toggleTagsBtn.textContent = toggleTagsBtn.textContent.includes('顯示') ? '隱藏標籤' : '顯示更多';
+toggleTagsBtn.textContent = isHidden ? '顯示較少' : `顯示更多 (${moreTags.length})`;
 });
 }
 }

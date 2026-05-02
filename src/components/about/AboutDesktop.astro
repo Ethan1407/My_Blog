@@ -66,8 +66,13 @@ lastUpdated = date.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digi
 </div>
 <footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent mt-auto">
 <div class="max-w-7xl mx-auto flex justify-between items-center">
+<div class="flex flex-col gap-2">
 <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
 Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
+</div>
+<div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
+Establish At : <span class="text-white font-bold">2026.02.16</span>
+</div>
 </div>
 <div class="flex gap-4">
 <a href="https://www.instagram.com/ethan._1407" target="_blank" class="p-2 border border-white/20 rounded-lg hover:bg-white/5 transition-all duration-300 shadow-md">
@@ -111,8 +116,7 @@ tagButtons.forEach(btn => { if (!btn.dataset.originalClass) btn.dataset.original
 function applyFilter() {
 eventItems.forEach(item => {
 const itemTags = JSON.parse(item.getAttribute('data-tags') || '[]');
-const dateText = item.querySelector('.text-right.pr-8')?.textContent || "";
-const itemYear = dateText.trim().split('-')[0].split('.')[0];
+const itemYear = item.getAttribute('data-year') || '';
 const itemCategory = item.getAttribute('data-category') || '';
 const matchTag = !activeTag || itemTags.includes(activeTag);
 const matchYear = !activeYear || itemYear === activeYear;
@@ -122,8 +126,8 @@ item.style.display = (matchTag && matchYear && matchCategory) ? '' : 'none';
 tagButtons.forEach(btn => {
 const original = btn.dataset.originalClass || '';
 const isMatch = btn.getAttribute('data-tag-name') === activeTag;
-if (isMatch) { btn.className = original + ' bg-white text-black font-bold ring-2 ring-blue-400'; } 
-else { btn.className = activeTag ? original + ' text-gray-300' : original; }
+if (isMatch) { btn.className = original.replace(/text-white/g, 'text-black') + ' bg-white font-bold ring-2 ring-blue-400'; } 
+else { btn.className = activeTag ? original.replace(/text-white/g, 'text-gray-300') : original; }
 });
 yearButtons.forEach(btn => {
 const isMatch = btn.getAttribute('data-year') === activeYear;
@@ -142,6 +146,6 @@ else clearBtn?.classList.add('hidden');
 tagButtons.forEach(btn => { btn.addEventListener('click', () => { const tagName = btn.getAttribute('data-tag-name'); activeTag = (activeTag === tagName) ? null : tagName; applyFilter(); }); });
 yearButtons.forEach(btn => { btn.addEventListener('click', () => { const year = btn.getAttribute('data-year'); activeYear = (activeYear === year) ? null : year; applyFilter(); }); });
 categoryButtons.forEach(btn => { btn.addEventListener('click', () => { const category = btn.getAttribute('data-category'); activeCategory = (activeCategory === category) ? null : category; applyFilter(); }); });
-toggleBtn?.addEventListener('click', () => { const isHidden = moreTags[0].classList.contains('hidden'); moreTags.forEach(t => t.classList.toggle('hidden')); toggleBtn.textContent = isHidden ? '顯示較少' : `顯示更多 (${moreTags.length})`; });
+toggleBtn?.addEventListener('click', () => { const isHidden = moreTags[0].classList.contains('hidden'); moreTags.forEach(t => t.classList.toggle('hidden')); toggleBtn.textContent = isHidden ? `顯示更多 (${moreTags.length})` : '顯示較少'; });
 clearBtn?.addEventListener('click', () => { activeTag = null; activeYear = null; activeCategory = null; applyFilter(); });
 </script>
