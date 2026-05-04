@@ -16,7 +16,7 @@ image: "/projects/In-school Learning Process Competition/1.jpg"
 
 在這次多元表現組的複賽中，我選擇以「AI 會議助理」作為發表主題。在準備過程中，我面臨最大的挑戰是如何讓評審理解其核心價值。我刻意去掉了過於深奧的專有名詞，將內容重新包裝，改以最簡單易懂的方式呈現。我的目標很明確：不只是展示程式碼，而是要讓台下的評審能感同身受我的製作動機，並清楚理解整個開發過程，而這段「化繁為簡」的過程，讓我對自己的專案有了更深層的檢視。
 
-AI 會議助理報告連結：[https://ethan1407.vercel.app/projects/ai-meeting-assistant](https://ethan1407.vercel.app/projects/ai-meeting-assistant)
+AI 會議助理之製作心得：[https://ethan1407.vercel.app/projects/ai-meeting-assistant](https://ethan1407.vercel.app/projects/ai-meeting-assistant)
 
 ## 二、 站上舞台：五分鐘的淋漓盡致
 
