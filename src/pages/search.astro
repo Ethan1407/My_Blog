@@ -26,12 +26,13 @@ const allSearchableContent = [...projectEntries, ...jsonEntries];
   <div class="flex flex-col min-h-screen h-screen bg-transparent overflow-y-auto">
     <Navbar />
     
-    <main class="flex-1 max-w-4xl mx-auto w-full p-8 md:p-12">
+    <main class="flex-1 max-w-6xl mx-auto w-full p-8 md:p-12">
       <header class="mb-16 border-b border-white/10 pb-10">
         <h1 class="text-5xl font-extrabold text-white mb-6 tracking-tight">Search Results</h1>
         <p id="search-status" class="text-gray-400 text-xl">
           正在檢索關鍵字：<span id="query-text" class="text-blue-400 font-bold italic"></span>
         </p>
+        <p id="result-count" class="text-gray-400 text-lg mt-4"></p>
       </header>
 
       <div id="search-results-list" class="space-y-12">
@@ -71,11 +72,13 @@ const allSearchableContent = [...projectEntries, ...jsonEntries];
   };
 
   const queryDisplay = document.getElementById('query-text');
+  const resultCount = document.getElementById('result-count');
   const searchItems = document.querySelectorAll('.search-item-box');
   const noResultsView = document.getElementById('no-results-view');
   const searchStatus = document.getElementById('search-status');
 
   if (queryDisplay) queryDisplay.textContent = rawQuery || "無";
+  if (resultCount) resultCount.textContent = '共 0 筆結果';
 
   const normalizedQuery = normalize(rawQuery);
 
@@ -103,11 +106,13 @@ const allSearchableContent = [...projectEntries, ...jsonEntries];
       }
     });
 
+    if (resultCount) resultCount.textContent = `共 ${matchCount} 筆結果`;
     if (matchCount === 0) {
       noResultsView?.classList.remove('hidden');
     }
   } else {
     if (searchStatus) searchStatus.innerHTML = '<span class="text-yellow-500/80">請在導覽列輸入關鍵字進行搜尋。</span>';
+    if (resultCount) resultCount.textContent = '共 0 筆結果';
     noResultsView?.classList.remove('hidden');
   }
 </script>
