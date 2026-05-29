@@ -4,8 +4,12 @@ import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import astronautImg from './astronaut.webp';
 const projectEntries = await getCollection('projects');
-const latestPost = projectEntries.sort((a, b) => {
-return new Date(b.data.date.replace(/\./g, '-')).getTime() - new Date(a.data.date.replace(/\./g, '-')).getTime();
+const parseProjectDate = (dateString) => {
+  const normalizedDate = String(dateString).split('-')[0].trim().replace(/\./g, '-');
+  return new Date(normalizedDate).getTime() || 0;
+};
+const latestPost = [...projectEntries].sort((a, b) => {
+  return parseProjectDate(b.data.date) - parseProjectDate(a.data.date);
 })[0];
 ---
 <section class="relative min-h-[calc(100vh-80px)] flex flex-col items-center justify-start pt-20 pb-12 px-6 bg-transparent overflow-hidden w-full">
