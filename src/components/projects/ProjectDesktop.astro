@@ -3,9 +3,9 @@
 const { entry, filteredHeadings, lastUpdated, Content, wordCount } = Astro.props;
 import { Image } from 'astro:assets';
 ---
-<div class="max-w-[1600px] mx-auto w-full flex flex-row gap-8 xl:gap-20 p-6 md:p-12 relative">
+<div class="max-w-[1600px] mx-auto w-full flex flex-row gap-8 xl:gap-20 p-6 md:p-12 relative overflow-hidden h-[calc(100vh-120px)]">
 <aside class="lg:w-[280px] shrink-0">
-<div class="sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar">
+<div class="sticky top-24 overflow-hidden">
 <h2 class="text-gray-500 font-bold text-xs uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-2">Contents</h2>
 <nav><ul class="space-y-5" id="toc-list">
 {filteredHeadings.map((h) => (
@@ -21,7 +21,7 @@ import { Image } from 'astro:assets';
 </div>
 </div>
 </aside>
-<main class="flex-1 min-w-0 max-w-4xl flex flex-col lg:pl-24">
+<main class="flex-1 min-w-0 max-w-4xl flex flex-col lg:pl-24 overflow-y-auto hide-scrollbar">
 <header class="mb-16 border-b border-white/10 pb-10">
 <h1 class="text-5xl font-extrabold mb-8 text-white tracking-tight leading-tight">{entry.data.title}</h1>
 <div class="flex flex-wrap gap-6 text-gray-400 text-lg">
@@ -56,18 +56,17 @@ import { Image } from 'astro:assets';
 </main>
 </div>
 <script is:inline>
-function updateActiveHeading() {
-const headings = document.querySelectorAll('.prose-custom h2, .prose-custom h3');
+// 使用 IntersectionObserver 来检测标题进入视口
+let currentActiveSlug = null;
+
+function setActiveLink(slug) {
+if (currentActiveSlug === slug) return;
+currentActiveSlug = slug;
+
 const tocLinks = document.querySelectorAll('.toc-link');
-if (headings.length === 0 || tocLinks.length === 0) return;
-let activeHeadingSlug = null;
-for (let heading of headings) {
-const rect = heading.getBoundingClientRect();
-if (rect.top <= 150) { activeHeadingSlug = heading.id; } else { break; }
-}
 tocLinks.forEach((link) => {
-const slug = link.getAttribute('data-heading-slug');
-if (slug === activeHeadingSlug) {
+const linkSlug = link.getAttribute('data-heading-slug');
+if (linkSlug === slug) {
 link.classList.remove('text-gray-400');
 link.classList.add('text-white', 'font-bold', 'translate-x-1');
 } else {
@@ -76,6 +75,39 @@ link.classList.add('text-gray-400');
 }
 });
 }
-window.addEventListener('scroll', updateActiveHeading, { passive: true });
-updateActiveHeading();
+
+function initializeHeadingObserver() {
+const mainElement = document.querySelector('main');
+if (!mainElement) return;
+
+const headings = Array.from(mainElement.querySelectorAll('h2, h3')).filter(h => h.id);
+if (headings.length === 0) return;
+
+// IntersectionObserver 选项：当标题进入 main 顶部 20% 的位置时触发
+const observerOptions = {
+root: mainElement,
+rootMargin: '0px 0px -80% 0px',
+threshold: 0
+};
+
+const observer = new IntersectionObserver((entries) => {
+entries.forEach((entry) => {
+if (entry.isIntersecting) {
+setActiveLink(entry.target.id);
+}
+});
+}, observerOptions);
+
+// 观察所有标题
+headings.forEach((heading) => {
+observer.observe(heading);
+});
+}
+
+// 页面加载完成后初始化
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', initializeHeadingObserver);
+} else {
+initializeHeadingObserver();
+}
 </script>
