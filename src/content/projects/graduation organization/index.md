@@ -35,6 +35,9 @@ image: "/projects/Graduation organization/1.jpg"
 
 雖然這一天非常累、非常辛苦，但我覺得這樣的經歷，遠比待在教室自習或滑手機一整天要來得充實太多了。
 
+畢聯會合照
+<img src="/projects/Graduation organization/5.jpg" alt="" />
+
 ## 畢業典禮
 
 ### 先前規劃
@@ -55,6 +58,9 @@ image: "/projects/Graduation organization/1.jpg"
 
 在忙碌的工作之餘拍了一張合照
 <img src="/projects/Graduation organization/2.jpg" alt="" />
+
+前一天的場地佈置
+<img src="/projects/Graduation organization/6.jpg" alt="" />
 
 忙了這樣一整天，中午也完全沒有休息，晚上回到家洗完澡後，真的覺得整個人非常累，眼睛也很痠，所以我那天大概十點出頭就直接躺在床上睡著了。
 
