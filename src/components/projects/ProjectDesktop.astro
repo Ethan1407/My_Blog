@@ -5,7 +5,7 @@ import { Image } from 'astro:assets';
 ---
 <div class="max-w-[1600px] mx-auto w-full flex flex-row gap-8 xl:gap-20 p-6 md:p-12 relative overflow-hidden h-[calc(100vh-120px)]">
 <aside class="lg:w-[280px] shrink-0">
-<div class="sticky top-24 overflow-hidden">
+<div class="sticky top-24 toc-scroll custom-scrollbar">
 <h2 class="text-gray-500 font-bold text-xs uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-2">Contents</h2>
 <nav><ul class="space-y-5" id="toc-list">
 {filteredHeadings.map((h) => (
@@ -55,6 +55,13 @@ import { Image } from 'astro:assets';
 </footer>
 </main>
 </div>
+<style>
+.toc-scroll {
+max-height: min(calc(14 * 1.75rem + 13 * 1.25rem + 10rem), calc(100vh - 8rem));
+overflow-y: auto;
+padding-right: 0.5rem;
+}
+</style>
 <script is:inline>
 // 使用 IntersectionObserver 来检测标题进入视口
 let currentActiveSlug = null;
