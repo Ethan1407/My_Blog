@@ -1,6 +1,8 @@
 ---
 // src/layouts/BaseLayout.astro
 import StarryBackground from '../components/StarryBackground.astro'; 
+import Analytics from '@vercel/analytics/astro';
+
 const { title } = Astro.props;
 ---
 <!DOCTYPE html>
@@ -19,6 +21,8 @@ const { title } = Astro.props;
     <StarryBackground />
 
     <slot />
+
+    <Analytics />
 
   </body>
 </html>
