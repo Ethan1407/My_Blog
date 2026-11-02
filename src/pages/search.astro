@@ -13,7 +13,7 @@ const projectEntries = await getCollection('projects');
 // 2. 格式化 JSON 經歷
 const jsonEntries = experienceData.map(item => ({
   collection: 'experience_json',
-  slug: '', 
+  id: '',
   data: { ...item },
   body: "" 
 }));

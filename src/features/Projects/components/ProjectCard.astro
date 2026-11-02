@@ -7,7 +7,7 @@
  */
 const { project } = Astro.props;
 const { title, location, summary, date, image, tags, category } = project.data;
-const slug = project.slug;
+const slug = project.id;
 
 const tagsString = JSON.stringify(tags);
 ---

@@ -3,7 +3,6 @@
  * TagSidebar 組件 (About Me 版本)
  */
 const { tags = [], years = [], categories = [] } = Astro.props;
-const topTags = tags.slice(0, 8); 
 const otherTags = tags.slice(8);
 ---
 <div class="space-y-12">
@@ -41,12 +40,12 @@ const otherTags = tags.slice(8);
             ))}
 
             {otherTags.length > 0 && (
-                <button id="toggle-tags-btn" class="mt-2 text-[11px] font-bold text-gray-500 hover:text-white transition-colors text-left pl-2">
+                <button class="toggle-tags-btn mt-2 text-[11px] font-bold text-gray-500 hover:text-white transition-colors text-left pl-2">
                     顯示更多 ({otherTags.length})
                 </button>
             )}
             
-            <button id="clear-all-filters" class="hidden mt-2 text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors text-left pl-1 uppercase tracking-tighter">
+            <button class="clear-all-filters hidden mt-2 text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors text-left pl-1 uppercase tracking-tighter">
                 ✕ 重置所有過濾
             </button>
         </div>

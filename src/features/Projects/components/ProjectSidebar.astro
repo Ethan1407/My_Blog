@@ -6,7 +6,6 @@
  * 3. 功能：支援標籤與月份的複合過濾
  */
 const { tags = [], yearlyStats = [], categories = [] } = Astro.props;
-const topTags = tags.slice(0, 5);
 const otherTags = tags.slice(5);
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -45,12 +44,12 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
             ))}
 
             {otherTags.length > 0 && (
-                <button id="toggle-tags-btn" class="mt-1 text-[11px] font-bold text-gray-500 hover:text-white transition-colors text-center py-1 border border-dashed border-white/10 rounded-md">
+                <button class="toggle-tags-btn mt-1 text-[11px] font-bold text-gray-500 hover:text-white transition-colors text-center py-1 border border-dashed border-white/10 rounded-md">
                     顯示更多 ({otherTags.length})
                 </button>
             )}
             
-            <button id="clear-all-filters" class="hidden mt-2 text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors text-left pl-1 uppercase tracking-tighter">
+            <button class="clear-all-filters hidden mt-2 text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors text-left pl-1 uppercase tracking-tighter">
                 ✕ 重置所有過濾
             </button>
         </div>

@@ -31,7 +31,7 @@ const nextItemStartDate = nextItemDate ? nextItemDate.split('-')[0] : null;
 const nextYear = nextItemStartDate ? nextItemStartDate.split('.')[0] : null;
 const isYearEnd = currentYear !== nextYear;
 const isProject = item.collection === 'projects';
-const projectPath = isProject ? '/projects/' + item.slug : null;
+const projectPath = isProject ? '/projects/' + item.id : null;
 return { title, date: rawDate, displayParts, location, category, summary, tags, tagsString: JSON.stringify(tags), projectPath, isYearEnd, currentYear };
 });
 ---

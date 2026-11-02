@@ -14,6 +14,7 @@
     const isMobile = window.innerWidth < 768; // md breakpoint
     const starCount = isMobile ? 60 : 180; // 粒子數量 (手機60個，桌面180個)
     const connectionDist = 120; // 連線的最大距離
+    const connectionDistSq = connectionDist * connectionDist;
     const mouseRadius = 150; // 滑鼠排斥影響範圍
     
     // 🔵 修改為深藍色背景
@@ -80,9 +81,13 @@
         // 4. 連線邏輯
         for (let j = i + 1; j < stars.length; j++) {
           const target = stars[j];
-          const distNext = Math.sqrt(Math.pow(star.x - target.x, 2) + Math.pow(star.y - target.y, 2));
-          
-          if (distNext < connectionDist) {
+          const ddx = star.x - target.x;
+          const ddy = star.y - target.y;
+          const distSq = ddx * ddx + ddy * ddy;
+
+          // 先用平方距離過濾，只有在範圍內才開根號，減少每幀的運算量
+          if (distSq < connectionDistSq) {
+            const distNext = Math.sqrt(distSq);
             ctx.beginPath();
             ctx.moveTo(star.x, star.y);
             ctx.lineTo(target.x, target.y);
