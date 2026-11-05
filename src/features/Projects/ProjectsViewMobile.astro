@@ -72,21 +72,6 @@ const viewP = document.getElementById('view-posts'); const viewF = document.getE
 if (!btnP || !btnF) return;
 btnP.onclick = () => { viewP.style.display = 'block'; viewF.style.display = 'none'; btnP.className = "flex-1 py-4 flex flex-col items-center gap-1.5 text-[11px] font-bold text-white bg-blue-600/10 border-b-2 border-blue-500"; btnF.className = "flex-1 py-4 flex flex-col items-center gap-1.5 text-[11px] font-bold text-gray-500 border-b-2 border-transparent"; window.scrollTo({ top: 0, behavior: 'smooth' }); };
 btnF.onclick = () => { viewP.style.display = 'none'; viewF.style.display = 'block'; btnF.className = "flex-1 py-4 flex flex-col items-center gap-1.5 text-[11px] font-bold text-white bg-blue-600/10 border-b-2 border-blue-500"; btnP.className = "flex-1 py-4 flex flex-col items-center gap-1.5 text-[11px] font-bold text-gray-500 border-b-2 border-transparent"; };
-const tagBtns = document.querySelectorAll('#view-filter .tag-button');
-const cardTags = document.querySelectorAll('#view-posts .tag-button');
-tagBtns.forEach(btn => {
-btn.addEventListener('click', () => {
-const tagName = btn.dataset.tagName;
-const isActive = btn.classList.contains('bg-white');
-cardTags.forEach(cTag => {
-if (cTag.dataset.tagName === tagName && !isActive) {
-cTag.className = "tag-button text-sm text-black bg-white px-2 py-0.5 rounded-md border border-white transition-all font-bold";
-} else {
-cTag.className = "tag-button text-sm text-blue-300/80 bg-blue-400/10 px-2 py-0.5 rounded-md border border-blue-400/20 transition-all font-bold";
-}
-});
-});
-});
 }
 initProjectsToggle();
 document.addEventListener('astro:page-load', initProjectsToggle);

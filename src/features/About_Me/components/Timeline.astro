@@ -33,20 +33,28 @@ const nextYear = nextItemStartDate ? nextItemStartDate.split('.')[0] : null;
 const isYearEnd = currentYear !== nextYear;
 const isProject = item.collection === 'projects';
 const projectPath = isProject ? '/projects/' + item.id : null;
-return { month: startDate.split('.').slice(0, 2).join('.'), period: getPeriod(rawDate), milestone, title, date: rawDate, displayParts, location, category, summary, tags, tagsString: JSON.stringify(tags), projectPath, isYearEnd, currentYear };
+return { startDate, month: startDate.split('.').slice(0, 2).join('.'), period: getPeriod(rawDate), milestone, title, date: rawDate, displayParts, location, category, summary, tags, tagsString: JSON.stringify(tags), projectPath, isYearEnd, currentYear };
 });
+// Now 的位置：放在第一個「已經發生（開始日 <= 今天）」的項目前面，之前的都是未來的活動。
+// 這裡用 build 當下的日期先排一次；網頁開啟後下方 script 會再依「當天日期」重新調整。
+const todayStr = (() => { const d = new Date(); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`; })();
+const nowIndexRaw = processedEvents.findIndex((e) => e.startDate.localeCompare(todayStr) <= 0);
+const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
 ---
 <div class="relative">
 <h2 class="text-3xl font-bold mb-16 tracking-widest text-white">Timeline</h2>
 <div class="absolute left-[10.5rem] top-24 bottom-10 w-[2px] bg-white hidden md:block opacity-50 z-0"></div>
 <div class="space-y-16 relative">
-<div class="flex flex-col md:flex-row items-start md:items-center mb-10 md:mb-20 relative h-auto md:h-8">
+{processedEvents.map((evt, index) => (
+<>
+{index === nowIndex && (
+<div class="timeline-now flex flex-col md:flex-row items-start md:items-center mb-10 md:mb-20 relative h-auto md:h-8">
 <div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-xl text-blue-400 md:text-gray-400 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">Present</div>
 <div class="absolute left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242] hidden md:block"></div>
 <div class="md:pl-12 font-bold text-2xl tracking-widest text-white">Now</div>
 </div>
-{processedEvents.map((evt, index) => (
-<div key={index}>
+)}
+<div class="timeline-item" data-start={evt.startDate}>
 {evt.milestone ? (
 <div class="timeline-event milestone-event relative flex flex-col md:flex-row items-start md:items-center my-4 md:my-8" data-month={evt.month} data-period={evt.period} data-tags={evt.tagsString} data-category={evt.category}>
 <div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-lg tracking-wider text-amber-300 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">{evt.date}</div>
@@ -103,7 +111,132 @@ return { month: startDate.split('.').slice(0, 2).join('.'), period: getPeriod(ra
 </div>
 )}
 </div>
+</>
 ))}
+{nowIndex === processedEvents.length && (
+<div class="timeline-now flex flex-col md:flex-row items-start md:items-center mb-10 md:mb-20 relative h-auto md:h-8">
+<div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-xl text-blue-400 md:text-gray-400 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">Present</div>
+<div class="absolute left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242] hidden md:block"></div>
+<div class="md:pl-12 font-bold text-2xl tracking-widest text-white">Now</div>
+</div>
+)}
 </div>
 <div class="h-40"></div>
 </div>
+
+<script>
+  // 1. 依「今天」的日期把 Now 移到正確位置（不用重新部署也會隨時間更新）
+  // 2. 若 Now 上方還有未來的活動：開啟時自動捲動，讓 Now 維持在畫面上方，並提示可往上滑查看
+  function getScrollParent(el: HTMLElement): HTMLElement | null {
+    let p = el.parentElement;
+    while (p) {
+      const oy = getComputedStyle(p).overflowY;
+      if ((oy === 'auto' || oy === 'scroll') && p.scrollHeight > p.clientHeight) return p;
+      p = p.parentElement;
+    }
+    return null;
+  }
+
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  function isShown(item: Element) {
+    const evt = item.querySelector<HTMLElement>('.timeline-event');
+    return !!evt && evt.style.display !== 'none' && !evt.classList.contains('period-hidden');
+  }
+
+  function scrollBoxTo(box: HTMLElement, el: HTMLElement, extraOffset: number, behavior: ScrollBehavior) {
+    const sticky = box.querySelector<HTMLElement>('.sticky');
+    const offset = (sticky && sticky.offsetParent !== null ? sticky.offsetHeight : 0) + extraOffset;
+    const top = el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - offset;
+    box.scrollTo({ top: Math.max(0, top), behavior });
+  }
+
+  /**
+   * 捲動時間軸：
+   * - 沒有篩選：讓 Now 回到畫面上方（Now 上方沒有未來活動時直接回到最上面）
+   * - 有篩選：跳到「符合篩選的最新活動」（不論是否已發生）
+   */
+  function scrollTimeline(now: HTMLElement, behavior: ScrollBehavior) {
+    if (now.offsetParent === null) return; // 目前看不到（例如手機版在其他分頁）
+    const list = now.parentElement;
+    const box = getScrollParent(now);
+    if (!list || !box) return;
+
+    const items = Array.from(list.children).filter((el) => el.classList.contains('timeline-item')) as HTMLElement[];
+    const shown = items.filter(isShown);
+    const filtering = shown.length < items.length;
+
+    if (!filtering) {
+      if (now.dataset.upcoming) scrollBoxTo(box, now, 72, behavior); // 72px 留給上方「往上滑」提示
+      else box.scrollTo({ top: 0, behavior });
+      return;
+    }
+    if (shown.length === 0) return;
+
+    // 時間軸由新到舊排列，第一個看得到的就是符合篩選的最新活動（不論是否已發生）
+    scrollBoxTo(box, shown[0], 32, behavior);
+  }
+
+  function placeNow() {
+    const today = todayStr();
+    document.querySelectorAll<HTMLElement>('.timeline-now').forEach((now) => {
+      const list = now.parentElement;
+      if (!list) return;
+      const items = Array.from(list.querySelectorAll<HTMLElement>(':scope > .timeline-item'));
+      const firstPast = items.find((el) => (el.dataset.start || '').localeCompare(today) <= 0);
+      if (firstPast) list.insertBefore(now, firstPast);
+      else list.appendChild(now);
+
+      now.querySelector('.timeline-upcoming-hint')?.remove();
+      const hint = document.createElement('button');
+      hint.type = 'button';
+      hint.className = 'timeline-upcoming-hint absolute -top-12 left-0 md:left-[13.5rem] flex items-center gap-1.5 text-xs font-mono tracking-widest text-gray-400 hover:text-white transition-colors';
+      hint.addEventListener('click', () => {
+        const box = getScrollParent(now);
+        box?.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      now.appendChild(hint);
+      updateUpcoming(now);
+
+      // 篩選（類型 / 時期 / 標籤 / 動態）改變顯示狀態時，重新計算即將到來的活動數
+      let queued = false;
+      new MutationObserver((records) => {
+        if (queued || records.every((r) => (r.target as HTMLElement).classList?.contains('timeline-upcoming-hint'))) return;
+        queued = true;
+        requestAnimationFrame(() => { queued = false; updateUpcoming(now); scrollTimeline(now, 'smooth'); });
+      }).observe(list, { subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+    });
+  }
+
+  // 只計算 Now 上方「目前沒被篩選隱藏」的活動
+  function updateUpcoming(now: HTMLElement) {
+    const list = now.parentElement;
+    const hint = now.querySelector<HTMLElement>('.timeline-upcoming-hint');
+    if (!list || !hint) return;
+    let count = 0;
+    for (const el of Array.from(list.children)) {
+      if (el === now) break;
+      if (el.classList.contains('timeline-item') && isShown(el)) count++;
+    }
+    if (count > 0) {
+      now.dataset.upcoming = String(count);
+      const text = `↑ 往上滑還有 ${count} 個即將到來的活動`;
+      if (hint.textContent !== text) hint.textContent = text;
+      if (hint.style.display !== '') hint.style.display = '';
+    } else {
+      delete now.dataset.upcoming;
+      if (hint.style.display !== 'none') hint.style.display = 'none';
+    }
+  }
+
+  placeNow();
+  document.querySelectorAll<HTMLElement>('.timeline-now').forEach((now) => scrollTimeline(now, 'auto'));
+
+  // 手機版：時間軸在分頁裡，切換到「時間軸」分頁時再捲動
+  document.getElementById('btn-timeline')?.addEventListener('click', () => {
+    requestAnimationFrame(() => document.querySelectorAll<HTMLElement>('.timeline-now').forEach((now) => scrollTimeline(now, 'auto')));
+  });
+</script>

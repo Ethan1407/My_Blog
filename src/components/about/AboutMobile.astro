@@ -101,27 +101,19 @@ else if (selectedFilter.startsWith('month:')) { shouldShow = evt.dataset.month =
 evt.style.display = shouldShow ? 'block' : 'none';
 });
 timelineTagBtns.forEach(tBtn => {
-if (activeTagName && tBtn.dataset.tagName === activeTagName) {
-tBtn.classList.remove('text-blue-300/80', 'bg-blue-400/10');
-tBtn.classList.add('bg-white', 'text-black', 'font-black');
-} else {
-tBtn.classList.add('text-blue-300/80', 'bg-blue-400/10');
-tBtn.classList.remove('bg-white', 'text-black', 'font-black');
-}
+tBtn.classList.toggle('filter-active', !!activeTagName && tBtn.dataset.tagName === activeTagName);
 });
 if (clearBtn) clearBtn.style.display = selectedFilter ? 'block' : 'none';
 }
 function clearAllHighlights() {
-tagButtons.forEach(btn => { btn.classList.remove('bg-white', 'text-[#424242]'); btn.classList.add('bg-[#5a5a5a]/60', 'text-white'); });
-categoryItems.forEach(item => { item.classList.remove('text-white'); item.classList.add('text-gray-300'); });
-monthButtons.forEach(btn => { btn.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'); });
+[...tagButtons, ...categoryItems, ...monthButtons].forEach(el => el.classList.remove('filter-active'));
 }
 tagButtons.forEach(btn => {
 btn.addEventListener('click', () => {
 const tagName = btn.dataset.tagName;
 const filterKey = 'tag:' + tagName;
 if (selectedFilter === filterKey) { selectedFilter = null; clearAllHighlights(); }
-else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('bg-white', 'text-[#424242]'); btn.classList.remove('bg-[#5a5a5a]/60', 'text-white'); }
+else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('filter-active'); }
 applyFilters();
 });
 });
@@ -129,16 +121,16 @@ categoryItems.forEach(item => {
 item.addEventListener('click', () => {
 const category = item.dataset.category;
 const filterKey = 'category:' + category;
-if (selectedFilter === filterKey) { selectedFilter = null; item.classList.remove('text-white'); item.classList.add('text-gray-300'); }
-else { clearAllHighlights(); selectedFilter = filterKey; item.classList.add('text-white'); item.classList.remove('text-gray-300'); }
+if (selectedFilter === filterKey) { selectedFilter = null; item.classList.remove('filter-active'); }
+else { clearAllHighlights(); selectedFilter = filterKey; item.classList.add('filter-active'); }
 applyFilters();
 });
 });
 monthButtons.forEach(btn => {
 btn.addEventListener('click', () => {
 const filterKey = 'month:' + btn.dataset.monthYear;
-if (selectedFilter === filterKey) { selectedFilter = null; btn.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'); }
-else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('text-blue-400', 'font-bold', 'bg-white/10'); }
+if (selectedFilter === filterKey) { selectedFilter = null; btn.classList.remove('filter-active'); }
+else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('filter-active'); }
 applyFilters();
 });
 });

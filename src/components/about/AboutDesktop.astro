@@ -105,18 +105,16 @@ item.style.display = (matchTag && matchMonth && matchCategory) ? '' : 'none';
 tagButtons.forEach(btn => {
 const original = btn.dataset.originalClass || '';
 const isMatch = btn.getAttribute('data-tag-name') === activeTag;
-if (isMatch) { btn.className = original.replace(/text-white/g, 'text-black') + ' bg-white font-bold ring-2 ring-blue-400'; } 
-else { btn.className = activeTag ? original.replace(/text-white/g, 'text-gray-300') : original; }
+btn.className = original;
+btn.classList.toggle('filter-active', isMatch);
 });
 monthButtons.forEach(btn => {
 const isMatch = btn.getAttribute('data-month-year') === activeMonth;
-btn.classList.toggle('text-blue-400', isMatch); btn.classList.toggle('font-bold', isMatch); btn.classList.toggle('bg-white/10', isMatch);
+btn.classList.toggle('filter-active', isMatch);
 });
 categoryButtons.forEach(btn => {
 const isMatch = btn.getAttribute('data-category') === activeCategory;
-btn.classList.toggle('text-white', isMatch || !activeCategory);
-btn.classList.toggle('font-bold', isMatch);
-btn.classList.toggle('text-gray-300', !!activeCategory && !isMatch);
+btn.classList.toggle('filter-active', isMatch);
 });
 if (activeTag || activeMonth || activeCategory) clearBtn?.classList.remove('hidden');
 else clearBtn?.classList.add('hidden');

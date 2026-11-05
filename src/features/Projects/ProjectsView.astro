@@ -138,22 +138,7 @@ const lastUpdated = await getLastUpdated("2026.02.15");
                 const tagName = btn.getAttribute('data-tag-name');
                 const isMatch = tagName === activeTag;
 
-                if (isMatch) {
-                    // 選中狀態：白底、深色字、藍色光環
-                    btn.classList.add('bg-white', 'text-[#424242]', 'ring-2', 'ring-blue-400');
-                    btn.classList.remove('bg-blue-400/10', 'text-blue-300/80', 'bg-[#5a5a5a]/60', 'text-white');
-                } else {
-                    // 未選中狀態：恢復原始樣式 (根據它是卡片標籤還是側邊欄標籤)
-                    btn.classList.remove('bg-white', 'text-[#424242]', 'ring-2', 'ring-blue-400');
-                
-                    const isInsideCard = btn.closest('.project-card') !== null;
-                    if (isInsideCard) {
-                        btn.classList.add('bg-blue-400/10', 'text-blue-300/80');
-                        btn.classList.remove('text-white');
-                    } else {
-                        btn.classList.add('bg-[#5a5a5a]/60', 'text-white');
-                    }
-                }
+                btn.classList.toggle('filter-active', isMatch);
             });
 
             // 篩選時隱藏階段分隔線，避免出現空的區段
@@ -171,11 +156,10 @@ const lastUpdated = await getLastUpdated("2026.02.15");
                 const cat = item.getAttribute('data-category');
                 if (activeCategory === cat) activeCategory = null;
                 else {
-                    categoryItems.forEach(i => i.classList.remove('text-blue-400', 'font-bold'));
+                    categoryItems.forEach(i => i.classList.remove('filter-active'));
                     activeCategory = cat;
                 }
-                item.classList.toggle('text-blue-400', activeCategory === cat);
-                item.classList.toggle('font-bold', activeCategory === cat);
+                item.classList.toggle('filter-active', activeCategory === cat);
                 applyFilters();
             });
         });
@@ -195,12 +179,10 @@ const lastUpdated = await getLastUpdated("2026.02.15");
                 const monYear = btn.getAttribute('data-month-year');
                 if (activeMonth === monYear) activeMonth = null;
                 else {
-                    monthButtons.forEach(b => b.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'));
+                    monthButtons.forEach(b => b.classList.remove('filter-active'));
                     activeMonth = monYear;
                 }
-                btn.classList.toggle('text-blue-400', activeMonth === monYear);
-                btn.classList.toggle('font-bold', activeMonth === monYear);
-                btn.classList.toggle('bg-white/10', activeMonth === monYear);
+                btn.classList.toggle('filter-active', activeMonth === monYear);
                 applyFilters();
             });
         });
@@ -208,8 +190,8 @@ const lastUpdated = await getLastUpdated("2026.02.15");
         // --- 重置所有過濾 ---
         clearBtn?.addEventListener('click', () => {
             activeCategory = null; activeTag = null; activeMonth = null;
-            categoryItems.forEach(i => i.classList.remove('text-blue-400', 'font-bold'));
-            monthButtons.forEach(b => b.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'));
+            categoryItems.forEach(i => i.classList.remove('filter-active'));
+            monthButtons.forEach(b => b.classList.remove('filter-active'));
             applyFilters();
         });
 
