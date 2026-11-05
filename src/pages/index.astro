@@ -9,7 +9,7 @@ import HomeMobile from '@/components/home/HomeMobile.astro';
 const lastUpdated = await getLastUpdated("2026.02.22");
 ---
 <BaseLayout title="Home | Ethan Chen">
-<div class="flex flex-col min-h-screen bg-transparent">
+<div class="flex flex-col h-screen overflow-y-auto bg-transparent">
 <Navbar />
 <main class="flex-1 flex flex-col">
 <div class="hidden lg:block flex-1">
