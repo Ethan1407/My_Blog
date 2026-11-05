@@ -5,7 +5,7 @@ summary: "星期六一早就坐客運殺到清大，開啟了長達五小時的C
 date: "2025.05.24"
 category: "競賽"
 tags: ["CTF", "資安", "資訊"]
-image: "/projects/MyFirstCTF/MyFirstCTF.jpg"
+image: "./MyFirstCTF.jpg"
 ---
 
 自從一年前參加過元智大學的資安活動後，我就對這個領域產生了濃厚興趣。雖然學校沒有專門的資安課程，但我總會利用課餘時間自學，並積極尋找參賽機會。這次前往清華大學參加 MyFirstCTF，對我來說不僅是一場技術檢測，更是一段難忘的旅程。

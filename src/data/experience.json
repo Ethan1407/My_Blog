@@ -1,10 +1,20 @@
 [
   {
     "date": "2026.08.30",
-    "title": "↑大學~",
+    "title": "進入大學",
     "location": "",
     "category": "",
-    "summary": "",
+    "summary": "國立中央大學 · 以上為大學時期的經歷",
+    "milestone": true,
+    "tags": []
+  },
+  {
+    "date": "2023.08.30",
+    "title": "進入高中",
+    "location": "",
+    "category": "",
+    "summary": "內湖高中 · 以上為高中時期的經歷",
+    "milestone": true,
     "tags": []
   },
   {

@@ -4,6 +4,8 @@ import { getLastUpdated } from '@/utils/lastUpdated';
 import { getCollection } from 'astro:content';
 import ProjectCard from './components/ProjectCard.astro';
 import ProjectSidebar from './components/ProjectSidebar.astro';
+import ProjectMilestone from './components/ProjectMilestone.astro';
+import { withMilestones } from '@/utils/milestones';
 const allProjects = await getCollection('projects');
 const tagMap = {};
 allProjects.forEach(p => { p.data.tags.forEach(t => { tagMap[t] = (tagMap[t] || 0) + 1; }); });
@@ -29,7 +31,7 @@ months: Object.entries(months).sort((a, b) => monthNames.indexOf(b[0]) - monthNa
 const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.data.date));
 const lastUpdated = await getLastUpdated("2026.02.15");
 ---
-<div data-projects-root class="flex flex-col w-full bg-transparent">
+<div data-projects-root data-period-root class="flex flex-col w-full bg-transparent">
 <header class="p-10 pt-6 border-b border-white/10 w-full text-center bg-gradient-to-b from-blue-900/10 to-transparent flex-shrink-0">
 <h1 class="text-4xl font-black text-white mb-2 tracking-tighter uppercase">Projects</h1>
 <p class="text-blue-400/60 text-xs font-mono tracking-[0.3em]">EXPLORE MY DEVELOPMENT PORTFOLIO</p>
@@ -46,11 +48,11 @@ const lastUpdated = await getLastUpdated("2026.02.15");
 </div>
 <main class="w-full flex-1 overflow-y-auto">
 <div id="view-posts" class="p-6 w-full">
-<div class="space-y-6">{sortedProjects.map(project => (<ProjectCard project={project} />))}</div>
+<div class="space-y-6">{withMilestones(sortedProjects, p => p.data.date).map(entry => (entry.type === 'milestone' ? <ProjectMilestone milestone={entry.milestone} /> : <ProjectCard project={entry.item} />))}</div>
 <div class="h-20"></div>
 </div>
 <div id="view-filter" class="p-6 w-full" style="display: none;">
-<ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} categories={categories} />
+<ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} categories={categories} dates={sortedProjects.map(p => p.data.date)} />
 <div class="h-20"></div>
 </div>
 </main>

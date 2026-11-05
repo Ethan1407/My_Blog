@@ -5,7 +5,7 @@ summary: "鑽研 EV3 邏輯與策略取捨，在比賽挑戰中學會臨場應�
 date: "2024.05.26"
 category: "競賽"
 tags: ["EV3", "資訊"]
-image: "/projects/EV3competition/EV3.jpg"
+image: "./EV3.jpg"
 ---
 
 ## 一、 幸運的入場券：從抽籤開始的挑戰
@@ -20,7 +20,7 @@ image: "/projects/EV3competition/EV3.jpg"
 
 競賽地圖的照片：
 
-<img src="/projects/EV3competition/1.jpg" alt="圖片描述" />
+![圖片描述](./1.jpg)
 
 ## 三、 學會「取捨」：比賽中的戰術與策略
 
@@ -38,4 +38,4 @@ image: "/projects/EV3competition/EV3.jpg"
 雖然成績不如預期，心中難免感到遺憾，但這場比賽教會我們：技術再好，也必須考量臨場變因與硬體極限。這三個月的努力並沒有白費，這些經驗後來也成了我們與日本交流時的珍貴話題。這場旅程讓我們深刻體會到，比賽的意義不只在於獎牌，更在於解決問題的韌性與團隊合作的回憶。
 
 得獎照片:
-<img src="/projects/EV3competition/2.jpg" alt="image" />
+![image](./2.jpg)

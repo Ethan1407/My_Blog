@@ -5,7 +5,7 @@ summary: "在百人海選中脫穎而出，以 AI 專案奪得校內特優並晉
 date: "2026.04.20"
 category: "競賽"
 tags: ["自主學習", "資訊"]
-image: "/projects/In-school Learning Process Competition/1.jpg"
+image: "./1.jpg"
 ---
 
 ## 學習歷程檔案競賽：從百人海選到特優的實踐之路
@@ -26,7 +26,7 @@ AI 會議助理之製作心得：[https://ethan1407.vercel.app/projects/ai-meeti
 
 發表照片：
 
-<img src="/projects/In-school Learning Process Competition/2.jpg" alt="發表照片" />
+![發表照片](./2.jpg)
 
 ## 三、 意外的驚喜：通往更廣闊舞台的門票
 

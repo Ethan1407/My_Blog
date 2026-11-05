@@ -5,7 +5,8 @@
  * 2. 視覺：維持極小間距與高資訊密度排版
  * 3. 功能：支援標籤與月份的複合過濾
  */
-const { tags = [], yearlyStats = [], categories = [] } = Astro.props;
+import PeriodFilter from '@/components/PeriodFilter.astro';
+const { tags = [], yearlyStats = [], categories = [], dates = [] } = Astro.props;
 const otherTags = tags.slice(5);
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -27,6 +28,8 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
             ))}
         </ul>
     </section>
+
+    <PeriodFilter dates={dates} />
 
     <section>
         <h2 class="text-lg font-bold mb-4 tracking-widest border-l-4 border-white pl-3 text-white uppercase">標籤</h2>

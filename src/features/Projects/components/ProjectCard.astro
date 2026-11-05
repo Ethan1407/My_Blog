@@ -7,6 +7,8 @@
  */
 const { project } = Astro.props;
 const { title, location, summary, date, image, tags, category } = project.data;
+import { getPeriod } from '@/utils/milestones';
+import CoverImage from '@/components/CoverImage.astro';
 const slug = project.id;
 
 const tagsString = JSON.stringify(tags);
@@ -16,12 +18,13 @@ const tagsString = JSON.stringify(tags);
     data-tags={tagsString}
     data-category={category}
     data-date={date}
+    data-period={getPeriod(date)}
     class="project-card block bg-[#5a5a5a]/40 hover:bg-[#5a5a5a]/60 rounded-xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-2xl border border-white/5 relative overflow-hidden mb-8"
 >
     <div class="flex flex-col md:flex-row gap-6">
         {image && (
             <div class="md:w-1/3 aspect-video bg-gray-600 rounded-lg overflow-hidden border border-white/10">
-                <img src={image} alt={title} class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                <CoverImage src={image} alt={title} width={800} class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
             </div>
         )}
 

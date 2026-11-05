@@ -22,19 +22,28 @@
 * **📂 Projects**: 集中展示專案細節。涵蓋資訊安全 CTF 紀錄、Python 應用、Discord 機器人等實戰作品。
 * **🚴 Hobbies**: 熱血生活記事。記錄 113km 鐵人三項、武嶺騎行與 Minecraft 建築創作，展現代碼以外的挑戰精神。
 
-## ✍️ 新增貼文教學 
-> **⚠️ 警告：路徑不對會導致圖片 404，請務必嚴格執行以下流程：**
-1. **建立目錄**: 於 `/src/content/projects` 下新增一個資料夾 (例如：`New-Project`)。
-2. **存入檔案**: 將該文章的 `.md` 檔與內文所需的所有照片直接放入上述資料夾。
-3. **處理主要縮圖 (重要)**: 若要在 Projects 列表頁正常顯示主圖，需**額外複製一份該照片**到 `public/projects/` 下對應的資料夾中（若資料夾不存在請手動建立），這樣才能確保路徑完全正確。
-4. **檢查 Frontmatter**: 確認 MD 檔頂部的 YAML 設定如下（注意 image 路徑）：
+## ✍️ 新增貼文教學
+每篇文章的文字與照片都放在**同一個資料夾**，不需要再另外複製到 `public/`。
+
+1. **建立資料夾**：在 `src/content/projects/` 下新增一個資料夾（例如 `New Project`）。
+2. **放入檔案**：把 `index.md` 和這篇文章用到的照片都放進這個資料夾。
+3. **Frontmatter**：封面用 `./` 開頭的相對路徑（不要封面可寫 `null`，也可以填完整網址 `https://...`）：
 ```markdown
+---
 title: "你的專案名稱"
 date: "2026.02.20"
-category: "資訊安全"
+category: "競賽"
 tags: ["CTF", "Python"]
-image: "projects/圖片所在的資料夾名稱/圖片檔名"
+image: "./cover.jpg"
+---
 ```
+4. **內文插入照片**：使用 Markdown 語法，同樣用 `./` 開頭：
+```markdown
+![照片說明](./1.jpg)
+```
+5. **上傳前先檢查**：執行 `npm run build`（或只跑 `npm run check:images`）。build 前會自動執行 `scripts/check-images.mjs`，若照片不存在或檔名**大小寫**不符（Windows 不分大小寫、Vercel 會分），會直接列出錯誤並停止。
+
+> 💡 照片會由 Astro（使用 `sharp`）自動壓縮並轉成 WebP，不需要自己先縮圖。
 
 ## 🧪 技術棧
 - **Frontend**: Astro, TypeScript, Tailwind CSS

@@ -1,0 +1,20 @@
+---
+/**
+ * 文章封面圖
+ * - 本機照片（與 index.md 放在同一資料夾，frontmatter 寫 "./xxx.jpg"）→ 由 Astro 自動壓縮、轉成 WebP
+ * - 網址（https://...）→ 直接使用原圖
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+    src: ImageMetadata | string;
+    alt: string;
+    width?: number;
+    class?: string;
+}
+const { src, alt, width = 800, class: className } = Astro.props;
+---
+{typeof src === 'string'
+    ? <img src={src} alt={alt} class={className} loading="lazy" decoding="async" />
+    : <Image src={src} alt={alt} width={width} class={className} />}

@@ -2,6 +2,7 @@
 /**
  * Timeline 組件：保留原始所有預處理邏輯，僅優化手機版空間排版
  */
+import { getPeriod } from '@/utils/milestones';
 const { events = [] } = Astro.props;
 const sortedEvents = [...events].sort((a, b) => {
 const dateAStr = a.data?.date || "0000.00.00";
@@ -11,7 +12,7 @@ const dateB = new Date(dateBStr.replace(/\./g, '-')).getTime();
 return dateB - dateA;
 });
 const processedEvents = sortedEvents.map((item, index) => {
-const { title, date, location, category, summary, tags = [] } = item.data;
+const { title, date, location, category, summary, tags = [], milestone = false } = item.data;
 const rawDate = String(date || '');
 let displayParts = [rawDate];
 if (rawDate.includes('-')) {
@@ -32,7 +33,7 @@ const nextYear = nextItemStartDate ? nextItemStartDate.split('.')[0] : null;
 const isYearEnd = currentYear !== nextYear;
 const isProject = item.collection === 'projects';
 const projectPath = isProject ? '/projects/' + item.id : null;
-return { title, date: rawDate, displayParts, location, category, summary, tags, tagsString: JSON.stringify(tags), projectPath, isYearEnd, currentYear };
+return { month: startDate.split('.').slice(0, 2).join('.'), period: getPeriod(rawDate), milestone, title, date: rawDate, displayParts, location, category, summary, tags, tagsString: JSON.stringify(tags), projectPath, isYearEnd, currentYear };
 });
 ---
 <div class="relative">
@@ -46,7 +47,27 @@ return { title, date: rawDate, displayParts, location, category, summary, tags, 
 </div>
 {processedEvents.map((evt, index) => (
 <div key={index}>
-<div class="timeline-event flex flex-col md:flex-row items-start group relative" data-tags={evt.tagsString} data-category={evt.category} data-year={evt.currentYear}>
+{evt.milestone ? (
+<div class="timeline-event milestone-event relative flex flex-col md:flex-row items-start md:items-center my-4 md:my-8" data-month={evt.month} data-period={evt.period} data-tags={evt.tagsString} data-category={evt.category}>
+<div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-lg tracking-wider text-amber-300 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">{evt.date}</div>
+<div class="absolute left-[10.5rem] -translate-x-1/2 z-10 hidden md:flex items-center justify-center w-10 h-10">
+<span class="absolute inline-flex w-full h-full rounded-full bg-amber-400/40 animate-ping"></span>
+<span class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 ring-4 ring-[#424242] shadow-[0_0_24px_rgba(251,191,36,0.6)]">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+</span>
+</div>
+<div class="flex-1 md:pl-12 w-full">
+<div class="relative overflow-hidden rounded-2xl p-[1.5px] bg-gradient-to-r from-amber-300 via-orange-400 to-pink-500 shadow-[0_10px_40px_rgba(251,146,60,0.25)]">
+<div class="relative rounded-[calc(1rem-1.5px)] bg-[#2b2b2b]/90 backdrop-blur-sm px-6 py-5">
+<div class="text-xs font-mono font-bold tracking-[0.3em] uppercase text-amber-300/90 mb-1">New Chapter</div>
+<h3 class="text-2xl md:text-3xl font-extrabold tracking-wide bg-gradient-to-r from-amber-200 via-orange-300 to-pink-300 bg-clip-text text-transparent">🎓 {evt.title}</h3>
+{evt.summary && (<p class="mt-2 text-gray-300 text-base md:text-lg">{evt.summary}</p>)}
+</div>
+</div>
+</div>
+</div>
+) : (
+<div class="timeline-event flex flex-col md:flex-row items-start group relative" data-month={evt.month} data-period={evt.period} data-tags={evt.tagsString} data-category={evt.category}>
 <div class={"w-full md:w-[10.5rem] text-left md:text-right md:pr-8 pt-1 font-bold text-lg tracking-wider text-blue-400 md:text-gray-300 flex-shrink-0 mb-1 md:mb-0 " + (evt.displayParts.length === 1 ? 'whitespace-nowrap' : '')}>
 {evt.displayParts.length > 1 ? evt.displayParts.map((part, i) => (<span class={i > 0 ? 'block' : ''}>{part}</span>)) : evt.date}
 </div>
@@ -74,6 +95,7 @@ return { title, date: rawDate, displayParts, location, category, summary, tags, 
 </ul>
 </div>
 </div>
+)}
 {evt.isYearEnd && (
 <div class="flex flex-row items-center my-16 md:my-20 relative h-10">
 <div class="w-auto md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-3xl text-gray-400">{evt.currentYear}</div>

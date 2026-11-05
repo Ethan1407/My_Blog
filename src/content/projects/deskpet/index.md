@@ -5,7 +5,7 @@ summary: "製作桌寵來偵測螢幕使用時間和放置小工具"
 date: "2026.02.14"
 category: "專題"
 tags: ["Python", "自主學習", "資訊"]
-image: "/projects/deskpet/deskpet.png"
+image: "./deskpet.png"
 ---
 
 桌寵的GitHub連結[🔗](https://github.com/Ethan1407/deskpet)

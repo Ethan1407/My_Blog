@@ -5,7 +5,7 @@ summary: "擔任副召統籌行政，並克服硬體卡關與現場失誤，展�
 date: "2025.04.18"
 category: "專題"
 tags: ["自主學習", "資訊"]
-image: "/projects/208Presentation/presentation.jpg"
+image: "./presentation.jpg"
 ---
 
 回首高二這一年，最讓我難忘的絕對是四月十八號舉辦的那場「成果發表會」。這不僅僅是一次課程的作業報告，更是我們準備了整整半年的大型活動。從分組時的無奈、製作過程的卡關、擔任幹部的繁瑣行政，到最後上台的驚險瞬間，這段過程就像坐雲霄飛車一樣刺激。以下我將依照五個階段，完整回顧這段笑淚交織的回憶。
@@ -30,7 +30,7 @@ image: "/projects/208Presentation/presentation.jpg"
 
 彩排時的照片：
 
-<img src="/projects/208Presentation/1.jpg" alt="彩排時的照片" />
+![彩排時的照片](./1.jpg)
 
 ## 四、 現場演示失誤之臨場應變與中場雪恥
 
@@ -48,4 +48,4 @@ image: "/projects/208Presentation/presentation.jpg"
 
 小組合照：
 
-<img src="/projects/208Presentation/2.jpg" alt="小組合照" />
+![小組合照](./2.jpg)

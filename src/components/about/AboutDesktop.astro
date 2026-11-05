@@ -27,7 +27,6 @@ const dateA = new Date(dateAStart.replace(/\./g, '-')).getTime();
 const dateB = new Date(dateBStart.replace(/\./g, '-')).getTime();
 return dateB - dateA;
 });
-const years = [...new Set(sortedEvents.map(e => e.data.date.split('-')[0].split('.')[0]))].sort((a, b) => b.localeCompare(a));
 const tagCountMap = {};
 sortedEvents.forEach(entry => {
 const tags = entry.data.tags || [];
@@ -42,11 +41,11 @@ if (category) { categoryCountMap[category] = (categoryCountMap[category] || 0) +
 const sortedCategories = Object.entries(categoryCountMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
 const lastUpdated = await getLastUpdated("2026.02.15");
 ---
-<div id="about-desktop" class="grid grid-cols-1 lg:grid-cols-[350px_1fr_280px] h-full divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
-<aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent">
+<div id="about-desktop" data-period-root class="grid grid-cols-1 lg:grid-cols-[350px_1fr_280px] lg:grid-rows-[minmax(0,1fr)] h-full divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
+<aside class="min-h-0 p-8 overflow-y-auto overscroll-contain drag-scrollbar bg-transparent">
 <ProfileSidebar />
 </aside>
-<main class="flex flex-col h-full overflow-y-auto custom-scrollbar bg-transparent">
+<main class="flex flex-col h-full min-h-0 overflow-y-auto overscroll-contain drag-scrollbar bg-transparent">
 <div class="p-10 flex-1">
 {sortedEvents.length > 0 ? (
 <Timeline events={sortedEvents} />
@@ -73,38 +72,35 @@ Establish At : <span class="text-white font-bold">2026.02.16</span>
 </footer>
 </main>
 <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent space-y-8">
-<TagSidebar tags={sortedTags} years={years} categories={sortedCategories} />
+<TagSidebar tags={sortedTags} categories={sortedCategories} dates={sortedEvents.map(e => e.data.date)} monthDates={sortedEvents.filter(e => !e.data.milestone).map(e => e.data.date)} />
 </aside>
 </div>
 <style is:global>
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
-.prose-custom img { @apply rounded-3xl my-14 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] object-cover; width: 75% !important; display: block !important; margin-left: auto !important; margin-right: auto !important; }
 </style>
 <script is:inline>
 {
 const root = document.getElementById('about-desktop');
 const eventItems = root.querySelectorAll('.timeline-event');
 const tagButtons = root.querySelectorAll('.tag-button');
-const yearButtons = root.querySelectorAll('.year-filter-btn');
+const monthButtons = root.querySelectorAll('.month-filter-btn');
 const categoryButtons = root.querySelectorAll('.filter-category');
 const clearBtn = root.querySelector('.clear-all-filters');
 const toggleBtn = root.querySelector('.toggle-tags-btn');
 const moreTags = root.querySelectorAll('.more-tag');
 let activeTag = null;
-let activeYear = null;
+let activeMonth = null;
 let activeCategory = null;
 tagButtons.forEach(btn => { if (!btn.dataset.originalClass) btn.dataset.originalClass = btn.className; });
 function applyFilter() {
 eventItems.forEach(item => {
 const itemTags = JSON.parse(item.getAttribute('data-tags') || '[]');
-const itemYear = item.getAttribute('data-year') || '';
+const itemMonth = item.getAttribute('data-month') || '';
 const itemCategory = item.getAttribute('data-category') || '';
 const matchTag = !activeTag || itemTags.includes(activeTag);
-const matchYear = !activeYear || itemYear === activeYear;
+const matchMonth = !activeMonth || itemMonth === activeMonth;
 const matchCategory = !activeCategory || itemCategory === activeCategory;
-item.style.display = (matchTag && matchYear && matchCategory) ? '' : 'none';
+item.style.display = (matchTag && matchMonth && matchCategory) ? '' : 'none';
 });
 tagButtons.forEach(btn => {
 const original = btn.dataset.originalClass || '';
@@ -112,10 +108,9 @@ const isMatch = btn.getAttribute('data-tag-name') === activeTag;
 if (isMatch) { btn.className = original.replace(/text-white/g, 'text-black') + ' bg-white font-bold ring-2 ring-blue-400'; } 
 else { btn.className = activeTag ? original.replace(/text-white/g, 'text-gray-300') : original; }
 });
-yearButtons.forEach(btn => {
-const isMatch = btn.getAttribute('data-year') === activeYear;
-if (isMatch) { btn.classList.add('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400'); btn.classList.remove('text-white'); } 
-else { btn.classList.remove('bg-white', 'text-black', 'font-bold', 'ring-2', 'ring-blue-400'); btn.classList.toggle('text-gray-300', !!activeYear); btn.classList.toggle('text-white', !activeYear); }
+monthButtons.forEach(btn => {
+const isMatch = btn.getAttribute('data-month-year') === activeMonth;
+btn.classList.toggle('text-blue-400', isMatch); btn.classList.toggle('font-bold', isMatch); btn.classList.toggle('bg-white/10', isMatch);
 });
 categoryButtons.forEach(btn => {
 const isMatch = btn.getAttribute('data-category') === activeCategory;
@@ -123,13 +118,13 @@ btn.classList.toggle('text-white', isMatch || !activeCategory);
 btn.classList.toggle('font-bold', isMatch);
 btn.classList.toggle('text-gray-300', !!activeCategory && !isMatch);
 });
-if (activeTag || activeYear || activeCategory) clearBtn?.classList.remove('hidden');
+if (activeTag || activeMonth || activeCategory) clearBtn?.classList.remove('hidden');
 else clearBtn?.classList.add('hidden');
 }
 tagButtons.forEach(btn => { btn.addEventListener('click', () => { const tagName = btn.getAttribute('data-tag-name'); activeTag = (activeTag === tagName) ? null : tagName; applyFilter(); }); });
-yearButtons.forEach(btn => { btn.addEventListener('click', () => { const year = btn.getAttribute('data-year'); activeYear = (activeYear === year) ? null : year; applyFilter(); }); });
+monthButtons.forEach(btn => { btn.addEventListener('click', () => { const mon = btn.getAttribute('data-month-year'); activeMonth = (activeMonth === mon) ? null : mon; applyFilter(); }); });
 categoryButtons.forEach(btn => { btn.addEventListener('click', () => { const category = btn.getAttribute('data-category'); activeCategory = (activeCategory === category) ? null : category; applyFilter(); }); });
 toggleBtn?.addEventListener('click', () => { const isHidden = moreTags[0].classList.contains('hidden'); moreTags.forEach(t => t.classList.toggle('hidden')); toggleBtn.textContent = isHidden ? '顯示較少' : `顯示更多 (${moreTags.length})`; });
-clearBtn?.addEventListener('click', () => { activeTag = null; activeYear = null; activeCategory = null; applyFilter(); });
+clearBtn?.addEventListener('click', () => { activeTag = null; activeMonth = null; activeCategory = null; applyFilter(); });
 }
 </script>

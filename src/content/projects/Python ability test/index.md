@@ -40,4 +40,4 @@ image:
 
 證書：
 
-<img src="/projects/Python ability test/1.jpg" alt="證書" />
+![證書](./1.jpg)

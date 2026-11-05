@@ -5,7 +5,7 @@ summary: "參與淡江大橋通車盛典，兩天內完成 10K 路跑與 50K 單
 date: "2026.04.18-19"
 category: "活動"
 tags: ["單車"]
-image: "/projects/Danjiang Bridge/Danjiang.jpg"
+image: "./Danjiang.jpg"
 ---
 
 身為一個熱愛運動的人，參與淡江大橋通車慶典不僅僅是體力的考驗，更是一個難得的經驗。能在正式通車前，完全不受干擾地以雙腳和單車體驗這座壯麗的建築，意義非凡。

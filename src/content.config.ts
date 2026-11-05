@@ -11,14 +11,18 @@ const projectsCollection = defineCollection({
     base: './src/content/projects',
     generateId: ({ entry }) => entry.split('/')[0].toLowerCase().replace(/\s+/g, '-'),
   }),
-  schema: z.object({
+  // image：與 index.md 同資料夾的照片（"./xxx.jpg"）或完整網址；空字串視為沒有封面
+  schema: ({ image }) => z.object({
     title: z.string(),
     location: z.string().optional().nullable(),
     summary: z.string(),
     date: z.string(),
     category: z.string(),
     tags: z.array(z.string()),
-    image: z.string().optional().nullable(),
+    image: z.preprocess(
+      (v) => (v === '' ? null : v),
+      z.union([z.string().url(), image()]).optional().nullable(),
+    ),
   }),
 });
 export const collections = {

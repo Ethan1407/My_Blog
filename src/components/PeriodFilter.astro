@@ -1,0 +1,59 @@
+---
+/**
+ * 時期篩選（大學 / 高中 / 高中以前），外觀與「類型」清單一致
+ * - 放在任一 [data-period-root] 容器內，會篩選同容器內帶 data-period 的項目
+ * - 點一次選取、再點一次取消；與既有的類型 / 標籤 / 年份篩選互相獨立，可疊加使用
+ * - props.dates：要統計數量的日期陣列
+ */
+import { periods, getPeriod } from '@/utils/milestones';
+const { dates = [] } = Astro.props;
+const counts: Record<string, number> = {};
+dates.forEach((d: string) => { const p = getPeriod(d); counts[p] = (counts[p] || 0) + 1; });
+const options = periods.map(p => ({ ...p, count: counts[p.key] || 0 }));
+---
+<section>
+    <h2 class="text-lg font-bold mb-4 tracking-widest border-l-4 border-white pl-3 text-white uppercase">時期</h2>
+    <ul class="space-y-0.5 text-base text-gray-300">
+        {options.map(opt => (
+            <li
+                class="period-filter-btn flex items-center justify-between hover:text-white cursor-pointer transition-colors group px-2 py-1 rounded-md"
+                data-period-value={opt.key}
+            >
+                <span class="flex items-center">
+                    <span class="mr-2 text-white/30 group-hover:text-white text-xs">•</span> {opt.label}
+                </span>
+                <span class="text-[11px] font-mono text-white/40 group-hover:text-white/80">{opt.count}</span>
+            </li>
+        ))}
+    </ul>
+</section>
+
+<style is:global>
+    .period-filter-btn.is-active { color: #60a5fa; font-weight: 700; }
+    /* 被時期篩選隱藏的項目；用 !important 以疊加在其他篩選的 style.display 之上 */
+    .period-hidden { display: none !important; }
+</style>
+
+<script>
+    function initPeriodFilter(root: Element) {
+        if ((root as HTMLElement).dataset.periodInit) return;
+        (root as HTMLElement).dataset.periodInit = '1';
+        const buttons = root.querySelectorAll<HTMLElement>('.period-filter-btn');
+        let active = '';
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const value = btn.dataset.periodValue || '';
+                active = active === value ? '' : value;
+                buttons.forEach(b => b.classList.toggle('is-active', !!active && b.dataset.periodValue === active));
+                root.querySelectorAll<HTMLElement>('[data-period]').forEach(el => {
+                    el.classList.toggle('period-hidden', !!active && el.dataset.period !== active);
+                });
+                // Projects 頁的階段分隔線：選定單一時期時隱藏
+                root.querySelectorAll<HTMLElement>('.project-milestone').forEach(el => {
+                    el.classList.toggle('period-hidden', !!active);
+                });
+            });
+        });
+    }
+    document.querySelectorAll('[data-period-root]').forEach(initPeriodFilter);
+</script>

@@ -5,7 +5,7 @@ summary: "結合 n8n 與多種 AI，打造從錄音上傳、網頁互動篩選�
 date: "2026.03.18"
 category: "專題"
 tags: ["自主學習", "資訊"]
-image: "/projects/AI Meeting Assistant/1.png"
+image: "./1.png"
 ---
 
 ## 一、 專案動機：解決「開會抓不到重點」的痛點
@@ -17,7 +17,7 @@ image: "/projects/AI Meeting Assistant/1.png"
 這個專案不只是單純的調用 API，而是結合了資料過濾、人機協作介面與交叉比對的完整工作流。
 
 流程總覽：
-<img src="/projects/AI Meeting Assistant/2.png" alt="流程總覽" />
+![流程總覽](./2.png)
 
 ### 1. 多元化的輸入機制 
 為了因應不同的使用場景，我設計了兩種檔案輸入方式：
@@ -31,7 +31,7 @@ image: "/projects/AI Meeting Assistant/1.png"
 *   **互動網頁：** 我製作了一個簡單易用的網頁介面，讀取試算表資料。使用者可以透過勾選或手動修改，挑選出真正核心的討論項目，再回傳至資料庫。
 
 網頁截圖：
-<img src="/projects/AI Meeting Assistant/3.png" alt="網頁截圖" />
+![網頁截圖](./3.png)
 ### 3. 交叉比對與摘要生成 
 最後，n8n 工作流會讀取使用者篩選後的主題，與原始逐字稿進行交叉分析，確保產出的「摘要檔」內容既符合使用者需求，又不失真。
 

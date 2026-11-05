@@ -19,7 +19,6 @@ const dateA = new Date(dateAStart.replace(/\./g, '-')).getTime();
 const dateB = new Date(dateBStart.replace(/\./g, '-')).getTime();
 return dateB - dateA;
 });
-const years = [...new Set(sortedEvents.map(e => e.data.date.split('-')[0].split('.')[0]))].sort((a, b) => b.localeCompare(a));
 const tagCountMap = {};
 sortedEvents.forEach(entry => { const tags = entry.data.tags || []; tags.forEach(tag => { tagCountMap[tag] = (tagCountMap[tag] || 0) + 1; }); });
 const sortedTags = Object.entries(tagCountMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
@@ -28,7 +27,7 @@ sortedEvents.forEach(entry => { const category = entry.data.category || ''; if (
 const sortedCategories = Object.entries(categoryCountMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
 const lastUpdated = await getLastUpdated("2026.02.22");
 ---
-<div class="flex flex-col min-h-screen bg-[#050b1a] w-full relative">
+<div data-period-root class="flex flex-col min-h-screen bg-[#050b1a] w-full relative">
 <header class="p-10 pt-28 border-b border-white/10 w-full text-center bg-gradient-to-b from-blue-900/10 to-transparent">
 <h1 class="text-4xl font-black text-white mb-2 tracking-tighter uppercase">About Me</h1>
 <p class="text-blue-400/60 text-xs font-mono tracking-[0.3em]">ETHAN CHEN / PORTFOLIO</p>
@@ -53,7 +52,7 @@ const lastUpdated = await getLastUpdated("2026.02.22");
 {sortedEvents.length > 0 ? <Timeline events={sortedEvents} /> : <p class="text-white text-center p-10">暫無資料</p>}
 </div>
 <div id="view-tags" class="p-8" style="display: none;">
-<TagSidebar tags={sortedTags} years={years} categories={sortedCategories} />
+<TagSidebar dates={sortedEvents.map(e => e.data.date)} monthDates={sortedEvents.filter(e => !e.data.milestone).map(e => e.data.date)} tags={sortedTags} categories={sortedCategories} />
 </div>
 </main>
 <footer class="w-full py-10 px-6 border-t border-white/10 bg-transparent">
@@ -84,7 +83,7 @@ function initMobileTimelineFilters() {
 let selectedFilter = null;
 const tagButtons = document.querySelectorAll('#view-tags .tag-button');
 const categoryItems = document.querySelectorAll('#view-tags .filter-category');
-const yearButtons = document.querySelectorAll('#view-tags .year-filter-btn');
+const monthButtons = document.querySelectorAll('#view-tags .month-filter-btn');
 const timelineEvents = document.querySelectorAll('#view-timeline .timeline-event');
 const timelineTagBtns = document.querySelectorAll('#view-timeline .tag-button');
 const clearBtn = document.querySelector('#view-tags .clear-all-filters');
@@ -97,7 +96,7 @@ let shouldShow = true;
 if (selectedFilter) {
 if (selectedFilter.startsWith('tag:')) { shouldShow = eventTags.includes(selectedFilter.substring(4)); }
 else if (selectedFilter.startsWith('category:')) { shouldShow = eventCategory === selectedFilter.substring(9); }
-else if (selectedFilter.startsWith('year:')) { shouldShow = evt.dataset.year === selectedFilter.substring(5); }
+else if (selectedFilter.startsWith('month:')) { shouldShow = evt.dataset.month === selectedFilter.substring(6); }
 }
 evt.style.display = shouldShow ? 'block' : 'none';
 });
@@ -115,7 +114,7 @@ if (clearBtn) clearBtn.style.display = selectedFilter ? 'block' : 'none';
 function clearAllHighlights() {
 tagButtons.forEach(btn => { btn.classList.remove('bg-white', 'text-[#424242]'); btn.classList.add('bg-[#5a5a5a]/60', 'text-white'); });
 categoryItems.forEach(item => { item.classList.remove('text-white'); item.classList.add('text-gray-300'); });
-yearButtons.forEach(btn => { btn.classList.remove('bg-white', 'text-[#424242]'); btn.classList.add('bg-[#5a5a5a]/60', 'text-white'); });
+monthButtons.forEach(btn => { btn.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'); });
 }
 tagButtons.forEach(btn => {
 btn.addEventListener('click', () => {
@@ -135,12 +134,11 @@ else { clearAllHighlights(); selectedFilter = filterKey; item.classList.add('tex
 applyFilters();
 });
 });
-yearButtons.forEach(btn => {
+monthButtons.forEach(btn => {
 btn.addEventListener('click', () => {
-const year = btn.dataset.year;
-const filterKey = 'year:' + year;
-if (selectedFilter === filterKey) { selectedFilter = null; btn.classList.remove('bg-white', 'text-[#424242]'); btn.classList.add('bg-[#5a5a5a]/60', 'text-white'); }
-else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('bg-white', 'text-[#424242]'); btn.classList.remove('bg-[#5a5a5a]/60', 'text-white'); }
+const filterKey = 'month:' + btn.dataset.monthYear;
+if (selectedFilter === filterKey) { selectedFilter = null; btn.classList.remove('text-blue-400', 'font-bold', 'bg-white/10'); }
+else { clearAllHighlights(); selectedFilter = filterKey; btn.classList.add('text-blue-400', 'font-bold', 'bg-white/10'); }
 applyFilters();
 });
 });

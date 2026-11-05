@@ -22,7 +22,7 @@ image: "https://picsum.photos/id/1/400/250"
 
 我在 Canva 畫的草圖：
 
-<img src="/projects/Personal website/1.jpg" alt="我在 Canva 畫的草圖" />
+![我在 Canva 畫的草圖](./1.jpg)
 
 ## Day 1：About Me 和 Projects頁面製作
 

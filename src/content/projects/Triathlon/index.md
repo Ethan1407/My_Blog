@@ -5,7 +5,7 @@ summary: "這項由游泳、騎車、跑步組合而成的運動不斷挑戰我�
 date: "2024.03.09"
 category: "活動"
 tags: ["單車"]
-image: "/projects/Triathlon/Triathlon.jpg"
+image: "./Triathlon.jpg"
 ---
 
 為了參加這場比賽，我們早在一年前就報名了這場三月的盛事，隨著日期接近，內心的興奮與對低溫活水湖的擔憂交織在一起。這是我挑戰自我極限最深刻的一次，一段長達 10 小時挑戰極限的自我對話。

@@ -4,6 +4,8 @@ import { getLastUpdated } from '@/utils/lastUpdated';
 import { getCollection } from 'astro:content';
 import ProjectCard from './components/ProjectCard.astro';
 import ProjectSidebar from './components/ProjectSidebar.astro';
+import ProjectMilestone from './components/ProjectMilestone.astro';
+import { withMilestones } from '@/utils/milestones';
 
 // 1. 抓取所有專案
 const allProjects = await getCollection('projects');
@@ -57,14 +59,16 @@ const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.da
 const lastUpdated = await getLastUpdated("2026.02.15");
 ---
 
-<div data-projects-root class="grid grid-cols-1 lg:grid-cols-[1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
+<div data-projects-root data-period-root class="grid grid-cols-1 lg:grid-cols-[1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
     
-    <main class="flex flex-col h-full overflow-y-auto custom-scrollbar bg-transparent">
+    <main class="flex flex-col h-full min-h-0 overflow-y-auto overscroll-contain drag-scrollbar bg-transparent">
         <div class="p-8 md:p-12 flex-1">
             <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">Projects</h2>
             <div class="space-y-8" id="project-list-container">
-                {sortedProjects.map(project => (
-                    <ProjectCard project={project} />
+                {withMilestones(sortedProjects, p => p.data.date).map(entry => (
+                    entry.type === 'milestone'
+                        ? <ProjectMilestone milestone={entry.milestone} />
+                        : <ProjectCard project={entry.item} />
                 ))}
             </div>
             <div class="h-20"></div>
@@ -88,14 +92,12 @@ const lastUpdated = await getLastUpdated("2026.02.15");
     </main>
 
     <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent">
-        <ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} categories={categories} />
+        <ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} categories={categories} dates={sortedProjects.map(p => p.data.date)} />
         <div class="h-20"></div>
     </aside>
 </div>
 
 <style>
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
 </style>
 
@@ -152,6 +154,11 @@ const lastUpdated = await getLastUpdated("2026.02.15");
                         btn.classList.add('bg-[#5a5a5a]/60', 'text-white');
                     }
                 }
+            });
+
+            // 篩選時隱藏階段分隔線，避免出現空的區段
+            root.querySelectorAll('.project-milestone').forEach(el => {
+                (el as HTMLElement).style.display = hasFilter ? 'none' : '';
             });
 
             if (hasFilter) clearBtn?.classList.remove('hidden');
