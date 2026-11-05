@@ -4,7 +4,7 @@ location: "淡水漁人碼頭"
 summary: "參與淡江大橋通車盛典，兩天內完成 10K 路跑與 50K 單車挑戰，親身見證地標工程與運動挑戰的結合。"
 date: "2026.04.18-19"
 category: "活動"
-tags: ["單車"]
+tags: ["單車","慢跑"]
 image: "./Danjiang.jpg"
 ---
 

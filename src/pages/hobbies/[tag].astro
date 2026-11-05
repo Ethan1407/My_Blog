@@ -7,12 +7,15 @@ import CoverImage from "@/components/CoverImage.astro";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("projects");
-  const tags = ["單車", "撞球", "保齡球", "排球", "手作"];
+  const tags = ["單車", "慢跑", "保齡球", "撞球", "手作"];
 
   return tags.map((tag) => ({
     params: { tag },
     props: { 
-      posts: allPosts.filter((post) => post.data.tags?.includes(tag)) 
+      // 依日期排序，最新的在最上面
+      posts: allPosts
+        .filter((post) => post.data.tags?.includes(tag))
+        .sort((a, b) => b.data.date.localeCompare(a.data.date)),
     },
   }));
 }
@@ -24,8 +27,19 @@ const descriptions: Record<string, string> = {
   "單車": "接觸時間：2021年。",
   "撞球": "接觸時間：2023年。",
   "保齡球": "接觸時間：2026年。",
-  "排球": "接觸時間：2024年。",
+  "慢跑": "接觸時間：2024年。",
   "手作": "接觸時間：2022年。"
+};
+
+// 顯示在「接觸時間」下一行的紀錄（例如慢跑成績）
+const records: Record<string, [string, string][]> = {
+  "慢跑": [
+    ["3K", "12:48"],
+    ["5K", "23:30"],
+    ["10K", "48:50"],
+    ["21K", "training"],
+    ["42K", "training"],
+  ],
 };
 
 const lastUpdated = await getLastUpdated("2026.02.16");
@@ -50,13 +64,13 @@ const lastUpdated = await getLastUpdated("2026.02.16");
                 <a href="/hobbies/單車" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '單車' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 單車 Cycling</a>
               </li>
               <li>
-                <a href="/hobbies/撞球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '撞球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 撞球 Billiard</a>
+                <a href="/hobbies/慢跑" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '慢跑' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 慢跑 Running</a>
               </li>
               <li>
                 <a href="/hobbies/保齡球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '保齡球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 保齡球 Bowling</a>
               </li>
               <li>
-                <a href="/hobbies/排球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '排球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 排球 Volleyball</a>
+                <a href="/hobbies/撞球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '撞球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 撞球 Billiard</a>
               </li>
               <li>
                 <a href="/hobbies/手作" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '手作' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 手作 DIY</a>
@@ -79,6 +93,17 @@ const lastUpdated = await getLastUpdated("2026.02.16");
             <p class="text-xl italic text-gray-200 m-0">
               {descriptions[tag as string] || "這是我熱愛的活動之一，帶給我無限的動力。"}
             </p>
+            {records[tag as string] && (
+              <ul class="mt-4 space-y-1 list-none m-0 p-0 font-mono text-lg">
+                {records[tag as string].map(([dist, time]) => (
+                  <li class="flex gap-3 m-0">
+                    <span class="w-12 text-gray-400">{dist}</span>
+                    <span class="text-gray-500">：</span>
+                    <span class={time === 'training' ? 'text-gray-400 italic' : 'text-white font-bold'}>{time}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </article>
 
@@ -94,8 +119,8 @@ const lastUpdated = await getLastUpdated("2026.02.16");
               </div>
             ) : (
               posts.map((post) => (
-                <a href={"/projects/" + post.id} class="group rounded-2xl bg-white/5 hover:bg-white/[0.08] transition-all duration-300 border border-white/5 hover:border-white/20 overflow-hidden">
-                  <div class="flex flex-col md:flex-row items-center p-6 gap-6">
+                <a href={"/projects/" + post.id} class="group relative rounded-2xl bg-white/5 hover:bg-white/[0.08] transition-all duration-300 border border-white/5 hover:border-white/20 overflow-hidden">
+                  <div class="flex flex-col md:flex-row items-center p-6 pb-10 gap-6">
                     {post.data.image && (
                       <CoverImage src={post.data.image} alt={post.data.title} width={480} class="w-full md:w-48 h-32 rounded-xl object-cover transition-transform duration-500 group-hover:scale-105" />
                     )}
@@ -106,6 +131,7 @@ const lastUpdated = await getLastUpdated("2026.02.16");
                       <p class="text-gray-400 text-sm line-clamp-2 leading-relaxed">{post.data.summary}</p>
                     </div>
                   </div>
+                  <span class="absolute bottom-3 right-5 text-xs font-mono tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">{post.data.date}</span>
                 </a>
               ))
             )}
