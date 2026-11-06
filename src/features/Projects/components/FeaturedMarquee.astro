@@ -1,0 +1,202 @@
+---
+/**
+ * FeaturedMarquee 推薦筆記跑馬燈
+ * - 一行橫向自動捲動，只顯示標題；滑鼠移上去時暫停，並在下方浮出該筆記的完整簡介卡片
+ * - 點標題或卡片可直接前往該筆記
+ * - 顯示所有帶有「推薦」標籤的筆記（依日期新到舊）；要更換推薦筆記，直接改該篇 index.md 的 tags 即可
+ */
+import { getCollection } from 'astro:content';
+import CoverImage from '@/components/CoverImage.astro';
+import { tagLabel } from '@/utils/tags';
+
+const FEATURED_TAG = '推薦';
+
+const featured = (await getCollection('projects'))
+    .filter((p) => p.data.tags.includes(FEATURED_TAG))
+    .sort((a, b) => b.data.date.localeCompare(a.data.date));
+---
+
+{featured.length > 0 && (
+<section data-marquee class="featured-marquee relative mb-10 rounded-xl border border-white/10 bg-white/[0.03] flex items-stretch">
+    <!-- 左側標籤 -->
+    <div class="shrink-0 flex items-center gap-2 px-4 border-r border-white/10 bg-blue-500/10 rounded-l-xl">
+        <span class="text-blue-400 text-sm">★</span>
+        <span class="text-xs font-bold tracking-[0.2em] text-blue-300 uppercase whitespace-nowrap">推薦筆記</span>
+    </div>
+
+    <!-- 捲動區：腳本會依畫面寬度複製足夠的份數，並以「一份的寬度」為單位循環，讓標題永遠接續不斷 -->
+    <div class="marquee-viewport relative flex-1 overflow-hidden py-3">
+        <div class="marquee-track flex w-max">
+            <ul class="marquee-group flex shrink-0">
+                {featured.map((p) => (
+                    <li class="flex items-center">
+                        <a
+                            href={`/projects/${p.id}`}
+                            data-preview={p.id}
+                            class="marquee-item px-6 text-[15px] font-semibold text-gray-300 hover:text-blue-400 transition-colors whitespace-nowrap"
+                        >{p.data.title}</a>
+                        <span class="text-white/20 text-xs">◆</span>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </div>
+
+    <!-- 懸浮簡介卡片（放在捲動區外，才不會被裁切；位置由下方腳本計算） -->
+    {featured.map((p) => {
+        const { title, location, summary, date, image, tags, category } = p.data;
+        return (
+            <a
+                href={`/projects/${p.id}`}
+                data-preview-card={p.id}
+                class="marquee-card hidden fixed z-[60] w-[min(460px,calc(100vw-32px))] bg-[#1c2333]/95 backdrop-blur-md rounded-xl p-5 border border-white/10 shadow-2xl hover:border-blue-400/40 transition-colors"
+            >
+                {image && (
+                    <div class="aspect-video rounded-lg overflow-hidden border border-white/10 mb-4">
+                        <CoverImage src={image} alt={title} width={800} class="w-full h-full object-cover" />
+                    </div>
+                )}
+                <h3 class="text-xl font-bold mb-2 text-white">{title}</h3>
+                <div class="space-y-1 text-gray-300 text-sm leading-relaxed">
+                    {location && <p><span class="font-semibold text-white/80">location :</span> {location}</p>}
+                    <p><span class="font-semibold text-white/80">summary :</span> {summary}</p>
+                </div>
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-white/60">tags :</span>
+                    {tags.map((tag) => (
+                        <span class="text-xs text-blue-300/80 bg-blue-400/10 px-2 py-0.5 rounded-md border border-blue-400/20">{tagLabel(tag)}</span>
+                    ))}
+                </div>
+                <div class="flex justify-end items-center gap-4 mt-4">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></span>
+                        <span class="text-xs font-bold text-blue-400 tracking-wider uppercase">{category}</span>
+                    </div>
+                    <span class="text-gray-400 font-mono text-xs border-l border-white/10 pl-4">{date}</span>
+                </div>
+            </a>
+        );
+    })}
+</section>
+)}
+
+<style>
+    /* 腳本量好寬度後才加上 is-ready 開始捲動；--shift = 一份內容的寬度 */
+    .marquee-track.is-ready {
+        animation: marquee-scroll var(--duration, 35s) linear infinite;
+    }
+    /* 滑鼠移到跑馬燈上（或正在看簡介卡片）時暫停 */
+    .featured-marquee:hover .marquee-track,
+    .featured-marquee.is-previewing .marquee-track {
+        animation-play-state: paused;
+    }
+    /* 左右兩側淡出 */
+    .marquee-viewport {
+        mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+    }
+    @keyframes marquee-scroll {
+        from { transform: translateX(0); }
+        to   { transform: translateX(calc(var(--shift, 0px) * -1)); }
+    }
+    /* 系統設定「減少動態效果」時不自動捲動，改成可手動左右滑 */
+    @media (prefers-reduced-motion: reduce) {
+        .marquee-track.is-ready { animation: none; }
+        .marquee-viewport { overflow-x: auto; }
+    }
+</style>
+
+<script>
+    document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((root) => {
+        const cards = new Map<string, HTMLElement>();
+        root.querySelectorAll<HTMLElement>('[data-preview-card]').forEach((c) => cards.set(c.dataset.previewCard!, c));
+
+        let active: HTMLElement | null = null;
+        let hideTimer: number | undefined;
+
+        const hide = () => {
+            active?.classList.add('hidden');
+            active = null;
+            root.classList.remove('is-previewing');
+        };
+        const scheduleHide = () => {
+            clearTimeout(hideTimer);
+            hideTimer = window.setTimeout(hide, 150); // 留一點時間讓滑鼠移到卡片上
+        };
+
+        const show = (item: HTMLElement) => {
+            clearTimeout(hideTimer);
+            const card = cards.get(item.dataset.preview!);
+            if (!card) return;
+            if (active !== card) active?.classList.add('hidden');
+            active = card;
+            root.classList.add('is-previewing');
+            card.classList.remove('hidden');
+
+            // 預設顯示在標題正下方；超出畫面時往左推、或改顯示在上方
+            const r = item.getBoundingClientRect();
+            const gap = 10;
+            const w = card.offsetWidth;
+            const h = card.offsetHeight;
+            const left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+            const below = r.bottom + gap;
+            const top = below + h > window.innerHeight - 8 ? Math.max(8, r.top - gap - h) : below;
+            card.style.left = `${left}px`;
+            card.style.top = `${top}px`;
+        };
+
+        // ---- 無縫循環：複製足夠份數，讓畫面上永遠排滿標題 ----
+        const SPEED = 40; // 每秒移動幾 px
+        const viewport = root.querySelector<HTMLElement>('.marquee-viewport')!;
+        const track = root.querySelector<HTMLElement>('.marquee-track')!;
+        const group = track.querySelector<HTMLElement>('.marquee-group')!;
+        let lastSize = '';
+
+        const layout = () => {
+            const vw = viewport.clientWidth;
+            const gw = group.offsetWidth;
+            if (!vw || !gw || `${vw}:${gw}` === lastSize) return; // 隱藏中（例如手機版區塊在桌面上）先不處理
+            lastSize = `${vw}:${gw}`;
+            track.querySelectorAll('.marquee-clone').forEach((c) => c.remove());
+            // 至少要「畫面寬度 + 一份」才能在移動一份的距離後完美接回起點
+            const copies = Math.ceil(vw / gw) + 1;
+            for (let i = 0; i < copies; i++) {
+                const clone = group.cloneNode(true) as HTMLElement;
+                clone.classList.add('marquee-clone');
+                clone.setAttribute('aria-hidden', 'true');
+                clone.querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', '-1'));
+                track.appendChild(clone);
+            }
+            track.style.setProperty('--shift', `${gw}px`);
+            track.style.setProperty('--duration', `${gw / SPEED}s`);
+            track.classList.add('is-ready');
+        };
+        // 畫面寬度改變、或字型載入後標題寬度改變時，重新計算
+        const ro = new ResizeObserver(layout);
+        ro.observe(viewport);
+        ro.observe(group);
+
+        // ---- 懸浮卡片（用事件委派，複製出來的標題也有效）----
+        // 只有滑鼠才顯示懸浮卡片；手機點標題就直接進入筆記
+        track.addEventListener('pointerover', (e) => {
+            const item = (e.target as HTMLElement).closest<HTMLElement>('[data-preview]');
+            if (item && e.pointerType === 'mouse') show(item);
+        });
+        track.addEventListener('pointerout', (e) => {
+            if ((e.target as HTMLElement).closest('[data-preview]')) scheduleHide();
+        });
+        track.addEventListener('focusin', (e) => {
+            const item = (e.target as HTMLElement).closest<HTMLElement>('[data-preview]');
+            if (item) show(item);
+        });
+        track.addEventListener('focusout', scheduleHide);
+        cards.forEach((card) => {
+            card.addEventListener('pointerenter', () => clearTimeout(hideTimer));
+            card.addEventListener('pointerleave', scheduleHide);
+        });
+
+        // 捲動頁面時卡片位置會錯開，直接收起
+        root.closest('main')?.addEventListener('scroll', hide, { passive: true });
+        window.addEventListener('resize', hide);
+    });
+</script>

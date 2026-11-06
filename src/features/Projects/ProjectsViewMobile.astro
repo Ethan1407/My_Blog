@@ -6,6 +6,7 @@ import { getCollection } from 'astro:content';
 import ProjectCard from './components/ProjectCard.astro';
 import ProjectSidebar from './components/ProjectSidebar.astro';
 import ProjectMilestone from './components/ProjectMilestone.astro';
+import FeaturedMarquee from './components/FeaturedMarquee.astro';
 import { withMilestones } from '@/utils/milestones';
 const allProjects = await getCollection('projects');
 const tagMap = {};
@@ -49,6 +50,7 @@ const lastUpdated = await getLastUpdated("2026.02.15");
 </div>
 <main class="w-full flex-1 overflow-y-auto">
 <div id="view-posts" class="p-6 w-full">
+<FeaturedMarquee />
 <div class="space-y-6">{withMilestones(sortedProjects, p => p.data.date).map(entry => (entry.type === 'milestone' ? <ProjectMilestone milestone={entry.milestone} /> : <ProjectCard project={entry.item} />))}</div>
 <div class="h-20"></div>
 </div>

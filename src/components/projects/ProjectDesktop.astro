@@ -4,6 +4,7 @@ import SocialLinks from '@/components/SocialLinks.astro';
 // src/components/projects/ProjectDesktop.astro
 const { entry, filteredHeadings, lastUpdated, Content, wordCount } = Astro.props;
 import { Image } from 'astro:assets';
+import { tagLabel } from '@/utils/tags';
 ---
 <div class="max-w-[1600px] mx-auto w-full flex flex-row gap-8 xl:gap-20 p-6 md:p-12 relative overflow-hidden h-[calc(100vh-120px)]">
 <aside class="lg:w-[280px] shrink-0">
@@ -32,7 +33,7 @@ import { Image } from 'astro:assets';
 <span class="flex items-center gap-2">📝 {wordCount} 字</span>
 <div class="flex gap-2">
 {entry.data.tags.map(tag => (
-<span class="bg-white/5 px-3 py-1 rounded text-sm text-white/60">#{tag}</span>
+<span class="bg-white/5 px-3 py-1 rounded text-sm text-white/60">#{tagLabel(tag)}</span>
 ))}
 </div>
 </div>

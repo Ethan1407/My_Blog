@@ -6,7 +6,14 @@
  * 3. 功能：支援標籤與月份的複合過濾
  */
 import PeriodFilter from '@/components/PeriodFilter.astro';
-const { tags = [], yearlyStats = [], categories = [], dates = [] } = Astro.props;
+import { tagLabel } from '@/utils/tags';
+const { tags: rawTags = [], yearlyStats = [], categories = [], dates = [] } = Astro.props;
+// 置頂的標籤（不論數量多寡都排在最上面），其餘維持依數量排序
+const PINNED_TAGS = ['推薦'];
+const tags = [
+    ...PINNED_TAGS.map(name => rawTags.find(t => t.name === name)).filter(Boolean),
+    ...rawTags.filter(t => !PINNED_TAGS.includes(t.name)),
+];
 const otherTags = tags.slice(5);
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -39,7 +46,7 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
                     class={`tag-button ${index >= 5 ? 'hidden more-tag' : ''} bg-[#5a5a5a]/60 hover:bg-[#7a7a7a] py-1 px-3.5 rounded-md text-sm font-bold transition-all flex items-center justify-between border border-white/5 group shadow-sm text-white`}
                     data-tag-name={tag.name}
                 >
-                    <span class="tracking-wide">{tag.name}</span>
+                    <span class="tracking-wide">{tagLabel(tag.name)}</span>
                     <span class="bg-white/10 group-hover:bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-bold text-white/60 group-hover:text-white min-w-[24px] text-center transition-colors">
                         {tag.count}
                     </span>

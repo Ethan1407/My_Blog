@@ -9,6 +9,7 @@ const { project } = Astro.props;
 const { title, location, summary, date, image, tags, category } = project.data;
 import { getPeriod } from '@/utils/milestones';
 import CoverImage from '@/components/CoverImage.astro';
+import { tagLabel } from '@/utils/tags';
 const slug = project.id;
 
 const tagsString = JSON.stringify(tags);
@@ -47,7 +48,7 @@ const tagsString = JSON.stringify(tags);
                                 class="tag-button text-sm text-blue-300/80 bg-blue-400/10 px-2 py-0.5 rounded-md border border-blue-400/20 transition-all duration-300"
                                 data-tag-name={tag}
                             >
-                                {tag}
+                                {tagLabel(tag)}
                             </span>
                         ))}
                     </div>
