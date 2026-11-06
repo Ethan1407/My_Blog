@@ -4,7 +4,9 @@ import SocialLinks from '@/components/SocialLinks.astro';
 import { Image } from "astro:assets";
 const { hobbies, lastUpdated } = Astro.props;
 ---
-<div class="flex flex-col min-h-full pt-20">
+<div class="flex flex-col">
+<!-- 主內容至少佔滿一個畫面高度（扣掉 80px Navbar），讓 footer 要往下滑才會出現 -->
+<div class="flex flex-col min-h-[calc(100vh-80px)] pt-20">
 <div class="rounded-lg bg-base-100/50 hover:shadow-xl transition ease-in-out hover:scale-[101%] mb-20 mx-10">
 <div class="hero-content flex-row p-8">
 <div class="grow w-full text-left">
@@ -24,7 +26,8 @@ const { hobbies, lastUpdated } = Astro.props;
 </a>
 ))}
 </div>
-<footer class="w-full py-8 px-10 border-t border-white/10 mt-auto bg-transparent">
+</div>
+<footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent">
 <div class="max-w-7xl mx-auto flex justify-between items-center">
 <div class="flex flex-col gap-2">
 <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">

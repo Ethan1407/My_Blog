@@ -4,6 +4,8 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
 import CoverImage from "@/components/CoverImage.astro";
+import RunningCalendar from "@/components/hobbies/RunningCalendar.astro";
+import { getRunningData } from "@/utils/running";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("projects");
@@ -43,6 +45,9 @@ const records: Record<string, [string, string][]> = {
 };
 
 const lastUpdated = await getLastUpdated("2026.02.16");
+
+// 只有慢跑頁面才去 intervals.icu 抓資料
+const runningData = tag === "慢跑" ? await getRunningData() : null;
 ---
 
 <BaseLayout title={`關於 ${tag} | Ethan Chen`}>
@@ -51,7 +56,8 @@ const lastUpdated = await getLastUpdated("2026.02.16");
     
     <div class="flex-1 overflow-hidden">
       <div class="h-full overflow-y-auto">
-        <div class="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-8 xl:gap-20 p-6 md:p-12 relative">
+        <!-- 主內容至少佔滿一個畫面高度（扣掉 80px Navbar），讓 footer 要往下滑才會出現 -->
+        <div class="max-w-[1600px] min-h-[calc(100vh-80px)] mx-auto w-full flex flex-col lg:flex-row gap-8 xl:gap-20 p-6 md:p-12 relative">
       
       <aside class="lg:w-[280px] shrink-0">
         <div class="sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar">
@@ -107,6 +113,8 @@ const lastUpdated = await getLastUpdated("2026.02.16");
           </div>
         </article>
 
+        {runningData && <RunningCalendar data={runningData} />}
+
         <section class="mb-20">
           <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
             <span class="w-8 h-[2px] bg-blue-500"></span> 相關貼文紀錄
@@ -140,8 +148,6 @@ const lastUpdated = await getLastUpdated("2026.02.16");
         </div>
       </main>
     </div>
-      </div>
-    </div>
 
     <footer class="w-full py-8 px-6 border-t border-white/10 bg-transparent">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10 text-center lg:text-left">
@@ -171,6 +177,8 @@ const lastUpdated = await getLastUpdated("2026.02.16");
         </div>
       </div>
     </footer>
+      </div>
+    </div>
   </div>
 </BaseLayout>
 

@@ -5,6 +5,8 @@ import { Image } from "astro:assets";
 const { hobbies, lastUpdated } = Astro.props;
 ---
 <div class="flex flex-col w-full bg-transparent">
+<!-- 主內容至少佔滿一個畫面高度（扣掉 80px Navbar），讓 footer 要往下滑才會出現 -->
+<div class="flex flex-col min-h-[calc(100vh-80px)]">
 <div class="rounded-lg bg-base-100/50 hover:shadow-xl transition ease-in-out hover:scale-[101%] mb-12 mx-6 mt-16">
 <div class="hero-content flex-col p-6">
 <div class="grow w-full text-center">
@@ -23,6 +25,7 @@ const { hobbies, lastUpdated } = Astro.props;
 <div class="h-1 w-12 bg-blue-500/50 mt-2"></div>
 </a>
 ))}
+</div>
 </div>
 <footer class="w-full py-8 px-6 border-t border-white/10 bg-transparent">
 <div class="max-w-7xl mx-auto flex flex-col gap-6 items-center justify-center text-center">

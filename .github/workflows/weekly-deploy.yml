@@ -1,0 +1,16 @@
+# 每週一定時觸發 Vercel 重新部署，讓慢跑頁面的跑步紀錄（intervals.icu）自動更新
+name: Weekly redeploy
+
+on:
+  schedule:
+    # GitHub 使用 UTC 時間：週日 22:00 UTC = 台灣時間週一 06:00
+    # （排程尖峰時段可能延遲幾分鐘到一小時，屬正常現象）
+    - cron: "0 22 * * 0"
+  workflow_dispatch: # 也可以在 GitHub 的 Actions 頁面手動執行
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
