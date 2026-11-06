@@ -4,12 +4,13 @@ location: ""
 summary: "最近學會計的時候發現這些資料可以拿去給 AI 處理變成可視化的報告，因此就製作了這樣的網頁來減輕自己學投資的負擔。"
 date: "2026.11.05"
 category: "專題"
-tags: ["自主學習", "資訊", "股票"]
+tags: ["自主學習", "資訊", "股票", "AI"]
 image: ""
 ---
 
 股票網頁的GitHub連結[🔗](https://github.com/Ethan1407/financial-Statement)
 
+網頁連結[🔗](https://financial-statement-iota.vercel.app/)
 
 製作一套能自動診斷股票的系統，是我在接觸投資理財後一直想完成的目標。以下我將結合這段時間的心路歷程與五個開發階段的紀錄，詳細回顧這段將財報轉化為視覺化圖表的實作過程。
 

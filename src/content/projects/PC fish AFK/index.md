@@ -4,7 +4,7 @@ location: ""
 summary: "我因為太喜歡養魚而寫了程式來幫我自動養魚"
 date: "2026.09.16"
 category: "專題"
-tags: ["資訊", "Python","遊戲"]
+tags: ["資訊", "Python","遊戲", "AI"]
 image: ""
 ---
 

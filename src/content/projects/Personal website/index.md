@@ -4,7 +4,7 @@ location: ""
 summary: "利用AI協作跨越網頁開發門檻，雖然途中仍遇到了許多AI也未必能解決的問題，但我不放棄，最終成功還原了心目中理想的個人網頁。"
 date: "2026.02.20"
 category: "專題"
-tags: ["自主學習", "資訊"]
+tags: ["自主學習", "資訊", "AI"]
 image: "https://picsum.photos/id/1/400/250"
 ---
 

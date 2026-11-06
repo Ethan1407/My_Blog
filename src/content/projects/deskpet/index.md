@@ -4,7 +4,7 @@ location:
 summary: "製作桌寵來偵測螢幕使用時間和放置小工具"
 date: "2026.02.14"
 category: "專題"
-tags: ["Python", "自主學習", "資訊"]
+tags: ["Python", "自主學習", "資訊", "AI"]
 image: "./deskpet.png"
 ---
 
