@@ -3,8 +3,15 @@
 //   POST /api/views → 訪客數 +1（只有瀏覽器第一次造訪時才會呼叫），回傳 { visitors }
 //   GET  /api/views → 只讀取，不累加
 
-const REDIS_URL = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
+// Vercel 連結資料庫時可能會加上自訂前綴（例如 STORAGE_KV_REST_API_URL），所以用「結尾」比對
+const findEnv = (...suffixes) => {
+  for (const suffix of suffixes) {
+    const hit = Object.entries(process.env).find(([key, value]) => key.endsWith(suffix) && value);
+    if (hit) return hit[1];
+  }
+};
+const REDIS_URL = findEnv('KV_REST_API_URL', 'UPSTASH_REDIS_REST_URL');
+const REDIS_TOKEN = findEnv('KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_TOKEN');
 const VISITORS_KEY = 'site:visitors';
 const BOT_UA = /bot|crawl|spider|slurp|preview|lighthouse|headless/i;
 
