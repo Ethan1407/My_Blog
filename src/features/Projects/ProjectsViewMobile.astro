@@ -1,4 +1,5 @@
 ﻿---
+import ViewCounter from '@/components/ViewCounter.astro';
 import SocialLinks from '@/components/SocialLinks.astro';
 import { getLastUpdated } from '@/utils/lastUpdated';
 import { getCollection } from 'astro:content';
@@ -59,6 +60,7 @@ const lastUpdated = await getLastUpdated("2026.02.15");
 <footer class="w-full py-8 px-6 border-t border-white/10 bg-transparent">
 <div class="flex flex-col gap-6 items-center">
 <div class="text-gray-400 text-xs font-mono tracking-widest uppercase">Last Updated : <span class="text-white font-bold">{lastUpdated}</span></div>
+<ViewCounter class="text-gray-400 text-xs font-mono tracking-widest uppercase" />
 <div class="flex gap-4">
 <SocialLinks linkClass="p-2 border border-white/20 rounded-lg hover:bg-white/5 shadow-md" />
 </div>

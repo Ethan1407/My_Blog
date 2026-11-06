@@ -1,0 +1,10 @@
+---
+// src/components/ViewCounter.astro
+// 底部橫幅的「總訪客數」（每個裝置的每個瀏覽器只算一次）。數字由 BaseLayout 的腳本向 /api/views 取得後填入；
+// 取得失敗（例如本機 dev、尚未設定資料庫）時整行保持隱藏。
+interface Props { class?: string }
+const { class: className = '' } = Astro.props;
+---
+<div class={className} data-view-counter hidden>
+  Total Visitors : <span class="text-white font-bold" data-visitors>-</span>
+</div>

@@ -1,4 +1,5 @@
 ---
+import ViewCounter from '@/components/ViewCounter.astro';
 import SocialLinks from '@/components/SocialLinks.astro';
 // src/components/hobbies/HobbiesDesktop.astro
 import { Image } from "astro:assets";
@@ -36,6 +37,7 @@ Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
 <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
 Establish At : <span class="text-white font-bold">2026.02.16</span>
 </div>
+<ViewCounter class="text-gray-400 text-sm font-mono tracking-widest uppercase" />
 </div>
 <div class="flex gap-4">
 <SocialLinks />

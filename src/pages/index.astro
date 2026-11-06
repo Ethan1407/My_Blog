@@ -1,4 +1,5 @@
 ---
+import ViewCounter from '@/components/ViewCounter.astro';
 import SocialLinks from '@/components/SocialLinks.astro';
 import { getLastUpdated } from '@/utils/lastUpdated';
 // src/pages/index.astro
@@ -24,6 +25,7 @@ const lastUpdated = await getLastUpdated("2026.02.22");
 <div class="text-gray-400 text-sm font-mono tracking-widest uppercase text-center lg:text-left">
 Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
 </div>
+<ViewCounter class="text-gray-400 text-sm font-mono tracking-widest uppercase text-center lg:text-left" />
 <div class="flex gap-4 justify-center lg:justify-end">
 <SocialLinks linkClass="p-2 border border-white/20 rounded-lg hover:bg-white/5 transition-all duration-300" />
 </div>

@@ -25,6 +25,26 @@ const { title } = Astro.props;
 
     <Analytics />
 
+    <script>
+      // 網站總訪客數：每個裝置的每個瀏覽器只算一次。
+      // 第一次造訪（瀏覽器裡沒有標記）才 POST 讓數字 +1，之後都只 GET 讀取。
+      const SEEN_KEY = 'vc_seen';
+      let isNew = false;
+      try { isNew = !localStorage.getItem(SEEN_KEY); } catch {}
+
+      fetch('/api/views', { method: isNew ? 'POST' : 'GET' })
+        .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+        .then(({ visitors }: { visitors: number }) => {
+          // 成功計入後才寫入標記，避免 API 失敗時漏算
+          if (isNew) try { localStorage.setItem(SEEN_KEY, '1'); } catch {}
+          document.querySelectorAll<HTMLElement>('[data-view-counter]').forEach((el) => {
+            el.querySelector('[data-visitors]')!.textContent = visitors.toLocaleString('en-US');
+            el.hidden = false;
+          });
+        })
+        .catch(() => {});
+    </script>
+
   </body>
 </html>
 

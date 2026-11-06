@@ -1,4 +1,5 @@
 ---
+import ViewCounter from '@/components/ViewCounter.astro';
 import SocialLinks from '@/components/SocialLinks.astro';
 import { getLastUpdated } from '@/utils/lastUpdated';
 // src/components/GlobalFooter.astro
@@ -14,6 +15,7 @@ const lastUpdated = await getLastUpdated("2026.02.15");
       <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
         Establish At : <span class="text-white font-bold">2026.02.16</span>
       </div>
+      <ViewCounter class="text-gray-400 text-sm font-mono tracking-widest uppercase" />
     </div>
     <div class="flex gap-4">
       <SocialLinks />
