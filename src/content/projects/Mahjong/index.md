@@ -8,7 +8,7 @@ tags: ["自主學習", "資訊", "麻將", "AI"]
 image: ""
 ---
 
-股票網頁的GitHub連結[🔗](https://github.com/Ethan1407/Mahjong)
+麻將網頁的GitHub連結[🔗](https://github.com/Ethan1407/Mahjong)
 
 網頁連結[🔗](https://mahjong-lemon.vercel.app/)
 

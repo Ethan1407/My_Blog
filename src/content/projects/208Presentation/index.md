@@ -4,7 +4,7 @@ location: "國立師範大學/臺北101的Google公司"
 summary: "擔任副召統籌行政，並克服硬體卡關與現場失誤，展現領導韌性與卓越的問題解決能力。"
 date: "2025.04.18"
 category: "專題"
-tags: ["自主學習", "資訊"]
+tags: ["自主學習", "資訊", "推薦"]
 image: "./presentation.jpg"
 ---
 
