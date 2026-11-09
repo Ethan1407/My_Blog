@@ -48,6 +48,8 @@ const options = periods.map(p => ({ ...p, count: counts[p.key] || 0 }));
                 root.querySelectorAll<HTMLElement>('[data-period]').forEach(el => {
                     el.classList.toggle('period-hidden', !!active && el.dataset.period !== active);
                 });
+                // 通知頁面的其他篩選（例如 Projects 的結果數量）
+                root.dispatchEvent(new CustomEvent('period-change', { detail: active }));
             });
         });
     }

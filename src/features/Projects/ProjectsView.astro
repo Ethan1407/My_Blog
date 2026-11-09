@@ -62,6 +62,7 @@ const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.da
         <div class="p-5 sm:p-8 md:p-12 flex-1">
             <h2 class="text-3xl lg:text-4xl font-extrabold mb-6 lg:mb-12 tracking-tight text-white">Projects</h2>
             <FeaturedMarquee />
+            <p class="filter-result-count hidden mb-5 text-sm font-bold text-blue-300" aria-live="polite"></p>
             <div class="space-y-5 md:space-y-8" id="project-list-container">
                 {withMilestones(sortedProjects, p => p.data.date).map(entry => (
                     entry.type === 'milestone'
@@ -94,15 +95,18 @@ const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.da
         const clearBtn = root.querySelector('.clear-all-filters');
         const toggleBtn = root.querySelector('.toggle-tags-btn');
         const moreTags = root.querySelectorAll('.more-tag');
+        const resultCount = root.querySelector('.filter-result-count');
 
         let activeCategory = null;
         let activeTag = null;
         let activeMonth = null;
+        let activePeriod = '';
 
         function applyFilters() {
-            const hasFilter = activeCategory !== null || activeTag !== null || activeMonth !== null;
-        
-            // 1. 處理卡片顯示/隱藏
+            const hasFilter = activeCategory !== null || activeTag !== null || activeMonth !== null || activePeriod !== '';
+            let visibleCount = 0;
+
+            // 1. 處理卡片顯示/隱藏（各區塊的條件同時成立才顯示）
             projectCards.forEach(card => {
                 const cardCategory = card.getAttribute('data-category');
                 const cardTags = JSON.parse(card.getAttribute('data-tags') || '[]');
@@ -112,8 +116,18 @@ const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.da
                 const matchTag = !activeTag || cardTags.includes(activeTag);
                 const matchMonth = !activeMonth || (cardDate && cardDate.startsWith(activeMonth));
 
-                (card as HTMLElement).style.display = (matchCategory && matchTag && matchMonth) ? 'block' : 'none';
+                const matchPeriod = !activePeriod || card.getAttribute('data-period') === activePeriod;
+                const isVisible = matchCategory && matchTag && matchMonth && matchPeriod;
+
+                (card as HTMLElement).style.display = isVisible ? 'block' : 'none';
+                if (isVisible) visibleCount++;
             });
+
+            // 有篩選時才顯示結果數量
+            if (resultCount) {
+                resultCount.textContent = visibleCount > 0 ? `共 ${visibleCount} 筆結果` : '共 0 筆結果，試著減少篩選條件';
+                resultCount.classList.toggle('hidden', !hasFilter);
+            }
 
             // 2. --- 核心修改：處理全頁面標籤按鈕的高亮 (連動特效) ---
             const allTagButtons = root.querySelectorAll('.tag-button');
@@ -167,11 +181,19 @@ const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.da
             });
         });
 
+        // --- 時期篩選（由 PeriodFilter 通知）---
+        root.addEventListener('period-change', (e) => {
+            activePeriod = (e as CustomEvent<string>).detail;
+            applyFilters();
+        });
+
         // --- 重置所有過濾 ---
         clearBtn?.addEventListener('click', () => {
             activeCategory = null; activeTag = null; activeMonth = null;
             categoryItems.forEach(i => i.classList.remove('filter-active'));
             monthButtons.forEach(b => b.classList.remove('filter-active'));
+            // 再點一次已選的時期即可取消，分隔線的顯示也會一起還原
+            root.querySelector<HTMLElement>('.period-filter-btn.filter-active')?.click();
             applyFilters();
         });
 
