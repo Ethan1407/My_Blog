@@ -1,10 +1,11 @@
 ---
-title: "財政部發票盃半馬路跑"
-location: "凱達格蘭大道"
+title: "新北聖誕接力跑"
+location: "新北市民廣場"
 summary: ""
-date: "2026.11.08"
+date: "2026.12.06"
 category: "活動"
 tags: ["慢跑"]
 image: ""
 ---
+
 

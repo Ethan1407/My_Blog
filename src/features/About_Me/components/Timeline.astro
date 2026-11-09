@@ -42,29 +42,29 @@ const nowIndexRaw = processedEvents.findIndex((e) => e.startDate.localeCompare(t
 const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
 ---
 <div class="relative">
-<h2 class="text-3xl font-bold mb-16 tracking-widest text-white">Timeline</h2>
-<div class="absolute left-[10.5rem] top-24 bottom-10 w-[2px] bg-white hidden md:block opacity-50 z-0"></div>
-<div class="space-y-16 relative">
+<h2 class="text-3xl font-bold mb-10 md:mb-16 tracking-widest text-white">Timeline</h2>
+<div class="absolute left-4 md:left-[10.5rem] top-20 md:top-24 bottom-10 w-[2px] bg-white opacity-50 z-0"></div>
+<div class="space-y-10 md:space-y-16 relative">
 {processedEvents.map((evt, index) => (
 <>
 {index === nowIndex && (
-<div class="timeline-now flex flex-col md:flex-row items-start md:items-center mb-10 md:mb-20 relative h-auto md:h-8">
-<div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-xl text-blue-400 md:text-gray-400 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">Present</div>
-<div class="absolute left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242] hidden md:block"></div>
+<div class="timeline-now flex flex-row items-center mb-10 md:mb-20 relative h-8">
+<div class="pl-10 md:pl-0 pr-4 md:pr-8 md:w-[10.5rem] text-left md:text-right font-bold text-xl text-gray-400 flex-shrink-0 whitespace-nowrap">Present</div>
+<div class="absolute left-4 md:left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242]"></div>
 <div class="md:pl-12 font-bold text-2xl tracking-widest text-white">Now</div>
 </div>
 )}
 <div class="timeline-item" data-start={evt.startDate}>
 {evt.milestone ? (
 <div class="timeline-event milestone-event relative flex flex-col md:flex-row items-start md:items-center my-4 md:my-8" data-month={evt.month} data-period={evt.period} data-tags={evt.tagsString} data-category={evt.category}>
-<div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-lg tracking-wider text-amber-300 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">{evt.date}</div>
-<div class="absolute left-[10.5rem] -translate-x-1/2 z-10 hidden md:flex items-center justify-center w-10 h-10">
+<div class="w-full pl-10 md:pl-0 md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-lg tracking-wider text-amber-300 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">{evt.date}</div>
+<div class="absolute left-4 md:left-[10.5rem] -translate-x-1/2 z-10 flex items-center justify-center w-8 h-8 md:w-10 md:h-10">
 <span class="absolute inline-flex w-full h-full rounded-full bg-amber-400/40 animate-ping"></span>
-<span class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 ring-4 ring-[#424242] shadow-[0_0_24px_rgba(251,191,36,0.6)]">
+<span class="relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 ring-4 ring-[#424242] shadow-[0_0_24px_rgba(251,191,36,0.6)]">
 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
 </span>
 </div>
-<div class="flex-1 md:pl-12 w-full">
+<div class="flex-1 pl-10 md:pl-12 w-full min-w-0">
 <div class="relative overflow-hidden rounded-2xl p-[1.5px] bg-gradient-to-r from-amber-300 via-orange-400 to-pink-500 shadow-[0_10px_40px_rgba(251,146,60,0.25)]">
 <div class="relative rounded-[calc(1rem-1.5px)] bg-[#2b2b2b]/90 backdrop-blur-sm px-6 py-5">
 <div class="text-xs font-mono font-bold tracking-[0.3em] uppercase text-amber-300/90 mb-1">New Chapter</div>
@@ -76,12 +76,12 @@ const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
 </div>
 ) : (
 <div class="timeline-event flex flex-col md:flex-row items-start group relative" data-month={evt.month} data-period={evt.period} data-tags={evt.tagsString} data-category={evt.category}>
-<div class={"w-full md:w-[10.5rem] text-left md:text-right md:pr-8 pt-1 font-bold text-lg tracking-wider text-blue-400 md:text-gray-300 flex-shrink-0 mb-1 md:mb-0 " + (evt.displayParts.length === 1 ? 'whitespace-nowrap' : '')}>
+<div class={"w-full pl-10 md:pl-0 md:w-[10.5rem] text-left md:text-right md:pr-8 pt-1 font-bold text-base md:text-lg tracking-wider text-gray-300 flex-shrink-0 mb-1 md:mb-0 " + (evt.displayParts.length === 1 ? 'whitespace-nowrap' : '')}>
 {evt.displayParts.length > 1 ? evt.displayParts.map((part, i) => (<span class={i > 0 ? 'block' : ''}>{part}</span>)) : evt.date}
 </div>
-<div class={"absolute left-[10.5rem] -translate-x-1/2 w-4 h-4 bg-white rounded-full z-10 mt-2 ring-4 ring-[#424242] transition-all duration-300 hidden md:block " + (evt.projectPath ? 'group-hover:scale-125' : '')}></div>
-<div class="flex-1 md:pl-12 w-full">
-<h3 class={"text-2xl font-bold mb-4 tracking-wide text-white transition-all duration-300 " + (evt.projectPath ? 'underline underline-offset-8 decoration-white/20 group-hover:decoration-white' : '')}>
+<div class={"absolute left-4 md:left-[10.5rem] -translate-x-1/2 w-4 h-4 bg-white rounded-full z-10 mt-2 ring-4 ring-[#424242] transition-all duration-300 " + (evt.projectPath ? 'group-hover:scale-125' : '')}></div>
+<div class="flex-1 pl-10 md:pl-12 w-full min-w-0">
+<h3 class={"text-xl md:text-2xl font-bold mb-3 md:mb-4 tracking-wide text-white transition-all duration-300 " + (evt.projectPath ? 'underline underline-offset-8 decoration-white/20 group-hover:decoration-white' : '')}>
 {evt.projectPath ? (
 <a href={evt.projectPath} class="hover:text-blue-400 hover:translate-x-1 transition-all inline-flex items-center gap-2">
 {evt.title}
@@ -89,12 +89,12 @@ const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
 </a>
 ) : (evt.title)}
 </h3>
-<ul class="space-y-3 text-gray-300 text-lg leading-relaxed">
-{evt.location && (<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• location :</span><span class="flex-1 text-gray-400">{evt.location}</span></li>)}
-{evt.category && (<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• category :</span><span class="flex-1 text-gray-400">{evt.category}</span></li>)}
-{evt.summary && (<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• summary :</span><span class="flex-1 text-gray-400">{evt.summary}</span></li>)}
+<ul class="space-y-2 md:space-y-3 text-gray-300 text-base md:text-lg leading-relaxed md:leading-relaxed">
+{evt.location && (<li class="flex items-start"><span class="font-semibold min-w-[6.5rem] md:min-w-[120px] text-white/80">• location :</span><span class="flex-1 text-gray-400">{evt.location}</span></li>)}
+{evt.category && (<li class="flex items-start"><span class="font-semibold min-w-[6.5rem] md:min-w-[120px] text-white/80">• category :</span><span class="flex-1 text-gray-400">{evt.category}</span></li>)}
+{evt.summary && (<li class="flex items-start"><span class="font-semibold min-w-[6.5rem] md:min-w-[120px] text-white/80">• summary :</span><span class="flex-1 text-gray-400">{evt.summary}</span></li>)}
 {evt.tags.length > 0 && (
-<li class="flex items-start"><span class="font-semibold min-w-[120px] text-white/80">• tags :</span>
+<li class="flex items-start"><span class="font-semibold min-w-[6.5rem] md:min-w-[120px] text-white/80">• tags :</span>
 <div class="flex flex-wrap gap-2 flex-1">
 {evt.tags.map((tag) => (<button class="tag-button text-sm text-blue-300/80 bg-blue-400/10 hover:bg-white hover:text-[#424242] px-2 py-0.5 rounded-md border border-blue-400/20 transition-all font-bold" data-tag-name={tag}>{tag}</button>))}
 </div>
@@ -105,8 +105,8 @@ const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
 </div>
 )}
 {evt.isYearEnd && (
-<div class="flex flex-row items-center my-16 md:my-20 relative h-10">
-<div class="w-auto md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-3xl text-gray-400">{evt.currentYear}</div>
+<div class="flex flex-row items-center my-10 md:my-20 relative h-10">
+<div class="w-auto pl-10 md:pl-0 md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-2xl md:text-3xl text-gray-400">{evt.currentYear}</div>
 <div class="flex-1 md:absolute md:left-[10.5rem] md:-translate-x-1/2 h-[2px] bg-white z-10 opacity-30 ml-4 md:ml-0 md:w-10"></div>
 </div>
 )}
@@ -114,14 +114,14 @@ const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
 </>
 ))}
 {nowIndex === processedEvents.length && (
-<div class="timeline-now flex flex-col md:flex-row items-start md:items-center mb-10 md:mb-20 relative h-auto md:h-8">
-<div class="w-full md:w-[10.5rem] text-left md:text-right md:pr-8 font-bold text-xl text-blue-400 md:text-gray-400 flex-shrink-0 whitespace-nowrap mb-2 md:mb-0">Present</div>
-<div class="absolute left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242] hidden md:block"></div>
+<div class="timeline-now flex flex-row items-center mb-10 md:mb-20 relative h-8">
+<div class="pl-10 md:pl-0 pr-4 md:pr-8 md:w-[10.5rem] text-left md:text-right font-bold text-xl text-gray-400 flex-shrink-0 whitespace-nowrap">Present</div>
+<div class="absolute left-4 md:left-[10.5rem] -translate-x-1/2 w-6 h-6 bg-white rounded-full z-10 ring-4 ring-[#424242]"></div>
 <div class="md:pl-12 font-bold text-2xl tracking-widest text-white">Now</div>
 </div>
 )}
 </div>
-<div class="h-40"></div>
+<div class="h-16 md:h-40"></div>
 </div>
 
 <script>
@@ -160,7 +160,7 @@ const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
    * - 有篩選：跳到「符合篩選的最新活動」（不論是否已發生）
    */
   function scrollTimeline(now: HTMLElement, behavior: ScrollBehavior) {
-    if (now.offsetParent === null) return; // 目前看不到（例如手機版在其他分頁）
+    if (now.offsetParent === null) return; // 目前看不到
     const list = now.parentElement;
     const box = getScrollParent(now);
     if (!list || !box) return;
@@ -193,7 +193,7 @@ const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
       now.querySelector('.timeline-upcoming-hint')?.remove();
       const hint = document.createElement('button');
       hint.type = 'button';
-      hint.className = 'timeline-upcoming-hint absolute -top-12 left-0 md:left-[13.5rem] flex items-center gap-1.5 text-xs font-mono tracking-widest text-gray-400 hover:text-white transition-colors';
+      hint.className = 'timeline-upcoming-hint absolute -top-8 md:-top-12 left-10 md:left-[13.5rem] flex items-center gap-1.5 text-xs font-mono tracking-widest text-gray-400 hover:text-white transition-colors';
       hint.addEventListener('click', () => {
         const box = getScrollParent(now);
         box?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -233,10 +233,8 @@ const nowIndex = nowIndexRaw === -1 ? processedEvents.length : nowIndexRaw;
   }
 
   placeNow();
-  document.querySelectorAll<HTMLElement>('.timeline-now').forEach((now) => scrollTimeline(now, 'auto'));
-
-  // 手機版：時間軸在分頁裡，切換到「時間軸」分頁時再捲動
-  document.getElementById('btn-timeline')?.addEventListener('click', () => {
-    requestAnimationFrame(() => document.querySelectorAll<HTMLElement>('.timeline-now').forEach((now) => scrollTimeline(now, 'auto')));
-  });
+  // 手機版的自我介紹在時間軸上方、共用同一個捲動區，開啟時不自動捲動，才看得到自我介紹
+  if (window.matchMedia('(min-width: 1024px)').matches) {
+    document.querySelectorAll<HTMLElement>('.timeline-now').forEach((now) => scrollTimeline(now, 'auto'));
+  }
 </script>

@@ -79,14 +79,14 @@ const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 const lastIdx = monthViews.length - 1;
 ---
 
-<section class="mb-16" data-running-calendar>
+<section class="mb-10 lg:mb-16" data-running-calendar>
   <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
     <span class="w-8 h-[2px] bg-blue-500"></span> 跑步紀錄
   </h2>
 
-  <div class="bg-white/5 p-6 md:p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-8 md:gap-12">
+  <div class="bg-white/5 p-4 md:p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-8 md:gap-12">
     <!-- 月曆 -->
-    <div class="w-fit mx-auto md:mx-0">
+    <div class="w-full md:w-fit md:mx-0">
       {monthViews.map((mv, idx) => (
         <div data-month={idx} data-km-total={fmt(mv.monthKm)} data-prev-km-total={fmt(mv.prevMonthKm)}
           data-days-total={mv.runDays} data-label={mv.monthLabel} data-prev-label={mv.prevMonthLabel} class={idx === lastIdx ? '' : 'hidden'}>
@@ -100,7 +100,7 @@ const lastIdx = monthViews.length - 1;
               disabled={idx === lastIdx}>›</button>
           </div>
 
-          <div class="grid grid-cols-[repeat(7,2rem)_3.5rem] md:grid-cols-[repeat(7,2.5rem)_4rem] gap-1.5 md:gap-2 text-center">
+          <div class="grid grid-cols-[repeat(7,minmax(0,1fr))_2.75rem] md:grid-cols-[repeat(7,2.5rem)_4rem] gap-1 md:gap-2 text-center">
             {weekdays.map((w) => <span class="text-xs text-gray-500">{w}</span>)}
             <span class="text-xs text-gray-500">週跑量</span>
 
@@ -113,7 +113,7 @@ const lastIdx = monthViews.length - 1;
                     <button type="button"
                       data-date={c.date} data-km={c.km.toFixed(2)}
                       aria-label={`${c.date}${c.km ? `：${c.km.toFixed(2)} km` : ''}`}
-                      class={`w-8 h-8 md:w-10 md:h-10 rounded-lg text-xs font-mono flex items-center justify-center transition hover:ring-1 hover:ring-white/50 ${level(c.km)} ${c.km ? 'text-white' : 'text-gray-500'} ${c.date === today ? 'outline outline-1 outline-white/70' : ''} ${c.future ? 'opacity-30 pointer-events-none' : ''}`}
+                      class={`w-full aspect-square md:w-10 md:h-10 rounded-lg text-xs font-mono flex items-center justify-center transition hover:ring-1 hover:ring-white/50 ${level(c.km)} ${c.km ? 'text-white' : 'text-gray-500'} ${c.date === today ? 'outline outline-1 outline-white/70' : ''} ${c.future ? 'opacity-30 pointer-events-none' : ''}`}
                     >{c.day}</button>
                   )
                 )}

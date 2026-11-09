@@ -1,0 +1,85 @@
+---
+/**
+ * PostLinkPreview 貼文內連結預覽
+ * 滑鼠移到內文中「連往其他貼文」的超連結時，浮出該貼文的簡介卡片（與 Projects 跑馬燈相同）
+ * 只輸出這篇貼文實際引用到的卡片；手機點連結就直接前往
+ */
+import { getCollection } from 'astro:content';
+import ProjectPreviewCard from '@/features/Projects/components/ProjectPreviewCard.astro';
+
+const { entry } = Astro.props;
+
+const linkedSlugs = new Set(
+    [...(entry.body ?? '').matchAll(/\/projects\/([^\s)"'#?/]+)/g)].map((m) => decodeURIComponent(m[1])),
+);
+const linked = (await getCollection('projects')).filter((p) => p.id !== entry.id && linkedSlugs.has(p.id));
+---
+
+{linked.length > 0 && (
+    <div data-link-previews>
+        {linked.map((project) => <ProjectPreviewCard project={project} />)}
+    </div>
+)}
+
+<script>
+    import { positionPreviewCard } from '@/utils/previewCard';
+
+    const SITE_HOSTS = new Set([location.host, 'ethan1407.vercel.app', 'localhost:4321']);
+
+    document.querySelectorAll<HTMLElement>('[data-link-previews]').forEach((root) => {
+        const article = document.querySelector<HTMLElement>('.prose-custom');
+        if (!article) return;
+
+        const cards = new Map<string, HTMLElement>();
+        root.querySelectorAll<HTMLElement>('[data-preview-card]').forEach((c) => cards.set(c.dataset.previewCard!, c));
+
+        // 回傳滑鼠所在連結對應的卡片；不是連往其他貼文的連結就回傳 undefined
+        const findTarget = (node: EventTarget | null) => {
+            const link = (node as HTMLElement).closest<HTMLAnchorElement>('a[href]');
+            if (!link || !SITE_HOSTS.has(link.host)) return;
+            const match = link.pathname.match(/^\/projects\/([^/]+)\/?$/);
+            const card = match ? cards.get(decodeURIComponent(match[1])) : undefined;
+            return card ? { link, card } : undefined;
+        };
+
+        let active: HTMLElement | null = null;
+        let hideTimer: number | undefined;
+
+        const hide = () => {
+            active?.classList.add('hidden');
+            active = null;
+        };
+        const scheduleHide = () => {
+            clearTimeout(hideTimer);
+            hideTimer = window.setTimeout(hide, 150); // 留一點時間讓滑鼠移到卡片上
+        };
+        const show = (link: HTMLElement, card: HTMLElement) => {
+            clearTimeout(hideTimer);
+            if (active !== card) active?.classList.add('hidden');
+            active = card;
+            card.classList.remove('hidden');
+            positionPreviewCard(card, link);
+        };
+
+        article.addEventListener('pointerover', (e) => {
+            const target = findTarget(e.target);
+            if (target && e.pointerType === 'mouse') show(target.link, target.card);
+        });
+        article.addEventListener('pointerout', (e) => {
+            if (findTarget(e.target)) scheduleHide();
+        });
+        article.addEventListener('focusin', (e) => {
+            const target = findTarget(e.target);
+            if (target) show(target.link, target.card);
+        });
+        article.addEventListener('focusout', scheduleHide);
+        cards.forEach((card) => {
+            card.addEventListener('pointerenter', () => clearTimeout(hideTimer));
+            card.addEventListener('pointerleave', scheduleHide);
+        });
+
+        // 捲動時卡片位置會錯開，直接收起（capture 才收得到內文區塊自己的捲動）
+        window.addEventListener('scroll', hide, { passive: true, capture: true });
+        window.addEventListener('resize', hide);
+    });
+</script>

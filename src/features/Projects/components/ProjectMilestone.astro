@@ -1,13 +1,14 @@
 ---
 /** Projects 列表中的階段分隔線（資料來源：experience.json 的 milestone） */
+import { getPeriod } from '@/utils/milestones';
 const { milestone } = Astro.props;
 ---
-<div class="project-milestone flex items-center gap-4 my-14 select-none" aria-label={`${milestone.date} ${milestone.title}`}>
+<div class="project-milestone flex items-center gap-2 md:gap-4 my-8 md:my-14 select-none" data-period={getPeriod(milestone.date)} aria-label={`${milestone.date} ${milestone.title}`}>
   <span class="h-[2px] flex-1 rounded-full bg-gradient-to-r from-transparent via-white/20 to-amber-300/40"></span>
-  <span class="flex items-center gap-3 px-5 py-2 rounded-full border border-amber-300/25 bg-amber-300/[0.06] whitespace-nowrap shadow-[0_0_20px_rgba(251,191,36,0.08)]">
+  <span class="flex items-center gap-2 md:gap-3 px-3 md:px-5 py-2 rounded-full border border-amber-300/25 bg-amber-300/[0.06] whitespace-nowrap shadow-[0_0_20px_rgba(251,191,36,0.08)]">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-300/80"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
-    <span class="text-sm font-mono tracking-widest text-gray-400">{milestone.date}</span>
-    <span class="text-base font-bold tracking-wide text-gray-200">{milestone.title}</span>
+    <span class="text-xs md:text-sm font-mono md:tracking-widest text-gray-400">{milestone.date}</span>
+    <span class="text-sm md:text-base font-bold tracking-wide text-gray-200">{milestone.title}</span>
   </span>
   <span class="h-[2px] flex-1 rounded-full bg-gradient-to-l from-transparent via-white/20 to-amber-300/40"></span>
 </div>

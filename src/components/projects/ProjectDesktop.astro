@@ -1,14 +1,15 @@
 ---
-import ViewCounter from '@/components/ViewCounter.astro';
-import SocialLinks from '@/components/SocialLinks.astro';
+import GlobalFooter from '@/components/GlobalFooter.astro';
+import MobileDrawer from '@/components/MobileDrawer.astro';
 // src/components/projects/ProjectDesktop.astro
-const { entry, filteredHeadings, lastUpdated, Content, wordCount } = Astro.props;
+const { entry, filteredHeadings, Content, wordCount } = Astro.props;
 import { Image } from 'astro:assets';
 import { tagLabel } from '@/utils/tags';
+import PostLinkPreview from './PostLinkPreview.astro';
 ---
-<div class="max-w-[1600px] mx-auto w-full flex flex-row gap-8 xl:gap-20 p-6 md:p-12 relative overflow-hidden h-[calc(100vh-120px)]">
-<aside class="lg:w-[280px] shrink-0">
-<div class="sticky top-24 toc-scroll custom-scrollbar">
+<div class="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-8 xl:gap-20 p-5 md:p-12 relative lg:overflow-hidden lg:h-[calc(100vh-120px)]">
+<MobileDrawer class="lg:w-[280px] shrink-0">
+<div class="lg:sticky lg:top-24 toc-scroll custom-scrollbar">
 <h2 class="text-gray-500 font-bold text-xs uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-2">Contents</h2>
 <nav><ul class="space-y-5" id="toc-list">
 {filteredHeadings.map((h) => (
@@ -23,15 +24,15 @@ import { tagLabel } from '@/utils/tags';
 </a>
 </div>
 </div>
-</aside>
-<main data-toc-root class="flex-1 min-w-0 max-w-4xl flex flex-col lg:pl-24 overflow-y-auto hide-scrollbar">
-<header class="mb-16 border-b border-white/10 pb-10">
-<h1 class="text-5xl font-extrabold mb-8 text-white tracking-tight leading-tight">{entry.data.title}</h1>
-<div class="flex flex-wrap gap-6 text-gray-400 text-lg">
+</MobileDrawer>
+<main data-toc-root class="flex-1 min-w-0 max-w-4xl flex flex-col lg:pl-24 lg:overflow-y-auto hide-scrollbar">
+<header class="mb-8 lg:mb-16 border-b border-white/10 pb-6 lg:pb-10">
+<h1 class="text-3xl lg:text-5xl font-extrabold mb-4 lg:mb-8 text-white tracking-tight leading-tight lg:leading-tight">{entry.data.title}</h1>
+<div class="flex flex-wrap gap-x-4 gap-y-2 lg:gap-6 text-gray-400 text-sm lg:text-lg">
 <span class="flex items-center gap-2">📅 {entry.data.date}</span>
 <span class="flex items-center gap-2">📍 {entry.data.location}</span>
 <span class="flex items-center gap-2">📝 {wordCount} 字</span>
-<div class="flex gap-2">
+<div class="flex flex-wrap gap-2">
 {entry.data.tags.map(tag => (
 <span class="bg-white/5 px-3 py-1 rounded text-sm text-white/60">#{tagLabel(tag)}</span>
 ))}
@@ -41,26 +42,18 @@ import { tagLabel } from '@/utils/tags';
 <article class="prose-custom flex-1">
 <Content />
 </article>
-<div class="h-32"></div>
-<footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent mt-auto">
-<div class="max-w-7xl mx-auto flex justify-between items-center">
-<div class="flex flex-col gap-2">
-<div class="text-gray-400 text-sm font-mono tracking-widest uppercase">Last Updated : <span class="text-white font-bold">{lastUpdated}</span></div>
-<div class="text-gray-400 text-sm font-mono tracking-widest uppercase">Establish At : <span class="text-white font-bold">2026.02.16</span></div>
-<ViewCounter class="text-gray-400 text-sm font-mono tracking-widest uppercase" />
-</div>
-<div class="flex gap-4">
-<SocialLinks />
-</div>
-</div>
-</footer>
+<div class="h-8 lg:h-32"></div>
+<GlobalFooter />
 </main>
+<PostLinkPreview entry={entry} />
 </div>
 <style>
+@media (min-width: 1024px) {
 .toc-scroll {
 max-height: min(calc(14 * 1.75rem + 13 * 1.25rem + 10rem), calc(100vh - 8rem));
 overflow-y: auto;
 padding-right: 0.5rem;
+}
 }
 </style>
 <script is:inline>
@@ -92,8 +85,9 @@ const headings = Array.from(mainElement.querySelectorAll('h2, h3')).filter(h => 
 if (headings.length === 0) return;
 
 // IntersectionObserver 选项：当标题进入 main 顶部 20% 的位置时触发
+// 桌面版捲動的是 main，手機版捲動的是整個頁面
 const observerOptions = {
-root: mainElement,
+root: window.matchMedia('(min-width: 1024px)').matches ? mainElement : null,
 rootMargin: '0px 0px -80% 0px',
 threshold: 0
 };

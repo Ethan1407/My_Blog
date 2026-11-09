@@ -1,7 +1,6 @@
 ---
-import ViewCounter from '@/components/ViewCounter.astro';
-import SocialLinks from '@/components/SocialLinks.astro';
-import { getLastUpdated } from '@/utils/lastUpdated';
+import GlobalFooter from '@/components/GlobalFooter.astro';
+import MobileDrawer from '@/components/MobileDrawer.astro';
 // src/components/about/AboutDesktop.astro
 import { getCollection } from 'astro:content';
 // 🚀 關鍵修正：校正指向原 features 資料夾的路徑
@@ -40,14 +39,13 @@ const category = entry.data.category || '';
 if (category) { categoryCountMap[category] = (categoryCountMap[category] || 0) + 1; }
 });
 const sortedCategories = Object.entries(categoryCountMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
-const lastUpdated = await getLastUpdated("2026.02.15");
 ---
-<div id="about-desktop" data-period-root class="grid grid-cols-1 lg:grid-cols-[350px_1fr_280px] lg:grid-rows-[minmax(0,1fr)] h-full divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
-<aside class="min-h-0 p-8 overflow-y-auto overscroll-contain drag-scrollbar bg-transparent">
+<div id="about-desktop" data-period-root class="block lg:grid lg:grid-cols-[350px_1fr_280px] lg:grid-rows-[minmax(0,1fr)] h-full lg:divide-x divide-white/10 overflow-y-auto lg:overflow-hidden bg-transparent">
+<aside class="min-h-0 p-5 lg:p-8 lg:overflow-y-auto overscroll-contain drag-scrollbar bg-transparent max-lg:border-b max-lg:border-white/10">
 <ProfileSidebar />
 </aside>
-<main class="flex flex-col h-full min-h-0 overflow-y-auto overscroll-contain drag-scrollbar bg-transparent">
-<div class="p-10 flex-1">
+<main class="flex flex-col lg:h-full min-h-0 lg:overflow-y-auto overscroll-contain drag-scrollbar bg-transparent">
+<div class="p-5 md:p-10 flex-1">
 {sortedEvents.length > 0 ? (
 <Timeline events={sortedEvents} />
 ) : (
@@ -56,26 +54,11 @@ const lastUpdated = await getLastUpdated("2026.02.15");
 </div>
 )}
 </div>
-<footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent mt-auto">
-<div class="max-w-7xl mx-auto flex justify-between items-center">
-<div class="flex flex-col gap-2">
-<div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
-Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
-</div>
-<div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
-Establish At : <span class="text-white font-bold">2026.02.16</span>
-</div>
-<ViewCounter class="text-gray-400 text-sm font-mono tracking-widest uppercase" />
-</div>
-<div class="flex gap-4">
-<SocialLinks />
-</div>
-</div>
-</footer>
+<GlobalFooter />
 </main>
-<aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent space-y-8">
+<MobileDrawer class="lg:p-8 overflow-y-auto hide-scrollbar" menuTitle="篩選" showApply>
 <TagSidebar tags={sortedTags} categories={sortedCategories} dates={sortedEvents.map(e => e.data.date)} monthDates={sortedEvents.filter(e => !e.data.milestone).map(e => e.data.date)} />
-</aside>
+</MobileDrawer>
 </div>
 <style is:global>
 .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -102,7 +85,9 @@ const itemCategory = item.getAttribute('data-category') || '';
 const matchTag = !activeTag || itemTags.includes(activeTag);
 const matchMonth = !activeMonth || itemMonth === activeMonth;
 const matchCategory = !activeCategory || itemCategory === activeCategory;
-item.style.display = (matchTag && matchMonth && matchCategory) ? '' : 'none';
+// 「進入大學 / 進入高中」等階段標籤在篩選時一律保留
+const isMilestone = item.classList.contains('milestone-event');
+item.style.display = (isMilestone || (matchTag && matchMonth && matchCategory)) ? '' : 'none';
 });
 tagButtons.forEach(btn => {
 const original = btn.dataset.originalClass || '';

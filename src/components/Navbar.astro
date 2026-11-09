@@ -1,7 +1,11 @@
 ---
 /**
  * Navbar 組件：搜尋擴張不移位版
+ * hasPageDrawer：該頁自己用 <MobileDrawer> 包住側欄時傳入，否則這裡會放一個只有導覽連結的抽屜
  */
+import MobileDrawer from './MobileDrawer.astro';
+
+const { hasPageDrawer = false } = Astro.props;
 const { pathname } = Astro.url;
 const isHome = pathname === '/';
 const isAbout = pathname.includes('about');
@@ -12,63 +16,56 @@ const activeClass = "bg-white/20 font-semibold text-white shadow-lg backdrop-blu
 const inactiveClass = "text-gray-300 hover:text-white transition-colors";
 ---
 
-<nav class="sticky top-0 left-0 right-0 flex items-center justify-between px-8 py-4 bg-[#050b1a]/90 backdrop-blur-md border-b border-white/10 z-50 h-[80px]">
-    
-    <div class="flex items-center min-w-[100px]">
-        <a href="/" class={`text-2xl cursor-pointer transition-all ${isHome ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]' : 'text-white hover:opacity-80'}`}>
+<nav class="sticky top-0 left-0 right-0 flex items-center justify-between px-4 lg:px-8 py-2 lg:py-4 bg-[#050b1a]/90 backdrop-blur-md border-b border-white/10 z-50 h-16 lg:h-[80px] max-lg:shrink-0">
+
+    <div class="flex items-center lg:min-w-[100px]">
+        <a href="/" aria-label="首頁" class={`text-2xl cursor-pointer transition-all ${isHome ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]' : 'text-white hover:opacity-80'}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </a>
     </div>
 
     <!-- 桌面版导航菜单 -->
-    <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 bg-black/20 border border-white/5 rounded-full p-1 shadow-inner z-10">
+    <div class="hidden lg:flex absolute left-1/2 -translate-x-1/2 bg-black/20 border border-white/5 rounded-full p-1 shadow-inner z-10">
         <a href="/about" class={`px-6 py-2 rounded-full transition-all duration-300 ${isAbout ? activeClass : inactiveClass}`}>About Me</a>
         <a href="/projects" class={`px-6 py-2 rounded-full transition-all duration-300 ${isProjects ? activeClass : inactiveClass}`}>Projects</a>
         <a href="/hobbies" class={`px-6 py-2 rounded-full transition-all duration-300 ${isHobbies ? activeClass : inactiveClass}`}>Hobbies</a>
     </div>
 
-    <div class="flex items-center gap-4 text-2xl">
+    <div class="flex items-center gap-2 lg:gap-4 text-2xl">
         <div class="relative flex items-center bg-white/10 border border-white/5 rounded-full px-3 py-1 group focus-within:ring-2 focus-within:ring-blue-400/50 transition-all">
-            <input 
-                type="text" 
+            <!-- 手機上字級維持 16px，避免 iOS 聚焦輸入框時自動放大頁面 -->
+            <input
+                type="text"
                 id="nav-search-input"
-                placeholder="Search..." 
-                class="bg-transparent text-sm text-white placeholder-gray-500 outline-none w-0 group-hover:w-32 focus:w-48 transition-all duration-300 ease-in-out pl-2"
+                placeholder="Search..."
+                class="bg-transparent text-base lg:text-sm text-white placeholder-gray-500 outline-none w-0 group-hover:w-28 focus:w-28 lg:group-hover:w-32 lg:focus:w-48 transition-all duration-300 ease-in-out pl-2"
             />
-            <button id="nav-search-btn" class="hover:scale-110 transition-transform p-1 text-white">
+            <button id="nav-search-btn" aria-label="搜尋" class="hover:scale-110 transition-transform p-1 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </button>
         </div>
 
-        <div class="w-10 h-10 rounded-full bg-blue-500/20 overflow-hidden border-2 border-white/20 shadow-lg shrink-0">
+        <div class="hidden lg:block w-10 h-10 rounded-full bg-blue-500/20 overflow-hidden border-2 border-white/20 shadow-lg shrink-0">
              <img src="/profile.jpg" alt="User Profile" class="w-full h-full object-cover" />
         </div>
 
-        <!-- 手機版漢堡菜單 -->
-        <div class="md:hidden relative">
-            <button id="mobile-menu-btn" class="p-2 hover:bg-white/10 rounded-lg transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
-            </button>
-            <div id="mobile-menu-dropdown" class="hidden absolute top-full right-0 mt-2 bg-[#0a1425]/95 backdrop-blur-md border border-white/10 rounded-lg shadow-lg z-50 min-w-[180px]">
-                <a href="/about" class={`block px-4 py-3 text-sm text-white hover:bg-blue-600/20 transition-all first:rounded-t-lg ${isAbout ? 'bg-blue-600/30 font-semibold' : ''}`}>
-                    About Me
-                </a>
-                <a href="/projects" class={`block px-4 py-3 text-sm text-white hover:bg-blue-600/20 transition-all ${isProjects ? 'bg-blue-600/30 font-semibold' : ''}`}>
-                    Projects
-                </a>
-                <a href="/hobbies" class={`block px-4 py-3 text-sm text-white hover:bg-blue-600/20 transition-all last:rounded-b-lg ${isHobbies ? 'bg-blue-600/30 font-semibold' : ''}`}>
-                    Hobbies
-                </a>
-            </div>
-        </div>
+        <!-- 手機版漢堡選單 -->
+        <button id="mobile-menu-btn" type="button" aria-label="開啟選單" aria-expanded="false" class="lg:hidden p-2 -mr-2 rounded-lg transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+        </button>
     </div>
 </nav>
+
+<!-- 抽屜與遮罩要放在 <nav> 外：nav 的 backdrop-blur 會讓裡面的 fixed 元素只相對於 nav 定位 -->
+<div id="mobile-drawer-backdrop" class="hidden lg:hidden fixed inset-0 z-[60] bg-black/60"></div>
+{!hasPageDrawer && <MobileDrawer class="lg:hidden" />}
 
 <script>
     const searchInput = document.getElementById('nav-search-input') as HTMLInputElement;
     const searchBtn = document.getElementById('nav-search-btn');
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenuDropdown = document.getElementById('mobile-menu-dropdown');
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const backdrop = document.getElementById('mobile-drawer-backdrop');
+    const drawer = document.querySelector<HTMLElement>('[data-mobile-drawer]');
 
     // 搜尋功能
     const handleSearch = () => {
@@ -90,22 +87,22 @@ const inactiveClass = "text-gray-300 hover:text-white transition-colors";
         }
     });
 
-    // 手機漢堡菜單開關
-    mobileMenuBtn?.addEventListener('click', () => {
-        mobileMenuDropdown?.classList.toggle('hidden');
-    });
+    // 手機漢堡選單開關
+    const setDrawer = (open: boolean) => {
+        drawer?.classList.toggle('is-open', open);
+        backdrop?.classList.toggle('hidden', !open);
+        menuBtn?.setAttribute('aria-expanded', String(open));
+    };
 
-    // 點擊菜單項時關閉菜單
-    document.querySelectorAll('#mobile-menu-dropdown a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenuDropdown?.classList.add('hidden');
-        });
+    menuBtn?.addEventListener('click', () => setDrawer(true));
+    backdrop?.addEventListener('click', () => setDrawer(false));
+    drawer?.addEventListener('click', (e) => {
+        // 點連結（導覽、目錄）或關閉鈕時收起；點篩選條件時保持開啟，可以連續選
+        if ((e.target as HTMLElement).closest('a, [data-drawer-close]')) setDrawer(false);
     });
-
-    // 點擊菜單外時關閉菜單
-    document.addEventListener('click', (e) => {
-        if (!mobileMenuBtn?.contains(e.target as Node) && !mobileMenuDropdown?.contains(e.target as Node)) {
-            mobileMenuDropdown?.classList.add('hidden');
-        }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setDrawer(false);
     });
+    // 轉成桌面寬度（例如平板旋轉）時收起，避免遮罩殘留狀態
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', () => setDrawer(false));
 </script>

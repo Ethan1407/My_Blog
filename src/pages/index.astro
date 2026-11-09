@@ -6,21 +6,17 @@ import { getLastUpdated } from '@/utils/lastUpdated';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Navbar from '@/components/Navbar.astro';
 import HomeDesktop from '@/components/home/HomeDesktop.astro';
-import HomeMobile from '@/components/home/HomeMobile.astro';
 const lastUpdated = await getLastUpdated("2026.02.22");
 ---
 <BaseLayout title="Home | Ethan Chen">
-<div class="flex flex-col h-screen overflow-y-auto bg-transparent">
+<div class="flex flex-col h-dvh overflow-y-auto bg-transparent">
 <Navbar />
 <main class="flex-1 flex flex-col">
-<div class="hidden lg:block flex-1">
+<div class="flex-1">
 <HomeDesktop lastUpdated={lastUpdated} />
 </div>
-<div class="block lg:hidden flex-1">
-<HomeMobile lastUpdated={lastUpdated} />
-</div>
 </main>
-<footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent">
+<footer class="w-full py-8 px-5 lg:px-10 border-t border-white/10 bg-transparent">
 <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
 <div class="text-gray-400 text-sm font-mono tracking-widest uppercase text-center lg:text-left">
 Last Updated : <span class="text-white font-bold">{lastUpdated}</span>

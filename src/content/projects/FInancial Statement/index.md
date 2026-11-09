@@ -5,7 +5,7 @@ summary: "最近學會計的時候發現這些資料可以拿去給 AI 處理變
 date: "2026.11.05"
 category: "專題"
 tags: ["自主學習", "資訊", "股票", "AI"]
-image: ""
+image: "./1.png"
 ---
 
 股票網頁的GitHub連結[🔗](https://github.com/Ethan1407/financial-Statement)

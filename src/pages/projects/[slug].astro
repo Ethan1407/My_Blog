@@ -4,7 +4,6 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Navbar from '@/components/Navbar.astro';
 import ProjectDesktop from '@/components/projects/ProjectDesktop.astro';
-import ProjectMobile from '@/components/projects/ProjectMobile.astro';
 export async function getStaticPaths() {
 const projectEntries = await getCollection('projects');
 return projectEntries.map(entry => ({ params: { slug: entry.id }, props: { entry } }));
@@ -19,29 +18,28 @@ const wordCount = entry.body ? entry.body.replace(/\s/g, '').length : 0;
 const lastUpdated = await getLastUpdated("2026.02.22");
 ---
 <BaseLayout title={entry.data.title}>
-<div class="flex flex-col w-full min-h-screen bg-transparent">
-<Navbar />
+<div class="flex flex-col w-full min-h-dvh bg-transparent">
+<Navbar hasPageDrawer />
 <main class="w-full flex-1">
-<div class="hidden lg:block w-full">
 <ProjectDesktop entry={entry} filteredHeadings={filteredHeadings} lastUpdated={lastUpdated} Content={Content} wordCount={wordCount} />
-</div>
-<div class="block lg:hidden w-full">
-<ProjectMobile entry={entry} filteredHeadings={filteredHeadings} lastUpdated={lastUpdated} Content={Content} wordCount={wordCount} />
-</div>
 </main>
 </div>
 </BaseLayout>
 <style is:global>
 html { scroll-behavior: smooth; overflow-y: auto !important; height: auto !important; }
 body { overflow-x: hidden; height: auto !important; }
+/* 手機版整頁捲動：body 不能是捲動容器，否則 Navbar 的 sticky 會失效 */
+@media (max-width: 1023.98px) { body { overflow-x: clip !important; overflow-y: visible !important; } }
+.prose-custom { overflow-wrap: anywhere; }
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-.prose-custom h2 { @apply text-3xl font-bold mt-20 mb-8 text-white border-b border-white/10 pb-3 scroll-mt-28; }
-.prose-custom h3 { @apply text-2xl font-bold mt-12 mb-6 text-white/90 scroll-mt-28; }
-.prose-custom p { @apply text-lg text-gray-300 leading-[1.8] mb-8; }
-.prose-custom ul { @apply list-disc ml-8 mb-8 text-gray-300 space-y-3; }
-.prose-custom pre { @apply bg-[#1a1a1a] p-8 rounded-2xl overflow-x-auto mb-10 border border-white/5 shadow-2xl; }
+.prose-custom h2 { @apply text-2xl lg:text-3xl font-bold mt-12 lg:mt-20 mb-6 lg:mb-8 text-white border-b border-white/10 pb-3 scroll-mt-28; }
+.prose-custom h3 { @apply text-xl lg:text-2xl font-bold mt-8 lg:mt-12 mb-4 lg:mb-6 text-white/90 scroll-mt-28; }
+.prose-custom p { @apply text-base lg:text-lg text-gray-300 leading-[1.8] lg:leading-[1.8] mb-6 lg:mb-8; }
+.prose-custom ul { @apply list-disc ml-5 lg:ml-8 mb-6 lg:mb-8 text-gray-300 space-y-3; }
+.prose-custom :is(p, li, td, blockquote) a { @apply text-blue-400 underline underline-offset-4 hover:text-blue-300 transition-colors; }
+.prose-custom pre { @apply bg-[#1a1a1a] p-4 lg:p-8 rounded-2xl overflow-x-auto mb-10 border border-white/5 shadow-2xl; }
 .prose-custom code { @apply bg-white/10 px-1.5 py-0.5 rounded text-blue-300 font-mono text-[0.9em]; }
-.prose-custom img { @apply rounded-3xl my-14 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] object-cover; width: auto !important; max-width: 100% !important; height: auto !important; display: block !important; margin-left: auto !important; margin-right: auto !important; }
+.prose-custom img { @apply rounded-2xl lg:rounded-3xl my-8 lg:my-14 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] object-cover; width: auto !important; max-width: 100% !important; height: auto !important; display: block !important; margin-left: auto !important; margin-right: auto !important; }
 @media (max-width: 1024px) { .prose-custom img { width: 100% !important; } }
 </style>

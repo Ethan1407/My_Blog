@@ -1,7 +1,6 @@
 ---
-import ViewCounter from '@/components/ViewCounter.astro';
-import SocialLinks from '@/components/SocialLinks.astro';
-import { getLastUpdated } from '@/utils/lastUpdated';
+import GlobalFooter from '@/components/GlobalFooter.astro';
+import MobileDrawer from '@/components/MobileDrawer.astro';
 import { getCollection } from 'astro:content';
 import ProjectCard from './components/ProjectCard.astro';
 import ProjectSidebar from './components/ProjectSidebar.astro';
@@ -55,50 +54,31 @@ const sortedYearlyStats = Object.entries(yearlyStatsMap)
 // 4. 排序專案 (最新在前)
 const sortedProjects = allProjects.sort((a, b) => b.data.date.localeCompare(a.data.date));
 
-/**
- * 5. GitHub 最新 Commit 時間（共用快取，見 src/utils/lastUpdated.ts）
- */
-const lastUpdated = await getLastUpdated("2026.02.15");
 ---
 
-<div data-projects-root data-period-root class="grid grid-cols-1 lg:grid-cols-[1fr_280px] h-[calc(100vh-80px)] divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden bg-transparent">
+<div data-projects-root data-period-root class="grid grid-cols-1 max-lg:grid-rows-[minmax(0,1fr)] lg:grid-cols-[1fr_280px] h-full lg:h-[calc(100vh-80px)] lg:divide-x divide-white/10 overflow-hidden bg-transparent">
     
     <main class="flex flex-col h-full min-h-0 overflow-y-auto overscroll-contain drag-scrollbar bg-transparent">
-        <div class="p-8 md:p-12 flex-1">
-            <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">Projects</h2>
+        <div class="p-5 sm:p-8 md:p-12 flex-1">
+            <h2 class="text-3xl lg:text-4xl font-extrabold mb-6 lg:mb-12 tracking-tight text-white">Projects</h2>
             <FeaturedMarquee />
-            <div class="space-y-8" id="project-list-container">
+            <div class="space-y-5 md:space-y-8" id="project-list-container">
                 {withMilestones(sortedProjects, p => p.data.date).map(entry => (
                     entry.type === 'milestone'
                         ? <ProjectMilestone milestone={entry.milestone} />
                         : <ProjectCard project={entry.item} />
                 ))}
             </div>
-            <div class="h-20"></div>
+            <div class="h-8 lg:h-20"></div>
         </div>
 
-        <footer class="w-full py-8 px-10 border-t border-white/10 bg-transparent mt-auto">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <div class="flex flex-col gap-2">
-                    <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
-                        Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
-                    </div>
-                    <div class="text-gray-400 text-sm font-mono tracking-widest uppercase">
-                        Establish At : <span class="text-white font-bold">2026.02.16</span>
-                    </div>
-                    <ViewCounter class="text-gray-400 text-sm font-mono tracking-widest uppercase" />
-                </div>
-                <div class="flex gap-4">
-                    <SocialLinks />
-                </div>
-            </div>
-        </footer>
+        <GlobalFooter />
     </main>
 
-    <aside class="p-8 overflow-y-auto hide-scrollbar bg-transparent">
+    <MobileDrawer class="lg:p-8 overflow-y-auto hide-scrollbar" menuTitle="篩選" showApply>
         <ProjectSidebar tags={sortedTags} yearlyStats={sortedYearlyStats} categories={categories} dates={sortedProjects.map(p => p.data.date)} />
-        <div class="h-20"></div>
-    </aside>
+        <div class="h-4 lg:h-20"></div>
+    </MobileDrawer>
 </div>
 
 <style>
@@ -106,7 +86,6 @@ const lastUpdated = await getLastUpdated("2026.02.15");
 </style>
 
 <script>
-    // 電腦版與手機版各自有一份篩選介面，分別初始化，避免互相干擾
     function initProjectFilters(root: Element) {
         const tagButtons = root.querySelectorAll('.tag-button');
         const categoryItems = root.querySelectorAll('.filter-category');
@@ -145,10 +124,7 @@ const lastUpdated = await getLastUpdated("2026.02.15");
                 btn.classList.toggle('filter-active', isMatch);
             });
 
-            // 篩選時隱藏階段分隔線，避免出現空的區段
-            root.querySelectorAll('.project-milestone').forEach(el => {
-                (el as HTMLElement).style.display = hasFilter ? 'none' : '';
-            });
+            // 階段分隔線（進入大學 / 進入高中）在標籤、類型、月份篩選時一律保留，不做隱藏
 
             if (hasFilter) clearBtn?.classList.remove('hidden');
             else clearBtn?.classList.add('hidden');

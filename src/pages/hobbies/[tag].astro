@@ -4,6 +4,7 @@ import { getLastUpdated } from '@/utils/lastUpdated';
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Navbar from "@/components/Navbar.astro";
+import MobileDrawer from "@/components/MobileDrawer.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import RunningCalendar from "@/components/hobbies/RunningCalendar.astro";
 import { getRunningData } from "@/utils/running";
@@ -40,7 +41,7 @@ const records: Record<string, [string, string][]> = {
     ["3K", "12:48"],
     ["5K", "23:30"],
     ["10K", "48:50"],
-    ["21K", "training"],
+    ["21K", "1:56:36"],
     ["42K", "training"],
   ],
 };
@@ -52,16 +53,16 @@ const runningData = tag === "慢跑" ? await getRunningData() : null;
 ---
 
 <BaseLayout title={`關於 ${tag} | Ethan Chen`}>
-  <div class="flex flex-col h-screen overflow-hidden bg-transparent">
-    <Navbar />
+  <div class="flex flex-col h-dvh overflow-hidden bg-transparent">
+    <Navbar hasPageDrawer />
     
     <div class="flex-1 overflow-hidden">
       <div class="h-full overflow-y-auto">
         <!-- 主內容至少佔滿一個畫面高度（扣掉 80px Navbar），讓 footer 要往下滑才會出現 -->
-        <div class="max-w-[1600px] min-h-[calc(100vh-80px)] mx-auto w-full flex flex-col lg:flex-row gap-8 xl:gap-20 p-6 md:p-12 relative">
+        <div class="max-w-[1600px] min-h-[calc(100dvh-64px)] lg:min-h-[calc(100vh-80px)] mx-auto w-full flex flex-col lg:flex-row gap-8 xl:gap-20 p-5 md:p-12 relative">
       
-      <aside class="lg:w-[280px] shrink-0">
-        <div class="sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar">
+      <MobileDrawer class="lg:w-[280px] shrink-0">
+        <div class="lg:sticky lg:top-24 lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto hide-scrollbar">
           <h2 class="text-gray-500 font-bold text-xs uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-2">
             Hobbies Navigation
           </h2>
@@ -91,13 +92,13 @@ const runningData = tag === "慢跑" ? await getRunningData() : null;
             </a>
           </div>
         </div>
-      </aside>
+      </MobileDrawer>
 
       <main class="flex-1 min-w-0 max-w-4xl flex flex-col">
-        <div class="p-8 md:p-12">
-          <h2 class="text-4xl font-extrabold mb-12 tracking-tight text-white">關於 #{tag}</h2>        <article class="prose-custom mb-16">
-          <div class="bg-white/5 p-8 rounded-2xl border-l-4 border-blue-500 shadow-2xl">
-            <p class="text-xl italic text-gray-200 m-0">
+        <div class="md:p-12">
+          <h2 class="text-3xl lg:text-4xl font-extrabold mb-6 lg:mb-12 tracking-tight text-white">關於 #{tag}</h2>        <article class="prose-custom mb-10 lg:mb-16">
+          <div class="bg-white/5 p-5 md:p-8 rounded-2xl border-l-4 border-blue-500 shadow-2xl">
+            <p class="text-lg lg:text-xl italic text-gray-200 m-0">
               {descriptions[tag as string] || "這是我熱愛的活動之一，帶給我無限的動力。"}
             </p>
             {records[tag as string] && (
@@ -116,8 +117,8 @@ const runningData = tag === "慢跑" ? await getRunningData() : null;
 
         {runningData && <RunningCalendar data={runningData} />}
 
-        <section class="mb-20">
-          <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+        <section class="mb-10 lg:mb-20">
+          <h2 class="text-2xl font-bold text-white mb-6 lg:mb-8 flex items-center gap-3">
             <span class="w-8 h-[2px] bg-blue-500"></span> 相關貼文紀錄
           </h2>
           
@@ -129,7 +130,7 @@ const runningData = tag === "慢跑" ? await getRunningData() : null;
             ) : (
               posts.map((post) => (
                 <a href={"/projects/" + post.id} class="group relative rounded-2xl bg-white/5 hover:bg-white/[0.08] transition-all duration-300 border border-white/5 hover:border-white/20 overflow-hidden">
-                  <div class="flex flex-col md:flex-row items-center p-6 pb-10 gap-6">
+                  <div class="flex flex-col md:flex-row items-center p-4 md:p-6 pb-10 gap-4 md:gap-6">
                     {post.data.image && (
                       <CoverImage src={post.data.image} alt={post.data.title} width={480} class="w-full md:w-48 h-32 rounded-xl object-cover transition-transform duration-500 group-hover:scale-105" />
                     )}
@@ -150,16 +151,16 @@ const runningData = tag === "慢跑" ? await getRunningData() : null;
       </main>
     </div>
 
-    <footer class="w-full py-8 px-6 border-t border-white/10 bg-transparent">
+    <footer class="w-full py-8 px-5 lg:px-6 border-t border-white/10 bg-transparent">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10 text-center lg:text-left">
         <div class="flex flex-col gap-2 text-center lg:text-left">
-          <div class="text-gray-400 text-[10px] lg:text-sm font-mono uppercase tracking-[0.2em]">
+          <div class="text-gray-400 text-xs lg:text-sm font-mono uppercase tracking-[0.2em]">
             Last Updated : <span class="text-white font-bold">{lastUpdated}</span>
           </div>
-          <div class="text-gray-400 text-[10px] lg:text-sm font-mono uppercase tracking-[0.2em]">
+          <div class="text-gray-400 text-xs lg:text-sm font-mono uppercase tracking-[0.2em]">
             Establish At : <span class="text-white font-bold">2026.02.16</span>
           </div>
-          <ViewCounter class="text-gray-400 text-[10px] lg:text-sm font-mono uppercase tracking-[0.2em]" />
+          <ViewCounter class="text-gray-400 text-xs lg:text-sm font-mono uppercase tracking-[0.2em]" />
         </div>
         <div class="flex justify-center lg:justify-end gap-4">
           <a href="https://discord.com/users/1251472862825545831" target="_blank" rel="noopener noreferrer" class="p-2 border border-white/20 rounded-lg hover:bg-white/5 transition-all duration-300 shadow-md">

@@ -1,0 +1,40 @@
+---
+/**
+ * ProjectPreviewCard 筆記懸浮簡介卡片
+ * 跑馬燈與貼文內超連結共用；預設隱藏，顯示與定位由使用端的腳本控制
+ */
+import CoverImage from '@/components/CoverImage.astro';
+import { tagLabel } from '@/utils/tags';
+
+const { project } = Astro.props;
+const { title, location, summary, date, image, tags, category } = project.data;
+---
+<a
+    href={`/projects/${project.id}`}
+    data-preview-card={project.id}
+    class="marquee-card hidden fixed z-[60] w-[min(460px,calc(100vw-32px))] bg-[#1c2333]/95 backdrop-blur-md rounded-xl p-5 border border-white/10 shadow-2xl hover:border-blue-400/40 transition-colors"
+>
+    {image && (
+        <div class="aspect-video rounded-lg overflow-hidden border border-white/10 mb-4">
+            <CoverImage src={image} alt={title} width={800} class="w-full h-full object-cover" />
+        </div>
+    )}
+    <h3 class="text-xl font-bold mb-2 text-white">{title}</h3>
+    <div class="space-y-1 text-gray-300 text-sm leading-relaxed">
+        {location && <p><span class="font-semibold text-white/80">location :</span> {location}</p>}
+        <p><span class="font-semibold text-white/80">summary :</span> {summary}</p>
+    </div>
+    <div class="mt-3 flex flex-wrap items-center gap-2">
+        <span class="text-xs font-bold text-white/60">tags :</span>
+        {tags.map((tag) => (
+            <span class="text-xs text-blue-300/80 bg-blue-400/10 px-2 py-0.5 rounded-md border border-blue-400/20">{tagLabel(tag)}</span>
+        ))}
+    </div>
+    <div class="flex justify-end items-center gap-4 mt-4">
+        <div class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></span>
+            <span class="text-xs font-bold text-blue-400 tracking-wider uppercase">{category}</span>
+        </div>
+        <span class="text-gray-400 font-mono text-xs border-l border-white/10 pl-4">{date}</span>
+    </div>
+</a>

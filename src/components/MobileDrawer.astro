@@ -1,0 +1,78 @@
+---
+/**
+ * 手機版漢堡選單抽屜（由 Navbar 的漢堡按鈕開關，桌面版不受影響）
+ * - 放在頁面裡時：包住該頁的側欄，桌面版就是一般的 <aside>，手機版變成右側滑出的抽屜
+ * - 不放內容時：只有導覽連結（由 Navbar 自動產生）
+ * 抽屜要放在頁面內，篩選腳本才能在同一個 root 底下找到側欄的按鈕。
+ */
+interface Props {
+  class?: string;
+  /** 抽屜中，頁面內容上方的小標題 */
+  menuTitle?: string;
+  /** 內容是篩選條件時顯示「查看結果」按鈕，因為抽屜會擋住結果 */
+  showApply?: boolean;
+}
+const { class: className = '', menuTitle, showApply = false } = Astro.props;
+const { pathname } = Astro.url;
+const links = [
+  { href: '/about', label: 'About Me', active: pathname.includes('about') },
+  { href: '/projects', label: 'Projects', active: pathname.includes('projects') },
+  { href: '/hobbies', label: 'Hobbies', active: pathname.includes('hobbies') },
+];
+const hasContent = Astro.slots.has('default');
+---
+<aside data-mobile-drawer class={className} aria-label="選單">
+  <div class="lg:hidden">
+    <div class="flex items-center justify-between px-5 h-16 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <img src="/profile.jpg" alt="" class="w-9 h-9 rounded-full object-cover border-2 border-white/20" />
+        <span class="font-bold tracking-wide text-white">Ethan Chen</span>
+      </div>
+      <button type="button" data-drawer-close aria-label="關閉選單" class="p-2 -mr-2 text-gray-300 hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <nav class="p-3 space-y-1">
+      {links.map((link) => (
+        <a href={link.href} class={`block px-4 py-3 rounded-full transition-all ${link.active ? 'bg-white/20 font-semibold text-white' : 'text-gray-300'}`}>{link.label}</a>
+      ))}
+    </nav>
+  </div>
+
+  {hasContent && (
+    <div class="lg:contents max-lg:block max-lg:px-5 max-lg:py-6 max-lg:border-t max-lg:border-white/10">
+      {menuTitle && <p class="lg:hidden text-gray-500 font-bold text-xs uppercase tracking-[0.2em] mb-6">{menuTitle}</p>}
+      <slot />
+    </div>
+  )}
+
+  {showApply && (
+    <div class="lg:hidden sticky bottom-0 p-4 bg-[#0a1425] border-t border-white/10">
+      <button type="button" data-drawer-close class="w-full py-3 rounded-full bg-blue-500/20 border border-blue-400/40 text-blue-300 font-bold">查看結果</button>
+    </div>
+  )}
+</aside>
+
+<style is:global>
+  @media (max-width: 1023.98px) {
+    [data-mobile-drawer] {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 70;
+      width: min(20rem, 85vw);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background-color: #0a1425;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      transform: translateX(100%);
+      visibility: hidden;
+      transition: transform 0.28s ease, visibility 0.28s;
+    }
+    [data-mobile-drawer].is-open {
+      transform: none;
+      visibility: visible;
+    }
+  }
+</style>

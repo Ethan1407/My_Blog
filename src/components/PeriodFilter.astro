@@ -44,12 +44,9 @@ const options = periods.map(p => ({ ...p, count: counts[p.key] || 0 }));
                 const value = btn.dataset.periodValue || '';
                 active = active === value ? '' : value;
                 buttons.forEach(b => b.classList.toggle('filter-active', !!active && b.dataset.periodValue === active));
+                // 包含階段分隔線（也帶有 data-period）：只保留所選時期的那一條，例如選「大學」顯示「進入大學」
                 root.querySelectorAll<HTMLElement>('[data-period]').forEach(el => {
                     el.classList.toggle('period-hidden', !!active && el.dataset.period !== active);
-                });
-                // Projects 頁的階段分隔線：選定單一時期時隱藏
-                root.querySelectorAll<HTMLElement>('.project-milestone').forEach(el => {
-                    el.classList.toggle('period-hidden', !!active);
                 });
             });
         });
