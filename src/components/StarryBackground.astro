@@ -7,13 +7,16 @@
   const initStarfield = () => {
     const canvas = document.getElementById('starry-canvas') as HTMLCanvasElement;
     if (!canvas) return;
+    // 避免 DOMContentLoaded 與 astro:page-load 重複啟動多個動畫迴圈
+    if (canvas.dataset.initialized) return;
+    canvas.dataset.initialized = 'true';
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     let stars = [];
     const isMobile = window.innerWidth < 768; // md breakpoint
-    const starCount = isMobile ? 60 : 180; // 粒子數量 (手機60個，桌面180個)
-    const connectionDist = 120; // 連線的最大距離
+    const starCount = isMobile ? 80 : 220; // 粒子數量 (手機80個，桌面220個)
+    const connectionDist = 140; // 連線的最大距離
     const connectionDistSq = connectionDist * connectionDist;
     const mouseRadius = 150; // 滑鼠排斥影響範圍
     
@@ -26,7 +29,7 @@
       const dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // 用 setTransform 避免多次 resize 時縮放累加
       canvas.style.width = `${window.innerWidth}px`;
       canvas.style.height = `${window.innerHeight}px`;
       initStars();
@@ -38,10 +41,12 @@
         stars.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          size: Math.random() * 1.5 + 0.5,
+          size: Math.random() * 1.5 + 0.7,
           vx: (Math.random() - 0.5) * 0.5, 
           vy: (Math.random() - 0.5) * 0.5, 
-          opacity: Math.random()
+          opacity: Math.random() * 0.4 + 0.3, // 亮度 0.3~0.7，保持柔和但不會消失
+          twinkleSpeed: Math.random() * 0.02 + 0.005,
+          twinklePhase: Math.random() * Math.PI * 2
         });
       }
     }
@@ -72,10 +77,24 @@
         if (star.y < 0) star.y = window.innerHeight;
         if (star.y > window.innerHeight) star.y = 0;
 
-        // 3. 繪製星星
+        // 3. 繪製星星（含閃爍與光暈）
+        star.twinklePhase += star.twinkleSpeed;
+        const alpha = star.opacity * (0.75 + 0.25 * Math.sin(star.twinklePhase));
+
+        // 外圈柔和光暈
+        const glowRadius = star.size * 3;
+        const glow = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, glowRadius);
+        glow.addColorStop(0, `rgba(180, 215, 255, ${alpha * 0.2})`);
+        glow.addColorStop(1, 'rgba(180, 215, 255, 0)');
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, glowRadius, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+
+        // 星星本體
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         ctx.fill();
 
         // 4. 連線邏輯
@@ -93,8 +112,8 @@
             ctx.lineTo(target.x, target.y);
             const lineOpacity = 1 - (distNext / connectionDist);
             // 稍微帶一點藍色的白線會更搭背景
-            ctx.strokeStyle = `rgba(200, 230, 255, ${lineOpacity * 0.2})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `rgba(200, 230, 255, ${lineOpacity * 0.28})`;
+            ctx.lineWidth = 0.6;
             ctx.stroke();
             ctx.closePath();
           }
