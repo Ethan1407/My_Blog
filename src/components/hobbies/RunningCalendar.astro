@@ -79,7 +79,7 @@ const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 const lastIdx = monthViews.length - 1;
 ---
 
-<section class="mb-10 lg:mb-16" data-running-calendar>
+<section class="mb-10 lg:mb-16" data-running-calendar data-today={today} data-km-by-day={JSON.stringify(kmByDay)}>
   <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
     <span class="w-8 h-[2px] bg-blue-500"></span> 跑步紀錄
   </h2>
@@ -155,15 +155,15 @@ const lastIdx = monthViews.length - 1;
         </div>
       </div>
 
-      <!-- 週：固定以更新當天為準 -->
+      <!-- 週：預設以更新當天為準，點擊日期後改以該日期所在週為準 -->
       <div class="grid grid-cols-3 md:grid-cols-1 gap-6 pt-6 border-t border-white/10">
         <div>
-          <div class="text-gray-400 text-xs tracking-widest">上週跑量</div>
-          <div class="text-2xl md:text-3xl font-bold text-white">{fmt(lastWeekKm)}<span class="text-sm text-gray-400 ml-1">km</span></div>
+          <div class="text-gray-400 text-xs tracking-widest"><span data-prev-week-label>上週</span>跑量</div>
+          <div class="text-2xl md:text-3xl font-bold text-white"><span data-prev-week-km>{fmt(lastWeekKm)}</span><span class="text-sm text-gray-400 ml-1">km</span></div>
         </div>
         <div>
-          <div class="text-gray-400 text-xs tracking-widest">本週跑量</div>
-          <div class="text-2xl md:text-3xl font-bold text-white">{fmt(thisWeekKm)}<span class="text-sm text-gray-400 ml-1">km</span></div>
+          <div class="text-gray-400 text-xs tracking-widest"><span data-week-label>本週</span>跑量</div>
+          <div class="text-2xl md:text-3xl font-bold text-white"><span data-week-km>{fmt(thisWeekKm)}</span><span class="text-sm text-gray-400 ml-1">km</span></div>
         </div>
       </div>
     </div>
@@ -180,8 +180,41 @@ const lastIdx = monthViews.length - 1;
     const prevMonthKm = root.querySelector<HTMLElement>('[data-prev-month-km]')!;
     const label = root.querySelector<HTMLElement>('span[data-label]')!;
     const prevLabel = root.querySelector<HTMLElement>('span[data-prev-label]')!;
+    const weekKmEl = root.querySelector<HTMLElement>('[data-week-km]')!;
+    const prevWeekKmEl = root.querySelector<HTMLElement>('[data-prev-week-km]')!;
+    const weekLabel = root.querySelector<HTMLElement>('[data-week-label]')!;
+    const prevWeekLabel = root.querySelector<HTMLElement>('[data-prev-week-label]')!;
+    const kmByDay: Record<string, number> = JSON.parse(root.dataset.kmByDay ?? '{}');
     let current = months.length - 1;
     let selected: HTMLElement | null = null;
+
+    // 週日～週六；日期一律以 UTC 表示的「純日期」計算，與 build 端一致
+    const DAY_MS = 86400000;
+    const parse = (s: string) => {
+      const [y, m, d] = s.split('-').map(Number);
+      return Date.UTC(y, m - 1, d);
+    };
+    const weekStartOf = (ms: number) => ms - new Date(ms).getUTCDay() * DAY_MS;
+    const weekKm = (start: number) =>
+      Array.from({ length: 7 }, (_, i) => kmByDay[new Date(start + i * DAY_MS).toISOString().slice(0, 10)] ?? 0)
+        .reduce((a, b) => a + b, 0);
+    const md = (ms: number) => `${new Date(ms).getUTCMonth() + 1}/${new Date(ms).getUTCDate()}`;
+    const thisWeekStart = weekStartOf(parse(root.dataset.today!));
+
+    const showWeek = (date: string) => {
+      const start = weekStartOf(parse(date));
+      const prevStart = start - 7 * DAY_MS;
+      weekKmEl.textContent = weekKm(start).toFixed(1);
+      prevWeekKmEl.textContent = weekKm(prevStart).toFixed(1);
+      // 選到本週時維持「本週 / 上週」，其他週則顯示該週起訖日期
+      if (start === thisWeekStart) {
+        weekLabel.textContent = '本週';
+        prevWeekLabel.textContent = '上週';
+      } else {
+        weekLabel.textContent = `${md(start)}–${md(start + 6 * DAY_MS)} `;
+        prevWeekLabel.textContent = `${md(prevStart)}–${md(prevStart + 6 * DAY_MS)} `;
+      }
+    };
 
     const show = (idx: number) => {
       if (idx < 0 || idx >= months.length) return;
@@ -205,6 +238,7 @@ const lastIdx = monthViews.length - 1;
       selected?.classList.remove('ring-2', 'ring-white');
       cell.classList.add('ring-2', 'ring-white');
       selected = cell;
+      showWeek(cell.dataset.date!);
       const km = Number(cell.dataset.km);
       const [, m, d] = cell.dataset.date!.split('-');
       detail.innerHTML = km > 0
