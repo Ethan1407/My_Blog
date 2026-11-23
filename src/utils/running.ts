@@ -77,3 +77,58 @@ async function load(): Promise<RunningData | null> {
     return null;
   }
 }
+
+// ---------------- 個人最佳紀錄（PB） ----------------
+
+/** [顯示名稱, 時間字串]，時間格式 m:ss 或 h:mm:ss；非時間（例如 "training"）代表尚無紀錄 */
+export type RunRecord = [string, string];
+
+const RECORD_METERS: Record<string, number> = {
+  '3K': 3000, '5K': 5000, '10K': 10000, '15K': 15000, '21K': 21097.5, '42K': 42195,
+};
+
+const toSeconds = (t: string): number | null => {
+  if (!/^\d+(:\d{1,2}){1,2}$/.test(t)) return null;
+  return t.split(':').map(Number).reduce((s, n) => s * 60 + n, 0);
+};
+const formatSeconds = (sec: number) => {
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  const p = (n: number) => String(n).padStart(2, '0');
+  return h ? `${h}:${p(m)}:${p(s)}` : `${m}:${p(s)}`;
+};
+
+interface PaceCurve { distance: number[]; values: number[] }
+
+/**
+ * 以手動填寫的紀錄為基準，檢查 `since`（含）之後的跑步是否破紀錄，有就換成新成績。
+ * 成績來自 intervals.icu 的 pace curve（活動中任一段連續距離的最快時間，GPS 計算，
+ * 可能和 Garmin / 晶片時間差幾秒），所以只比較基準日之後的新跑步，避免舊紀錄被改掉。
+ * 手動更新紀錄時，記得把 `since` 改成更新後的隔天。
+ */
+export async function getRunningRecords(manual: RunRecord[], since: string): Promise<RunRecord[]> {
+  const athleteId = import.meta.env.INTERVALS_ATHLETE_ID;
+  const apiKey = import.meta.env.INTERVALS_API_KEY;
+  if (!athleteId || !apiKey) return manual;
+  try {
+    const auth = Buffer.from(`API_KEY:${apiKey}`).toString('base64');
+    const url = `https://intervals.icu/api/v1/athlete/${athleteId}/pace-curves.json?type=Run&curves=r.${since}`;
+    const res = await fetch(url, { headers: { Authorization: `Basic ${auth}` } });
+    if (!res.ok) throw new Error(`intervals.icu 回應 ${res.status}`);
+    const curve: PaceCurve | undefined = (await res.json()).list?.[0];
+    if (!curve) return manual;
+
+    return manual.map(([name, time]) => {
+      const meters = RECORD_METERS[name];
+      const i = meters ? curve.distance.findIndex((d) => Math.abs(d - meters) < 1) : -1;
+      const best = i >= 0 ? curve.values[i] : undefined;
+      if (!best) return [name, time];
+      const current = toSeconds(time);
+      if (current !== null && best >= current) return [name, time];
+      console.log(`[running] 新紀錄 ${name}：${time} → ${formatSeconds(best)}`);
+      return [name, formatSeconds(best)];
+    });
+  } catch (err) {
+    console.warn('[running] 取得 PB 失敗，使用手動紀錄：', err);
+    return manual;
+  }
+}

@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar.astro";
 import MobileDrawer from "@/components/MobileDrawer.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import RunningCalendar from "@/components/hobbies/RunningCalendar.astro";
-import { getRunningData } from "@/utils/running";
+import { getRunningData, getRunningRecords, type RunRecord } from "@/utils/running";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("projects");
@@ -36,11 +36,15 @@ const descriptions: Record<string, string> = {
 };
 
 // 顯示在「接觸時間」下一行的紀錄（例如慢跑成績）
-const records: Record<string, [string, string][]> = {
+// 慢跑：這裡是手動紀錄（基準），build 時會檢查 RUNNING_RECORDS_SINCE 之後的跑步，破紀錄就自動顯示新成績。
+// 手動修改成績時，把 RUNNING_RECORDS_SINCE 改成修改當天的隔天。
+const RUNNING_RECORDS_SINCE = "2026-11-24";
+const records: Record<string, RunRecord[]> = {
   "慢跑": [
     ["3K", "12:48"],
     ["5K", "23:30"],
-    ["10K", "48:50"],
+    ["10K", "47:55"],
+    ["15K", "1:14:53"],
     ["21K", "1:56:36"],
     ["42K", "training"],
   ],
@@ -50,6 +54,7 @@ const lastUpdated = await getLastUpdated("2026.02.16");
 
 // 只有慢跑頁面才去 intervals.icu 抓資料
 const runningData = tag === "慢跑" ? await getRunningData() : null;
+if (tag === "慢跑") records["慢跑"] = await getRunningRecords(records["慢跑"], RUNNING_RECORDS_SINCE);
 ---
 
 <BaseLayout title={`關於 ${tag} | Ethan Chen`}>
