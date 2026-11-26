@@ -11,11 +11,19 @@ import { getRunningData, getRunningRecords, type RunRecord } from "@/utils/runni
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("projects");
-  const tags = ["單車", "慢跑", "保齡球", "撞球", "手作"];
+  // 網址用英文 slug（避免中文網址被編碼成亂碼），文章 tags 仍用中文
+  const tags: Record<string, string> = {
+    cycling: "單車",
+    running: "慢跑",
+    bowling: "保齡球",
+    billiard: "撞球",
+    diy: "手作",
+  };
 
-  return tags.map((tag) => ({
-    params: { tag },
-    props: { 
+  return Object.entries(tags).map(([slug, tag]) => ({
+    params: { tag: slug },
+    props: {
+      tag,
       // 依日期排序，最新的在最上面
       posts: allPosts
         .filter((post) => post.data.tags?.includes(tag))
@@ -24,8 +32,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const { tag } = Astro.params;
-const { posts } = Astro.props;
+const { tag, posts } = Astro.props;
 
 const descriptions: Record<string, string> = {
   "單車": "接觸時間：2021年。",
@@ -74,19 +81,19 @@ if (tag === "慢跑") records["慢跑"] = await getRunningRecords(records["慢�
           <nav>
             <ul class="space-y-5">
               <li>
-                <a href="/hobbies/單車" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '單車' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 單車 Cycling</a>
+                <a href="/hobbies/cycling" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '單車' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 單車 Cycling</a>
               </li>
               <li>
-                <a href="/hobbies/慢跑" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '慢跑' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 慢跑 Running</a>
+                <a href="/hobbies/running" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '慢跑' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 慢跑 Running</a>
               </li>
               <li>
-                <a href="/hobbies/保齡球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '保齡球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 保齡球 Bowling</a>
+                <a href="/hobbies/bowling" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '保齡球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 保齡球 Bowling</a>
               </li>
               <li>
-                <a href="/hobbies/撞球" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '撞球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 撞球 Billiard</a>
+                <a href="/hobbies/billiard" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '撞球' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 撞球 Billiard</a>
               </li>
               <li>
-                <a href="/hobbies/手作" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '手作' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 手作 DIY</a>
+                <a href="/hobbies/diy" class={`text-[15px] leading-relaxed block hover:translate-x-1 transition-all ${tag === '手作' ? 'text-blue-400 font-bold' : 'text-gray-400 hover:text-white'}`}># 手作 DIY</a>
               </li>
             </ul>
           </nav>

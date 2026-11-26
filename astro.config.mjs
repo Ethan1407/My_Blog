@@ -25,4 +25,12 @@ function localViewsApi() {
 
 export default defineConfig({
   integrations: [localViewsApi()],
+  // 舊的中文網址導向新的英文網址，避免既有連結失效
+  redirects: {
+    '/hobbies/單車': '/hobbies/cycling',
+    '/hobbies/慢跑': '/hobbies/running',
+    '/hobbies/保齡球': '/hobbies/bowling',
+    '/hobbies/撞球': '/hobbies/billiard',
+    '/hobbies/手作': '/hobbies/diy',
+  },
 });
